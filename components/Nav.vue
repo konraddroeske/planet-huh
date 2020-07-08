@@ -8,6 +8,12 @@ import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 export default {
+  data() {
+    return {
+      toggle: false,
+      pauseTime: null,
+    }
+  },
   mounted() {
     this.initThree()
   },
@@ -15,34 +21,19 @@ export default {
     initThree() {
       const canvas = this.$refs.scene
       const renderer = new THREE.WebGLRenderer({ canvas })
-
-      const fov = 45
-      const aspect = 2 // the canvas default
-      const near = 0.1
-      const far = 100
-      const camera = new THREE.PerspectiveCamera(fov, aspect, near, far)
+      const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
       camera.position.set(0, 0, 5)
-
-      // const controls = new OrbitControls(camera, canvas)
-      // controls.target.set(0, 0, 0)
-      // controls.update()
 
       const scene = new THREE.Scene()
       scene.background = new THREE.Color('white')
-
-      // const color = 0xb1e1ff
-      // const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
-      // const material = new THREE.MeshPhongMaterial({ color })
-      // const cube = new THREE.Mesh(geometry, material)
-      // scene.add(cube)
-      // cube.position.set(0, 0, 0)
 
       const dotGeometry = new THREE.Geometry()
       dotGeometry.vertices.push(new THREE.Vector3(0, 0, 0))
       const dotMaterial = new THREE.PointsMaterial({
         size: 1,
         sizeAttenuation: false,
-        color: 0x000000,
+        opacity: 0,
+        transparent: true,
       })
       const pivotPoint = new THREE.Points(dotGeometry, dotMaterial)
       scene.add(pivotPoint)
@@ -59,37 +50,14 @@ export default {
         scene.add(light)
       }
 
-      {
-        const color = 0xffffff
-        const intensity = 1
-        const light = new THREE.DirectionalLight(color, intensity)
-        light.position.set(5, 10, 2)
-        scene.add(light)
-        scene.add(light.target)
-      }
-
-      function frameArea(sizeToFitOnScreen, boxSize, boxCenter, camera) {
-        const halfSizeToFitOnScreen = sizeToFitOnScreen * 0.5
-        const halfFovY = THREE.MathUtils.degToRad(camera.fov * 0.5)
-        const distance = halfSizeToFitOnScreen / Math.tan(halfFovY)
-
-        const direction = new THREE.Vector3()
-          .subVectors(camera.position, boxCenter)
-          .multiply(new THREE.Vector3(1, 0, 1))
-          .normalize()
-
-        // camera.position.copy(direction.multiplyScalar(distance).add(boxCenter))
-
-        // pick some near and far values for the frustum that
-        // will contain the box.
-        // camera.near = boxSize / 100
-        // camera.far = boxSize * 100
-
-        // camera.updateProjectionMatrix()
-
-        // point the camera to look at the center of the box
-        // camera.lookAt(boxCenter.x, boxCenter.y, boxCenter.z)
-      }
+      // {
+      //   const color = 0xffffff
+      //   const intensity = 1
+      //   const light = new THREE.DirectionalLight(color, intensity)
+      //   light.position.set(5, 10, 2)
+      //   scene.add(light)
+      //   scene.add(light.target)
+      // }
 
       let moodObj1
       let moodObj2
@@ -99,34 +67,15 @@ export default {
         gltfLoader.load('/mood.glb', (gltf) => {
           moodObj1 = gltf
           moodObj1.scene.position.set(-2, 0, 0)
-
           pivotPoint.add(moodObj1.scene)
-
-          // const box = new THREE.Box3().setFromObject(rootObj.scene)
-
-          // const boxSize = box.getSize(new THREE.Vector3()).length()
-          // const boxCenter = box.getCenter(new THREE.Vector3())
-
-          // frameArea(boxSize * 1, boxSize, boxCenter, camera)
-
-          // update the Trackball controls to handle the new size
-          // controls.maxDistance = boxSize * 10
-          // controls.target.copy(boxCenter)
-          // controls.update()
         })
 
-        gltfLoader.load('/mood.glb', (gltf) => {
+        gltfLoader.load('/globe.glb', (gltf) => {
           moodObj2 = gltf
-
-          // scene.add(moodObj2.scene)
-
           moodObj2.scene.position.set(2, 0, 0)
-
           pivotPoint.add(moodObj2.scene)
         })
       }
-
-      // Animation Control
 
       function resizeRendererToDisplaySize(renderer) {
         const canvas = renderer.domElement
@@ -139,8 +88,33 @@ export default {
         return needResize
       }
 
-      function render(time) {
-        time *= 0.001
+      let timer = 0
+      const speed = 3.5
+      let delta = 0
+      const clock = new THREE.Clock()
+      clock.autoStart = false
+
+      const toggleAnim = () => {
+        if (!clock.running) {
+          this.toggle = !this.toggle
+
+          this.toggle ? (delta = 0) : (delta = Math.PI / speed)
+
+          clock.stop()
+          clock.start()
+        }
+      }
+
+      document.addEventListener('click', toggleAnim)
+
+      const render = (time) => {
+        time *= 0.0001
+
+        if (clock.getElapsedTime() <= Math.PI / speed) {
+          timer = clock.getElapsedTime() + delta
+        } else {
+          clock.stop()
+        }
 
         if (resizeRendererToDisplaySize(renderer)) {
           const canvas = renderer.domElement
@@ -149,11 +123,9 @@ export default {
         }
 
         if (moodObj1 && moodObj2) {
-          pivotPoint.rotation.y = time * 0.5
-          moodObj1.scene.rotation.y = time * 0.5
-          moodObj2.scene.rotation.y = time * 0.5
-          // const delta = clock.getDelta()
-          // mixer.update(delta)
+          pivotPoint.rotation.y = timer * speed
+          moodObj1.scene.rotation.y = time
+          moodObj2.scene.rotation.y = time
         }
 
         renderer.render(scene, camera)

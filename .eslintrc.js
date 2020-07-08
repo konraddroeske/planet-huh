@@ -19,5 +19,6 @@ module.exports = {
   rules: {
     'unicorn/number-literal-case': 'off',
     'no-unused-vars': 'warn',
+    'no-lone-blocks': 'warn',
   },
 }
