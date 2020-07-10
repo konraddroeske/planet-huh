@@ -260,4 +260,20 @@ button {
     cursor: pointer;
   }
 }
+
+:root {
+  --primary-font-color: #d15b84;
+  --secondary-font-color: #ffffff;
+  --primary-background-color: #f0f0f0;
+  --secondary-background-color: rgba(255, 199, 188, 0.9);
+  --tertiary-background-color: rgba(44, 41, 57, 0.85); // #1C1C20
+  // --tertiary-solid-color: #2c2939;
+  // --primary-font-family: "NeueMontreal", Arial, Helvetica, sans-serif;
+  // --secondary-font-family: "Savate", serif;
+  --font-size-xl: 5.5vw;
+  --font-size-large: 1.2rem;
+  --font-size-med: 1rem;
+  --font-size-small: 0.8rem;
+  --font-size-xsmall: 0.7rem;
+}
 </style>
