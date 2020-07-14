@@ -5,7 +5,11 @@ TailwindCSS Configuration File
 ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
 */
 module.exports = {
-  theme: {},
+  theme: {
+    inset: {
+      4: '1.5rem',
+    },
+  },
   variants: {},
   plugins: [],
   purge: {
