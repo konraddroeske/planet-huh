@@ -1,9 +1,15 @@
 <template>
   <nav>
-    <ul class="list-none flex justify-between py-12">
-      <li class="uppercase font-extrabold text-6xl">Cities</li>
-      <li class="uppercase font-extrabold text-6xl">Senses</li>
-      <li class="uppercase font-extrabold text-6xl">Moods</li>
+    <ul class="categoryList">
+      <li class="category">
+        <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
+      </li>
+      <li class="category">
+        <nuxt-link :to="{ name: 'senses' }">Senses</nuxt-link>
+      </li>
+      <li class="category">
+        <nuxt-link :to="{ name: 'moods' }">Moods</nuxt-link>
+      </li>
     </ul>
   </nav>
 </template>
@@ -12,4 +18,16 @@
 export default {}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.categoryList {
+  @apply list-none;
+  @apply py-12;
+  @apply flex;
+  @apply justify-between;
+}
+.category {
+  @apply uppercase;
+  @apply font-extrabold;
+  @apply text-6xl;
+}
+</style>

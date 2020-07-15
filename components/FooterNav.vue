@@ -1,12 +1,12 @@
 <template>
   <nav>
     <ul class="grid grid-cols-2 col-gap-24">
-      <li class="text-lg">Sign In</li>
-      <li class="text-lg">About</li>
-      <li class="text-lg">Submit</li>
-      <li class="text-lg">Contact</li>
-      <li class="text-lg">FAQ</li>
-      <li class="text-lg">Legal</li>
+      <li class="text-xl">Sign In</li>
+      <li class="text-xl">About</li>
+      <li class="text-xl">Submit</li>
+      <li class="text-xl">Contact</li>
+      <li class="text-xl">FAQ</li>
+      <li class="text-xl">Legal</li>
     </ul>
   </nav>
 </template>
