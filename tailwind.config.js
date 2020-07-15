@@ -9,6 +9,11 @@ module.exports = {
     inset: {
       4: '1.5rem',
     },
+    fontFamily: {
+      display: ['"Work Sans"', 'sans-serif'],
+      sans: ['Oswald', 'sans-serif'],
+      body: ['Georgia', 'serif'],
+    },
   },
   variants: {},
   plugins: [],
