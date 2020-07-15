@@ -5,7 +5,13 @@ TailwindCSS Configuration File
 ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
 */
 module.exports = {
-  theme: {},
+  theme: {
+    fontFamily: {
+      display: ['"Work Sans"', 'sans-serif'],
+      sans: ['Oswald', 'sans-serif'],
+      body: ['Georgia', 'serif'],
+    },
+  },
   variants: {},
   plugins: [],
   purge: {
