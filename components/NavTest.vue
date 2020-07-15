@@ -38,12 +38,9 @@ export default {
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
-      // camera.position.set(4.5, 0, -2)
-      // camera.lookAt(0, 0, 1.5)
-
       pivotCamera.add(camera)
-      // camera.position.set(0, 0, 3)
       camera.lookAt(0, 0, -3)
+      const globeRadians = (0 * Math.PI) / 180
 
       // const controls = new OrbitControls(camera, canvas)
       // controls.target.set(0, 5, 0)
@@ -134,7 +131,7 @@ export default {
 
       let newAngle = 0
 
-      const pivotGlobeRadians = (23.4 * Math.PI) / 180
+      const pivotGlobeRadians = (90 * Math.PI) / 180
       const pivotGlobeAxis = new THREE.Vector3(
         Math.sin(pivotGlobeRadians),
         Math.cos(pivotGlobeRadians),
@@ -154,44 +151,26 @@ export default {
       // CLICK AND DRAG GLOBE
 
       let isDragging = false
-      const globeRadians = (23.4 * Math.PI) / 180
 
-      const vector = new THREE.Vector3(
+      const vectorPivot = new THREE.Vector3(
+        Math.sin(pivotGlobeRadians),
+        Math.cos(pivotGlobeRadians),
+        0
+      ).normalize()
+
+      const vectorGlobe = new THREE.Vector3(
         Math.sin(globeRadians),
         Math.cos(globeRadians),
         0
       ).normalize()
 
-      // north pole Q
+      const deltaPivotQuaternion = new THREE.Quaternion().setFromAxisAngle(
+        vectorPivot,
+        0
+      )
 
-      // w: 0.7083632691965598
-      // x: 0.6029461761183548
-      // y: -0.3582237681756691
-      // z: -0.0797064581539078
-
-      const northPole = new THREE.Quaternion().fromArray([
-        0.6029461761183548,
-        -0.3582237681756691,
-        -0.0797064581539078,
-        0.7083632691965598,
-      ])
-
-      // south pole Q
-
-      // w: 0.6710812181531872
-      // x: -0.7110073790353338
-      // y: 0.06415516180009449
-      // z: 0.20000655192703862
-
-      const southPole = new THREE.Quaternion().fromArray([
-        -0.7110073790353338,
-        0.06415516180009449,
-        0.20000655192703862,
-        0.6710812181531872,
-      ])
-
-      const deltaRotationQuaternion = new THREE.Quaternion().setFromAxisAngle(
-        vector,
+      const deltaGlobeQuaternion = new THREE.Quaternion().setFromAxisAngle(
+        vectorGlobe,
         0
       )
 
@@ -242,6 +221,8 @@ export default {
           targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.02
 
         if (Math.abs(event.clientX - previousMousePosition.x) < 30) {
+          console.log()
+
           deltaMove = {
             x: event.clientX - previousMousePosition.x,
             y: event.clientY - previousMousePosition.y,
@@ -270,6 +251,16 @@ export default {
 
       function setDragEnd() {
         isDragging = false
+
+        newAngle =
+          pivotGlobe.rotation.y > 0
+            ? startQuaternion.angleTo(pivotGlobe.quaternion)
+            : startQuaternion.angleTo(pivotGlobe.quaternion) * -1
+
+        endQuaternion = new THREE.Quaternion().setFromAxisAngle(
+          pivotGlobeAxis,
+          newAngle
+        )
       }
 
       // SWITCH OBJECTS
@@ -302,18 +293,16 @@ export default {
         new THREE.Matrix4().makeRotationZ(-globeRadians)
       )
 
-      // const z = new THREE.Vector3(0, 0, 1)
-      // pivotGlobe.rotateOnAxis(z, -globeRadians)
+      // const globeAxis = new THREE.Vector3(
+      //   Math.sin(globeRadians),
+      //   Math.cos(globeRadians),
+      //   0
+      // ).normalize()
 
-      // pivotGlobe.geometry.applyMatrix(
-      //   new THREE.Matrix4().makeRotationZ(-globeRadians)
+      // const globeQuaternion = new THREE.Quaternion().setFromAxisAngle(
+      //   globeAxis,
+      //   0.4
       // )
-
-      const globeAxis = new THREE.Vector3(
-        Math.sin(globeRadians),
-        Math.cos(globeRadians),
-        0
-      ).normalize()
 
       // RENDER
 
@@ -337,16 +326,6 @@ export default {
             Math.sqrt(Math.pow(deltaMove.x, 2) + Math.pow(deltaMove.y, 2)) / 3
         }
 
-        newAngle =
-          pivotGlobe.rotation.y > 0
-            ? startQuaternion.angleTo(pivotGlobe.quaternion)
-            : startQuaternion.angleTo(pivotGlobe.quaternion) * -1
-
-        endQuaternion = new THREE.Quaternion().setFromAxisAngle(
-          pivotGlobeAxis,
-          newAngle
-        )
-
         if (Math.abs(inertia) >= 0.1) {
           inertia = inertia - targetRotation * 0.01
 
@@ -357,27 +336,47 @@ export default {
           inertia = 0
         }
 
+        // console.log(
+        //   pivotGlobe.quaternion.angleTo(northPole),
+        //   pivotGlobe.quaternion.angleTo(southPole)
+        // )
+
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
 
-          const normalMatrix = new THREE.Vector3(
-            Math.sin(globeRadians) * deltaMove.y,
+          const pivotMatrix = new THREE.Vector3(
+            Math.sin(pivotGlobeRadians) * deltaMove.y,
+            Math.cos(pivotGlobeRadians) * deltaMove.y,
+            0
+          ).normalize()
+
+          const globeMatrix = new THREE.Vector3(
+            Math.sin(globeRadians) * deltaMove.x,
             Math.cos(globeRadians) * deltaMove.x,
             0
           ).normalize()
 
-          deltaRotationQuaternion.setFromAxisAngle(
-            normalMatrix,
-            Math.abs(inertia) * 0.01
+          deltaPivotQuaternion.setFromAxisAngle(
+            pivotMatrix,
+            Math.abs(inertia) * 0.0035
+          )
+
+          deltaGlobeQuaternion.setFromAxisAngle(
+            globeMatrix,
+            Math.abs(inertia) * 0.005
           )
 
           pivotGlobe.quaternion
-            .multiplyQuaternions(deltaRotationQuaternion, pivotGlobe.quaternion)
+            .multiplyQuaternions(deltaPivotQuaternion, pivotGlobe.quaternion)
+            .normalize()
+
+          globe.quaternion
+            .multiplyQuaternions(deltaGlobeQuaternion, globe.quaternion)
             .normalize()
 
           if (!isDragging) {
-            globe.rotateOnAxis(globeAxis, 0.002) // axis must be normalized
-            pivotGlobe.quaternion.slerp(endQuaternion, 0.012)
+            // globe.rotateOnAxis(globeAxis, 0.003) // axis must be normalized
+            // pivotGlobe.quaternion.slerp(endQuaternion, 0.01)
           }
         }
         renderer.render(scene, camera)
