@@ -221,8 +221,6 @@ export default {
           targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.02
 
         if (Math.abs(event.clientX - previousMousePosition.x) < 30) {
-          console.log()
-
           deltaMove = {
             x: event.clientX - previousMousePosition.x,
             y: event.clientY - previousMousePosition.y,
