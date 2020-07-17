@@ -186,7 +186,8 @@ export default {
       let windowHalfX = window.innerWidth / 2
       let windowHalfY = window.innerHeight / 2
       let inertia = 0
-      const acceleration = 25
+      const acceleration = 15
+      let rotationToggle = true
 
       let deltaMove = {
         x: 0,
@@ -215,6 +216,7 @@ export default {
         event.preventDefault()
         resetMouse()
 
+        rotationToggle = false
         isDragging = true
         container.addEventListener('mousemove', onDocumentMouseMove, false)
         container.addEventListener('mouseup', onDocumentMouseUp, false)
@@ -260,6 +262,10 @@ export default {
 
       function setDragEnd() {
         isDragging = false
+
+        setTimeout(() => {
+          rotationToggle = true
+        }, 750)
       }
 
       // SWITCH OBJECTS
@@ -315,7 +321,7 @@ export default {
         }
 
         if (Math.abs(inertia) >= 0.1) {
-          inertia = inertia - targetRotation * 0.015
+          inertia = inertia - targetRotation * 0.012
 
           targetRotation = inertia
         }
@@ -345,16 +351,19 @@ export default {
           if (!isDragging) {
             // X AXIS ROTATION
 
-            const xRotationSpeed = 0.002
-            const xRotationRange = 0.006
+            if (rotationToggle) {
+              const xRotationSpeed = 0.008
+              const xRotationRange = 0.0025
 
-            const targetY = (1 - mouseY) * xRotationRange
-            parentGlobe.rotation.x +=
-              xRotationSpeed * (targetY - parentGlobe.rotation.x)
+              const targetY = (1 - mouseY) * xRotationRange
 
-            // GLOBE ROTATION CONTINUOUSE ROTATION
+              parentGlobe.rotation.x +=
+                xRotationSpeed * (targetY - parentGlobe.rotation.x)
+            }
 
-            globe.rotateOnAxis(globeAxis, 0.002) // axis must be normalized
+            // GLOBE ROTATION CONTINUOUS ROTATION
+
+            globe.rotateOnAxis(globeAxis, 0.001)
 
             // GLOBE CORRECTION/SLERP
 
