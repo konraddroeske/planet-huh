@@ -1,5 +1,5 @@
 <template>
-  <div id="sceneContainer" class="container">
+  <div id="sceneContainer" class="sceneContainer">
     <canvas ref="scene" class="scene" />
     <button class="toggle">Toggle</button>
   </div>
@@ -32,7 +32,7 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, 3)
+      pivotCamera.position.set(0, 0, 3.2)
       scene.add(pivotCamera)
 
       // CAMERA
@@ -42,7 +42,7 @@ export default {
       // camera.lookAt(0, 0, 1.5)
 
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, -3)
+      camera.lookAt(0, 0, -3.2)
 
       // const controls = new OrbitControls(camera, canvas)
       // controls.target.set(0, 5, 0)
@@ -186,7 +186,7 @@ export default {
       let windowHalfX = window.innerWidth / 2
       let windowHalfY = window.innerHeight / 2
       let inertia = 0
-      const acceleration = 15
+      const acceleration = 20
       let rotationToggle = true
 
       let deltaMove = {
@@ -216,7 +216,6 @@ export default {
         event.preventDefault()
         resetMouse()
 
-        rotationToggle = false
         isDragging = true
         container.addEventListener('mousemove', onDocumentMouseMove, false)
         container.addEventListener('mouseup', onDocumentMouseUp, false)
@@ -265,7 +264,7 @@ export default {
 
         setTimeout(() => {
           rotationToggle = true
-        }, 750)
+        }, 300)
       }
 
       // SWITCH OBJECTS
@@ -316,8 +315,10 @@ export default {
         }
 
         if (isDragging) {
+          rotationToggle = false
+
           inertia =
-            Math.sqrt(Math.pow(deltaMove.x, 2) + Math.pow(deltaMove.y, 2)) / 3
+            Math.sqrt(Math.pow(deltaMove.x, 2) + Math.pow(deltaMove.y, 2)) / 2.5
         }
 
         if (Math.abs(inertia) >= 0.1) {
@@ -341,7 +342,7 @@ export default {
 
           deltaRotationQuaternion.setFromAxisAngle(
             normalMatrix,
-            Math.abs(inertia) * 0.0075
+            Math.abs(inertia) * 0.01
           )
 
           pivotGlobe.quaternion
@@ -352,7 +353,7 @@ export default {
             // X AXIS ROTATION
 
             if (rotationToggle) {
-              const xRotationSpeed = 0.008
+              const xRotationSpeed = 0.0075
               const xRotationRange = 0.0025
 
               const targetY = (1 - mouseY) * xRotationRange
@@ -368,7 +369,7 @@ export default {
             // GLOBE CORRECTION/SLERP
 
             const endQuaternion = getClosestQuaternion()
-            pivotGlobe.quaternion.slerp(endQuaternion, 0.025)
+            pivotGlobe.quaternion.slerp(endQuaternion, 0.05)
           }
         }
         renderer.render(scene, camera)
@@ -393,7 +394,7 @@ export default {
   border-radius: 25px;
 }
 
-.container {
+.sceneContainer {
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
@@ -402,11 +403,12 @@ export default {
   align-items: center;
   text-align: center;
   position: relative;
+  cursor: pointer;
 }
 
 .scene {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: block;
   pointer-events: none;
 }
