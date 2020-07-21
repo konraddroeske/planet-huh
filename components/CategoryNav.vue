@@ -1,12 +1,12 @@
 <template>
   <nav>
     <ul
-      class="list-none desktop:my-12 desktop:flex justify-between text-center"
+      class="list-none my-8 desktop:my-20 desktop:flex justify-between text-center"
     >
-      <li class="category">
+      <li class="category mb-4">
         <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
       </li>
-      <li class="category">
+      <li class="category mb-4">
         <nuxt-link :to="{ name: 'senses' }">Senses</nuxt-link>
       </li>
       <li class="category">
@@ -25,5 +25,6 @@ export default {}
   @apply uppercase;
   @apply font-extrabold;
   @apply text-6xl;
+  @apply leading-none;
 }
 </style>
