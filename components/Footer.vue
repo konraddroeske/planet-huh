@@ -20,7 +20,7 @@
         class="flex flex-col desktop:flex-row justify-center desktop:justify-between items-center pb-12"
       >
         <Social />
-        <span class="text-xl block mt-20 desktop:mt-0"
+        <span class="text-xl block mt-20 desktop:mt-0 text-center"
           >A Project by SOMEWHERELSE</span
         >
       </div>
