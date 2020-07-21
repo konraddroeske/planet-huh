@@ -1,5 +1,5 @@
 <template>
-  <ul class="socialList text-2xl">
+  <ul class="socialList text-3xl">
     <li>
       <a href="https://facebook.com">
         <FontAwesomeIcon :icon="['fab', 'facebook-f']" />
