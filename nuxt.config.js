@@ -29,7 +29,7 @@ export default {
       {
         rel: 'stylesheet',
         href:
-          'https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Work+Sans:wght@400;700&display=swap',
+          'https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Work+Sans:wght@400;900&display=swap',
       },
     ],
   },
@@ -41,7 +41,7 @@ export default {
    ** Plugins to load before mounting the App
    ** https://nuxtjs.org/guide/plugins
    */
-  plugins: [],
+  plugins: ['~plugins/fontAwesome.js'],
   /*
    ** Auto import components
    ** See https://nuxtjs.org/api/configuration-components
