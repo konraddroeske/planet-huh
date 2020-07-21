@@ -1,7 +1,15 @@
 <template>
-  <div>
-    <input class="searchInput" type="text" placeholder="Start typing..." />
-    <button class="searchButton">Go!</button>
+  <div class="flex flex-col desktop:block">
+    <input
+      class="placeholder rounded-full border-white border-2 bg-transparent py-2 px-4 text-2xl mb-6 desktop:mb-0 desktop:mr-2"
+      type="text"
+      placeholder="Start typing..."
+    />
+    <button
+      class="rounded-full bg-white text-black p-3 text-xl font-extrabold uppercase inline-block mx-auto desktop:mt-4"
+    >
+      Go!
+    </button>
   </div>
 </template>
 
@@ -10,25 +18,9 @@ export default {}
 </script>
 
 <style lang="scss" scoped>
-.searchInput {
-  @apply rounded-full;
-  @apply border-white;
-  @apply border-2;
-  @apply bg-transparent;
-  @apply py-2;
-  @apply px-4;
-  @apply text-2xl;
-  @apply mr-2;
+.placeholder {
   &::placeholder {
-    color: #555;
+    color: #707070;
   }
-}
-.searchButton {
-  @apply rounded-full;
-  @apply bg-white;
-  @apply text-black;
-  @apply p-3;
-  @apply text-xl;
-  @apply uppercase;
 }
 </style>

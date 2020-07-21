@@ -29,7 +29,7 @@ export default {
       {
         rel: 'stylesheet',
         href:
-          'https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Work+Sans:wght@400;800&display=swap',
+          'https://fonts.googleapis.com/css2?family=Oswald:wght@600&family=Work+Sans:wght@400;900&display=swap',
       },
     ],
   },

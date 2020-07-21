@@ -1,6 +1,8 @@
 <template>
   <nav>
-    <ul class="categoryList">
+    <ul
+      class="list-none desktop:my-12 desktop:flex justify-between text-center"
+    >
       <li class="category">
         <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
       </li>
@@ -19,12 +21,6 @@ export default {}
 </script>
 
 <style lang="scss" scoped>
-.categoryList {
-  @apply list-none;
-  @apply py-12;
-  @apply flex;
-  @apply justify-between;
-}
 .category {
   @apply uppercase;
   @apply font-extrabold;
