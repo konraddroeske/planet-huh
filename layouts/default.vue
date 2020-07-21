@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div class="fixed z-10 pt-6 pl-8">
-      <Logo />
-    </div>
-    <Nuxt />
+    <Header />
+    <main>
+      <Nuxt />
+    </main>
     <Footer />
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo'
+import Header from '~/components/Header'
 import Footer from '~/components/Footer'
 export default {
-  components: { Logo, Footer },
+  components: { Header, Footer },
 }
 </script>
 
