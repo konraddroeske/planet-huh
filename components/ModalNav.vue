@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="sandwichMenu">
+    <div class="sandwichMenu relative z-fixed">
       <input
         id="menuButton"
         class="visuallyHidden"
