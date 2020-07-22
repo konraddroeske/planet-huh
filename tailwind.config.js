@@ -23,6 +23,11 @@ module.exports = {
       5: '1.25rem',
       6: '1.5rem',
     },
+    zIndex: {
+      above: 10,
+      modal: 20,
+      fixed: 30,
+    },
   },
   variants: {},
   plugins: [],

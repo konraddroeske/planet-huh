@@ -1,13 +1,17 @@
 <template>
-  <header class="fixed width-100 py-6 px-8">
+  <header
+    class="fixed z-fixed w-screen py-6 px-8 flex justify-between items-center"
+  >
     <Logo />
+    <ModalNav />
   </header>
 </template>
 
 <script>
 import Logo from './Logo'
+import ModalNav from './ModalNav'
 export default {
-  components: { Logo },
+  components: { Logo, ModalNav },
 }
 </script>
 
