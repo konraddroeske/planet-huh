@@ -617,10 +617,8 @@ export default {
           pivotGlobe.rotation.y += deltaX
 
           // VERTICAL ROTATION
-          if (isThrowing) {
-            if (checkMaxAngle(pivotGlobe, deltaY, 'x')) {
-              pivotGlobe.rotation.x += deltaY
-            }
+          if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
+            pivotGlobe.rotation.x += deltaY
           }
 
           if (!isDragging) {
@@ -631,8 +629,10 @@ export default {
             // GLOBE CORRECTION SLERP
 
             if (!isThrowing) {
+              targetRotationY = pivotGlobe.rotation.x
+
               if (pivotGlobe.rotation.x > 0.01) {
-                pivotGlobe.rotation.x -= 0.002
+                pivotGlobe.rotation.x += -0.002
               } else if (pivotGlobe.rotation.x < -0.01) {
                 pivotGlobe.rotation.x += 0.002
               }
