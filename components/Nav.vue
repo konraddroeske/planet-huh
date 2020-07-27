@@ -25,7 +25,7 @@ export default {
     initThree() {
       // ANIMATE OBJECT CONTROLS
 
-      let deltaMove = {
+      const deltaMove = {
         x: 0,
         y: 0,
       }
@@ -46,7 +46,8 @@ export default {
         },
       }
 
-      const rotationSpeed = 0.025
+      const rotationSpeed = 0.0035
+      const rotationInertia = 0.05
 
       // horizonal rotation
 
@@ -242,12 +243,14 @@ export default {
             mouseX = e.clientX - windowHalfX
 
             targetRotationX =
-              targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.02
+              targetRotationOnMouseDownX +
+              (mouseX - mouseXOnMouseDown) * rotationSpeed
 
             mouseY = e.clientY - windowHalfY
 
             const delta =
-              targetRotationOnMouseDownY + (mouseY - mouseYOnMouseDown) * 0.02
+              targetRotationOnMouseDownY +
+              (mouseY - mouseYOnMouseDown) * rotationSpeed
 
             if (delta <= MAX_ANGLES.x.from * -1) {
               targetRotationY = MAX_ANGLES.x.from * -1
@@ -255,33 +258,31 @@ export default {
               targetRotationY = MAX_ANGLES.x.from
             } else {
               targetRotationY =
-                targetRotationOnMouseDownY + (mouseY - mouseYOnMouseDown) * 0.02
+                targetRotationOnMouseDownY +
+                (mouseY - mouseYOnMouseDown) * rotationSpeed
             }
 
-            // targetRotationY =
-            //   targetRotationOnMouseDownY + (mouseY - mouseYOnMouseDown) * 0.02
+            // deltaMove = {
+            //   x: e.offsetX - previousMousePosition.x,
+            //   y: e.offsetY - previousMousePosition.y,
+            // }
 
-            deltaMove = {
-              x: e.offsetX - previousMousePosition.x,
-              y: e.offsetY - previousMousePosition.y,
-            }
+            // previousMousePosition = { x: e.offsetX, y: e.offsetY }
 
-            previousMousePosition = { x: e.offsetX, y: e.offsetY }
+            // if (horizontalRotationEnabled && deltaMove.x !== 0) {
+            //   if (
+            //     !isWithinMaxAngle(Math.sign(deltaMove.x) * rotationSpeed, 'y')
+            //   )
+            //     return
+            //   mesh.rotation.y += Math.sign(deltaMove.x) * rotationSpeed
+            //   flag = mouseFlags.MOUSEMOVE
+            // }
 
-            if (horizontalRotationEnabled && deltaMove.x !== 0) {
-              if (
-                !isWithinMaxAngle(Math.sign(deltaMove.x) * rotationSpeed, 'y')
-              )
-                return
-              // mesh.rotation.y += Math.sign(deltaMove.x) * rotationSpeed
-              flag = mouseFlags.MOUSEMOVE
-            }
-
-            if (verticalRotationEnabled && deltaMove.y !== 0) {
-              if (!isWithinMaxAngle(delta, 'x')) return
-              // mesh.rotation.x += Math.sign(deltaMove.y) * rotationSpeed
-              flag = mouseFlags.MOUSEMOVE
-            }
+            // if (verticalRotationEnabled && deltaMove.y !== 0) {
+            //   if (!isWithinMaxAngle(delta, 'x')) return
+            //   mesh.rotation.x += Math.sign(deltaMove.y) * rotationSpeed
+            //   flag = mouseFlags.MOUSEMOVE
+            // }
           }
         }
 
@@ -626,12 +627,14 @@ export default {
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
 
-          globe.rotation.y += (targetRotationX - globe.rotation.y) * 0.05
+          globe.rotation.y +=
+            (targetRotationX - globe.rotation.y) * rotationInertia
 
-          const deltaY = (targetRotationY - globe.rotation.x) * 0.05
+          const deltaY = (targetRotationY - globe.rotation.x) * rotationInertia
 
           if (checkMaxAngle(globe, deltaY, 'x')) {
-            globe.rotation.x += (targetRotationY - globe.rotation.x) * 0.05
+            globe.rotation.x +=
+              (targetRotationY - globe.rotation.x) * rotationInertia
           }
         }
         renderer.render(scene, camera)
