@@ -25,12 +25,9 @@ export default {
     initThree() {
       // ANIMATE OBJECT CONTROLS
 
-      const deltaMove = {
-        x: 0,
-        y: 0,
-      }
-
       let isDragging = false
+      let isThrowing = false
+
       const MAX_ANGLES = {
         x: {
           // Vertical from bottom to top.
@@ -59,6 +56,8 @@ export default {
 
       let windowHalfX = window.innerWidth / 2
 
+      let deltaX = 0
+
       // vertical rotation
 
       let targetRotationY = 0
@@ -68,6 +67,8 @@ export default {
       let mouseYOnMouseDown = 0
 
       let windowHalfY = window.innerWidth / 2
+
+      let deltaY = 0
 
       const checkMaxAngle = (obj, delta, axe) => {
         const condition =
@@ -188,7 +189,6 @@ export default {
         const mouseFlags = { MOUSEDOWN: 0, MOUSEMOVE: 1 }
 
         let flag
-        isDragging = false
         let previousMousePosition = { x: 0, y: 0 }
 
         /**
@@ -229,6 +229,7 @@ export default {
 
         function mouseDown(e) {
           isDragging = true
+          isThrowing = true
           flag = mouseFlags.MOUSEDOWN
 
           mouseXOnMouseDown = e.clientX - windowHalfX
@@ -261,28 +262,6 @@ export default {
                 targetRotationOnMouseDownY +
                 (mouseY - mouseYOnMouseDown) * rotationSpeed
             }
-
-            // deltaMove = {
-            //   x: e.offsetX - previousMousePosition.x,
-            //   y: e.offsetY - previousMousePosition.y,
-            // }
-
-            // previousMousePosition = { x: e.offsetX, y: e.offsetY }
-
-            // if (horizontalRotationEnabled && deltaMove.x !== 0) {
-            //   if (
-            //     !isWithinMaxAngle(Math.sign(deltaMove.x) * rotationSpeed, 'y')
-            //   )
-            //     return
-            //   mesh.rotation.y += Math.sign(deltaMove.x) * rotationSpeed
-            //   flag = mouseFlags.MOUSEMOVE
-            // }
-
-            // if (verticalRotationEnabled && deltaMove.y !== 0) {
-            //   if (!isWithinMaxAngle(delta, 'x')) return
-            //   mesh.rotation.x += Math.sign(deltaMove.y) * rotationSpeed
-            //   flag = mouseFlags.MOUSEMOVE
-            // }
           }
         }
 
@@ -291,15 +270,15 @@ export default {
           resetMousePosition()
         }
 
-        function wheel(e) {
-          const delta = e.wheelDelta ? e.wheelDelta : e.deltaY * -1
-          if (delta > 0 && camera.position.z > minDistance) {
-            zoomIn()
-          } else if (delta < 0 && camera.position.z < maxDistance) {
-            zoomOut()
-          }
-        }
-        // TOUCH Interaction
+        // function wheel(e) {
+        //   const delta = e.wheelDelta ? e.wheelDelta : e.deltaY * -1
+        //   if (delta > 0 && camera.position.z > minDistance) {
+        //     zoomIn()
+        //   } else if (delta < 0 && camera.position.z < maxDistance) {
+        //     zoomOut()
+        //   }
+        // }
+        // TOUCH INTERACTION
 
         function onTouchStart(e) {
           e.preventDefault()
@@ -631,19 +610,36 @@ export default {
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
 
-          pivotGlobe.rotation.y +=
-            (targetRotationX - pivotGlobe.rotation.y) * rotationInertia
+          deltaX = (targetRotationX - pivotGlobe.rotation.y) * rotationInertia
+          deltaY = (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
 
-          if (!isDragging) {
-            globe.rotateOnAxis(globeAxis, 0.002)
+          // HORIZONAL ROTATION
+          pivotGlobe.rotation.y += deltaX
+
+          // VERTICAL ROTATION
+          if (isThrowing) {
+            if (checkMaxAngle(pivotGlobe, deltaY, 'x')) {
+              pivotGlobe.rotation.x += deltaY
+            }
           }
 
-          const deltaY =
-            (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
+          if (!isDragging) {
+            if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
+              isThrowing = false
+            }
 
-          if (checkMaxAngle(pivotGlobe, deltaY, 'x')) {
-            pivotGlobe.rotation.x +=
-              (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
+            // GLOBE CORRECTION SLERP
+
+            if (!isThrowing) {
+              if (pivotGlobe.rotation.x > 0.01) {
+                pivotGlobe.rotation.x -= 0.002
+              } else if (pivotGlobe.rotation.x < -0.01) {
+                pivotGlobe.rotation.x += 0.002
+              }
+            }
+
+            // GLOBE CONTINUOUS ROTATION
+            globe.rotateOnAxis(globeAxis, 0.002)
           }
         }
         renderer.render(scene, camera)
