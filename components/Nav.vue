@@ -47,7 +47,7 @@ export default {
       }
 
       const rotationSpeed = 0.0035
-      const rotationInertia = 0.05
+      const rotationInertia = 0.08
 
       // horizonal rotation
 
@@ -570,7 +570,11 @@ export default {
 
       // CLICK AND DRAG GLOBE
 
-      const objectControls = new THREE.ObjectControls(camera, document, globe)
+      const objectControls = new THREE.ObjectControls(
+        camera,
+        document,
+        pivotGlobe
+      )
       // objectControls.setDistance(8, 200) // set min - max distance for zoom
       // objectControls.setZoomSpeed(0.5) // set zoom speed
       // objectControls.enableVerticalRotation()
@@ -627,14 +631,19 @@ export default {
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
 
-          globe.rotation.y +=
-            (targetRotationX - globe.rotation.y) * rotationInertia
+          pivotGlobe.rotation.y +=
+            (targetRotationX - pivotGlobe.rotation.y) * rotationInertia
 
-          const deltaY = (targetRotationY - globe.rotation.x) * rotationInertia
+          if (!isDragging) {
+            globe.rotateOnAxis(globeAxis, 0.002)
+          }
 
-          if (checkMaxAngle(globe, deltaY, 'x')) {
-            globe.rotation.x +=
-              (targetRotationY - globe.rotation.x) * rotationInertia
+          const deltaY =
+            (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
+
+          if (checkMaxAngle(pivotGlobe, deltaY, 'x')) {
+            pivotGlobe.rotation.x +=
+              (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
           }
         }
         renderer.render(scene, camera)
