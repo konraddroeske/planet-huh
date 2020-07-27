@@ -1,5 +1,5 @@
 <template>
-  <div id="sceneContainer" class="container">
+  <div id="sceneContainer" class="sceneContainer">
     <canvas ref="scene" class="scene" />
     <button class="toggle">Toggle</button>
   </div>
@@ -32,15 +32,17 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, 3)
+      pivotCamera.position.set(0, 0, 3.2)
       scene.add(pivotCamera)
 
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
+      // camera.position.set(4.5, 0, -2)
+      // camera.lookAt(0, 0, 1.5)
+
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, -3)
-      const globeRadians = (0 * Math.PI) / 180
+      camera.lookAt(0, 0, -3.2)
 
       // const controls = new OrbitControls(camera, canvas)
       // controls.target.set(0, 5, 0)
@@ -61,11 +63,17 @@ export default {
       pivotMain.position.set(1.2, 0, -2)
       scene.add(pivotMain)
 
+      // GLOBE PARENT
+
+      const parentGlobe = new THREE.Object3D()
+      parentGlobe.position.set(-1.2, 0, 2)
+      pivotMain.add(parentGlobe)
+
       // GLOBE PIVOT
 
       const pivotGlobe = new THREE.Object3D()
-      pivotGlobe.position.set(-1.2, 0, 2)
-      pivotMain.add(pivotGlobe)
+      pivotGlobe.position.set(0, 0, 0)
+      parentGlobe.add(pivotGlobe)
 
       // GLOBE OBJECT
 
@@ -111,6 +119,7 @@ export default {
 
       function resizeRendererToDisplaySize(renderer) {
         windowHalfX = window.innerWidth / 2
+        windowHalfY = window.innerHeight / 2
         const canvas = renderer.domElement
         const width = canvas.clientWidth
         const height = canvas.clientHeight
@@ -129,57 +138,56 @@ export default {
 
       // SLERP PIVOT GLOBE
 
-      let newAngle = 0
+      const globeRadians = toRadians(23.4)
 
-      const pivotGlobeRadians = (90 * Math.PI) / 180
-      const pivotGlobeAxis = new THREE.Vector3(
-        Math.sin(pivotGlobeRadians),
-        Math.cos(pivotGlobeRadians),
-        0
-      ).normalize()
-
-      const startQuaternion = new THREE.Quaternion().setFromAxisAngle(
-        pivotGlobeAxis,
-        0
-      )
-
-      let endQuaternion = new THREE.Quaternion().setFromAxisAngle(
-        pivotGlobeAxis,
-        newAngle
-      )
-
-      // CLICK AND DRAG GLOBE
-
-      let isDragging = false
-
-      const vectorPivot = new THREE.Vector3(
-        Math.sin(pivotGlobeRadians),
-        Math.cos(pivotGlobeRadians),
-        0
-      ).normalize()
-
-      const vectorGlobe = new THREE.Vector3(
+      const globeAxis = new THREE.Vector3(
         Math.sin(globeRadians),
         Math.cos(globeRadians),
         0
       ).normalize()
 
-      const deltaPivotQuaternion = new THREE.Quaternion().setFromAxisAngle(
-        vectorPivot,
-        0
-      )
+      const quaternionArr = []
+      const steps = (2 * Math.PI) / 360
 
-      const deltaGlobeQuaternion = new THREE.Quaternion().setFromAxisAngle(
-        vectorGlobe,
+      // create array of quaternions for comparison
+      for (let i = 0; i < Math.PI * 2; i += steps) {
+        quaternionArr.push(
+          new THREE.Quaternion().setFromAxisAngle(globeAxis, i)
+        )
+      }
+
+      const getClosestQuaternion = (currentQuaternion) => {
+        const distances = []
+
+        // calculate distance to each quarternion
+        quaternionArr.forEach((quaternion, index) => {
+          distances.push(quaternion.angleTo(pivotGlobe.quaternion))
+        })
+
+        // return one with least distance
+        return quaternionArr[distances.indexOf(Math.min.apply(null, distances))]
+      }
+
+      // CLICK AND DRAG GLOBE
+
+      let isDragging = false
+
+      const deltaRotationQuaternion = new THREE.Quaternion().setFromAxisAngle(
+        globeAxis,
         0
       )
 
       let targetRotation = 0
       let targetRotationOnMouseDown = 0
       let mouseX = 0
+      let mouseY = 0
       let mouseXOnMouseDown = 0
+      const container = document.querySelector('#sceneContainer')
       let windowHalfX = window.innerWidth / 2
+      let windowHalfY = window.innerHeight / 2
       let inertia = 0
+      const acceleration = 20
+      let rotationToggle = true
 
       let deltaMove = {
         x: 0,
@@ -191,14 +199,18 @@ export default {
         y: 0,
       }
 
-      const container = document.querySelector('#sceneContainer')
-
       const resetMouse = () => {
         deltaMove.x = 0
         deltaMove.y = 0
         previousMousePosition.x = 0
         previousMousePosition.y = 0
       }
+
+      // const rotationFactor = -1
+
+      container.addEventListener('mousemove', function (e) {
+        mouseY = event.clientY - windowHalfY
+      })
 
       container.addEventListener('mousedown', function (e) {
         event.preventDefault()
@@ -220,7 +232,7 @@ export default {
         targetRotation =
           targetRotationOnMouseDown + (mouseX - mouseXOnMouseDown) * 0.02
 
-        if (Math.abs(event.clientX - previousMousePosition.x) < 30) {
+        if (Math.abs(event.clientX - previousMousePosition.x) < acceleration) {
           deltaMove = {
             x: event.clientX - previousMousePosition.x,
             y: event.clientY - previousMousePosition.y,
@@ -250,15 +262,9 @@ export default {
       function setDragEnd() {
         isDragging = false
 
-        newAngle =
-          pivotGlobe.rotation.y > 0
-            ? startQuaternion.angleTo(pivotGlobe.quaternion)
-            : startQuaternion.angleTo(pivotGlobe.quaternion) * -1
-
-        endQuaternion = new THREE.Quaternion().setFromAxisAngle(
-          pivotGlobeAxis,
-          newAngle
-        )
+        setTimeout(() => {
+          rotationToggle = true
+        }, 400)
       }
 
       // SWITCH OBJECTS
@@ -291,17 +297,6 @@ export default {
         new THREE.Matrix4().makeRotationZ(-globeRadians)
       )
 
-      // const globeAxis = new THREE.Vector3(
-      //   Math.sin(globeRadians),
-      //   Math.cos(globeRadians),
-      //   0
-      // ).normalize()
-
-      // const globeQuaternion = new THREE.Quaternion().setFromAxisAngle(
-      //   globeAxis,
-      //   0.4
-      // )
-
       // RENDER
 
       const render = (time) => {
@@ -320,12 +315,14 @@ export default {
         }
 
         if (isDragging) {
+          rotationToggle = false
+
           inertia =
-            Math.sqrt(Math.pow(deltaMove.x, 2) + Math.pow(deltaMove.y, 2)) / 3
+            Math.sqrt(Math.pow(deltaMove.x, 2) + Math.pow(deltaMove.y, 2)) / 4
         }
 
         if (Math.abs(inertia) >= 0.1) {
-          inertia = inertia - targetRotation * 0.01
+          inertia = inertia - targetRotation * 0.06
 
           targetRotation = inertia
         }
@@ -334,47 +331,45 @@ export default {
           inertia = 0
         }
 
-        // console.log(
-        //   pivotGlobe.quaternion.angleTo(northPole),
-        //   pivotGlobe.quaternion.angleTo(southPole)
-        // )
-
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
 
-          const pivotMatrix = new THREE.Vector3(
-            Math.sin(pivotGlobeRadians) * deltaMove.y,
-            Math.cos(pivotGlobeRadians) * deltaMove.y,
-            0
-          ).normalize()
-
-          const globeMatrix = new THREE.Vector3(
-            Math.sin(globeRadians) * deltaMove.x,
+          const normalMatrix = new THREE.Vector3(
+            Math.sin(globeRadians) * deltaMove.y,
             Math.cos(globeRadians) * deltaMove.x,
             0
           ).normalize()
 
-          deltaPivotQuaternion.setFromAxisAngle(
-            pivotMatrix,
-            Math.abs(inertia) * 0.0035
-          )
-
-          deltaGlobeQuaternion.setFromAxisAngle(
-            globeMatrix,
-            Math.abs(inertia) * 0.005
+          deltaRotationQuaternion.setFromAxisAngle(
+            normalMatrix,
+            Math.abs(inertia) * 0.01
           )
 
           pivotGlobe.quaternion
-            .multiplyQuaternions(deltaPivotQuaternion, pivotGlobe.quaternion)
-            .normalize()
-
-          globe.quaternion
-            .multiplyQuaternions(deltaGlobeQuaternion, globe.quaternion)
+            .multiplyQuaternions(deltaRotationQuaternion, pivotGlobe.quaternion)
             .normalize()
 
           if (!isDragging) {
-            // globe.rotateOnAxis(globeAxis, 0.003) // axis must be normalized
-            // pivotGlobe.quaternion.slerp(endQuaternion, 0.01)
+            // X AXIS ROTATION
+
+            if (rotationToggle) {
+              const xRotationSpeed = 0.005
+              const xRotationRange = 0.00275
+
+              const targetY = (1 - mouseY) * xRotationRange
+
+              parentGlobe.rotation.x +=
+                xRotationSpeed * (targetY - parentGlobe.rotation.x)
+            }
+
+            // GLOBE ROTATION CONTINUOUS ROTATION
+
+            globe.rotateOnAxis(globeAxis, 0.002)
+
+            // GLOBE CORRECTION/SLERP
+
+            const endQuaternion = getClosestQuaternion()
+            pivotGlobe.quaternion.slerp(endQuaternion, 0.0025)
           }
         }
         renderer.render(scene, camera)
@@ -399,7 +394,7 @@ export default {
   border-radius: 25px;
 }
 
-.container {
+.sceneContainer {
   margin: 0 auto;
   min-height: 100vh;
   display: flex;
@@ -408,11 +403,12 @@ export default {
   align-items: center;
   text-align: center;
   position: relative;
+  cursor: grab;
 }
 
 .scene {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: block;
   pointer-events: none;
 }
