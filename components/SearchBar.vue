@@ -1,11 +1,7 @@
 <template>
-  <div class="flex flex-col desktop:block">
-    <input
-      class="searchInput border-white border-2 py-2 px-4 text-2xl mb-6 desktop:mb-0 desktop:mr-2"
-      type="text"
-      placeholder="Start typing..."
-    />
-    <button class="searchButton bg-white text-black p-3 text-xl font-extrabold">
+  <div class="container">
+    <input class="searchInput" type="text" placeholder="Start typing..." />
+    <button class="searchButton">
       Go!
     </button>
   </div>
@@ -16,19 +12,51 @@ export default {}
 </script>
 
 <style lang="scss" scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+
+  @media (min-width: $bp-desktop) {
+    display: block;
+  }
+}
 .searchInput {
+  font-family: $font-display;
+  font-size: 1.5rem;
   border-radius: 180px;
+  border: 2px solid $white;
   background: transparent;
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+
   &::placeholder {
     color: #707070;
+  }
+
+  @media (min-width: $bp-desktop) {
+    margin-bottom: 0;
+    margin-right: 0.5rem;
   }
 }
 
 .searchButton {
+  border: 0;
+  cursor: pointer;
   border-radius: 180px;
   text-transform: uppercase;
   display: inline-block;
   margin-left: auto;
   margin-right: auto;
+  background: $white;
+  color: $black;
+  padding: 1.25rem 1rem;
+  font-size: 1.25rem;
+  font-weight: $extrabold;
+
+  &:hover,
+  &:focus {
+    background: $accent;
+    color: $white;
+  }
 }
 </style>

@@ -1,0 +1,37 @@
+// Breakpoints
+$bp-desktop: 1024px;
+
+// Font
+$font-display: 'Work Sans', sans-serif;
+$font-sans: Oswald, sans-serif;
+$font-body: Georgia, sans-serif;
+
+$extrabold: 900;
+
+// Color
+$black: #000000;
+$white: #ffffff;
+$accent: #749bff;
+
+// Positioning
+$z-above: 10;
+$z-modal: 20;
+$z-fixed: 30;
+
+html {
+  font-family: $font-display;
+}
+
+.visuallyHidden:not(:focus):not(:active) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  -webkit-clip-path: inset(100%);
+  clip-path: inset(100%);
+  clip: rect(0 0 0);
+  overflow: hidden;
+}

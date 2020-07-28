@@ -1,5 +1,5 @@
 <template>
-  <ul class="socialList text-3xl">
+  <ul class="socialList">
     <li>
       <a href="https://facebook.com">
         <FontAwesomeIcon :icon="['fab', 'facebook-f']" />
@@ -29,10 +29,22 @@ export default {}
 .socialList {
   list-style: none;
   padding-left: 0;
+  font-size: 1.875rem;
   display: flex;
 
   li:not(:last-child) {
-    @apply mr-8;
+    margin-right: 2rem;
+  }
+
+  a,
+  a:visited {
+    color: $white;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
   }
 }
 </style>

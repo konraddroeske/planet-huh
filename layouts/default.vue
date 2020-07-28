@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="fixed z-10 pt-6 pl-8">
+    <div class="logoContainer">
       <Logo />
     </div>
     <Nuxt />
@@ -16,4 +16,11 @@ export default {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+.logoContainer {
+  position: fixed;
+  z-index: $z-above;
+  top: 1.5rem;
+  left: 2rem;
+}
+</style>

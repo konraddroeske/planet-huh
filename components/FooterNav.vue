@@ -1,14 +1,12 @@
 <template>
   <nav>
-    <ul
-      class="text-center desktop:text-left desktop:grid grid-cols-2 col-gap-24 mb-20 desktop:mb-0"
-    >
-      <li class="text-2xl">Sign In</li>
-      <li class="text-2xl">About</li>
-      <li class="text-2xl">Submit</li>
-      <li class="text-2xl">Contact</li>
-      <li class="text-2xl">FAQ</li>
-      <li class="text-2xl">Legal</li>
+    <ul class="navList">
+      <li class="navItem">Sign In</li>
+      <li class="navItem">About</li>
+      <li class="navItem">Submit</li>
+      <li class="navItem">Contact</li>
+      <li class="navItem">FAQ</li>
+      <li class="navItem">Legal</li>
     </ul>
   </nav>
 </template>
@@ -17,4 +15,23 @@
 export default {}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.navList {
+  list-style: none;
+  padding-left: 0;
+  text-align: center;
+  margin-bottom: 5rem;
+
+  @media (min-width: $bp-desktop) {
+    text-align: left;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 6rem;
+    margin-bottom: 0;
+  }
+}
+
+.navItem {
+  font-size: 1.5rem;
+}
+</style>
