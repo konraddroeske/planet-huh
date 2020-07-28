@@ -570,8 +570,7 @@ export default {
 
       const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
       const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap })
-      const sprite = new THREE.Sprite(spriteMaterial)
-      sprite.scale.set(0.1, 0.1, 1)
+      const spriteArr = []
 
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
@@ -587,13 +586,17 @@ export default {
       const cities = [
         [40.71427, -74.00597],
         [52.52437, 13.41053],
+        [51.5074, 0.1278],
       ]
 
       function addPoints() {
-        const position = calcPosition(cities[0][0], cities[0][1], 1.015)
-
-        globe.add(sprite)
-        sprite.position.set(position[0], position[1], position[2])
+        cities.forEach((city, index) => {
+          spriteArr.push(new THREE.Sprite(spriteMaterial))
+          const position = calcPosition(city[0], city[1], 1.015)
+          spriteArr[index].scale.set(0.1, 0.1, 1)
+          spriteArr[index].position.set(position[0], position[1], position[2])
+          globe.add(spriteArr[index])
+        })
       }
 
       addPoints()
