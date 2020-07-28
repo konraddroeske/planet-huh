@@ -32,14 +32,14 @@ export default {
         x: {
           // Vertical from bottom to top.
           enabled: true,
-          from: Math.PI / 4,
-          to: Math.PI / 4,
+          from: Math.PI / 3,
+          to: Math.PI / 3,
         },
         y: {
           // Horizontal from left to right.
           enabled: false,
-          from: Math.PI / 4,
-          to: Math.PI / 4,
+          from: Math.PI / 3,
+          to: Math.PI / 3,
         },
       }
 
@@ -77,6 +77,14 @@ export default {
 
         return condition
       }
+
+      // camera zoom
+
+      const maxZoom = -0.5
+      const minZoom = 0
+      const zoomInSpeed = 1.07
+      let zoomPosition = 0.005
+      const zoomOutSpeed = 0.0015
 
       // OBJECT CONTROLS
 
@@ -200,7 +208,7 @@ export default {
 
         const prevZoomDiff = { X: null, Y: null }
 
-        // /***************************** shared functions **********************/
+        // SHARED FUNCTIONS
 
         function zoomIn() {
           camera.position.z -= zoomSpeed
@@ -267,6 +275,7 @@ export default {
 
         function mouseUp(e) {
           isDragging = false
+          zoomPosition = 0.005
           resetMousePosition()
         }
 
@@ -525,28 +534,6 @@ export default {
         0
       ).normalize()
 
-      const quaternionArr = []
-      const steps = (2 * Math.PI) / 360
-
-      // create array of quaternions for comparison
-      for (let i = 0; i < Math.PI * 2; i += steps) {
-        quaternionArr.push(
-          new THREE.Quaternion().setFromAxisAngle(globeAxis, i)
-        )
-      }
-
-      const getClosestQuaternion = (currentQuaternion) => {
-        const distances = []
-
-        // calculate distance to each quarternion
-        quaternionArr.forEach((quaternion, index) => {
-          distances.push(quaternion.angleTo(pivotGlobe.quaternion))
-        })
-
-        // return one with least distance
-        return quaternionArr[distances.indexOf(Math.min.apply(null, distances))]
-      }
-
       // CLICK AND DRAG GLOBE
 
       const objectControls = new THREE.ObjectControls(
@@ -610,36 +597,50 @@ export default {
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
 
-          deltaX = (targetRotationX - pivotGlobe.rotation.y) * rotationInertia
-          deltaY = (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
-
           // HORIZONAL ROTATION
+
+          deltaX = (targetRotationX - pivotGlobe.rotation.y) * rotationInertia
           pivotGlobe.rotation.y += deltaX
 
           // VERTICAL ROTATION
+
+          deltaY = (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
           if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
             pivotGlobe.rotation.x += deltaY
           }
 
+          // CAMERA ZOOM
+
+          if (isDragging) {
+            if (camera.position.z >= maxZoom) {
+              zoomPosition *= zoomInSpeed
+              camera.position.z -= zoomPosition
+            }
+          }
+
           if (!isDragging) {
+            if (camera.position.z <= minZoom) {
+              camera.position.z += zoomOutSpeed
+            }
+
             if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
               isThrowing = false
             }
 
-            // GLOBE CORRECTION SLERP
+            // GLOBE CORRECTION LERP
 
             if (!isThrowing) {
               targetRotationY = pivotGlobe.rotation.x
 
               if (pivotGlobe.rotation.x > 0.01) {
-                pivotGlobe.rotation.x += -0.002
+                pivotGlobe.rotation.x += -0.0015
               } else if (pivotGlobe.rotation.x < -0.01) {
-                pivotGlobe.rotation.x += 0.002
+                pivotGlobe.rotation.x += 0.0015
               }
             }
 
             // GLOBE CONTINUOUS ROTATION
-            globe.rotateOnAxis(globeAxis, 0.002)
+            globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
         renderer.render(scene, camera)
