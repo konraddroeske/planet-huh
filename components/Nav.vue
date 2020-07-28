@@ -86,6 +86,20 @@ export default {
       let zoomPosition = 0.005
       const zoomOutSpeed = 0.0015
 
+      // RAYCASTER
+
+      const raycaster = new THREE.Raycaster()
+      const rayMouse = new THREE.Vector2()
+      let currentCity = null
+
+      const navRouter = () => {
+        if (currentCity) {
+          console.log(currentCity)
+        }
+      }
+
+      document.addEventListener('click', navRouter)
+
       // OBJECT CONTROLS
 
       THREE.ObjectControls = function (camera, domElement, objectToMove) {
@@ -245,6 +259,11 @@ export default {
         }
 
         function mouseMove(e) {
+          // Raycaster
+
+          rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
+          rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
           if (isDragging) {
             mouseX = e.clientX - windowHalfX
 
@@ -465,6 +484,7 @@ export default {
         })
         material.map.minFilter = THREE.LinearFilter
         globe = new THREE.Mesh(geometry, material)
+        globe.name = 'globe'
         pivotGlobe.add(globe)
       }
 
@@ -530,6 +550,7 @@ export default {
         document,
         pivotGlobe
       )
+
       // objectControls.setDistance(8, 200) // set min - max distance for zoom
       // objectControls.setZoomSpeed(0.5) // set zoom speed
       // objectControls.enableVerticalRotation()
@@ -566,11 +587,11 @@ export default {
         new THREE.Matrix4().makeRotationZ(-globeRadians)
       )
 
-      // SPRITES
+      // CITIES
 
       const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
       const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap })
-      const spriteArr = []
+      const raycastArr = []
 
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
@@ -584,22 +605,27 @@ export default {
       }
 
       const cities = [
-        [40.71427, -74.00597],
-        [52.52437, 13.41053],
-        [51.5074, 0.1278],
+        [40.71427, -74.00597, 'New York City'],
+        [52.52437, 13.41053, 'Berlin'],
+        [51.5074, 0.1278, 'London'],
       ]
 
       function addPoints() {
         cities.forEach((city, index) => {
-          spriteArr.push(new THREE.Sprite(spriteMaterial))
+          raycastArr.push(new THREE.Sprite(spriteMaterial))
           const position = calcPosition(city[0], city[1], 1.015)
-          spriteArr[index].scale.set(0.1, 0.1, 1)
-          spriteArr[index].position.set(position[0], position[1], position[2])
-          globe.add(spriteArr[index])
+          raycastArr[index].name = city[2]
+          raycastArr[index].scale.set(0.1, 0.1, 1)
+          raycastArr[index].position.set(position[0], position[1], position[2])
+          globe.add(raycastArr[index])
         })
       }
 
       addPoints()
+
+      function setCity(city) {
+        currentCity = city
+      }
 
       // RENDER
 
@@ -616,6 +642,23 @@ export default {
           const canvas = renderer.domElement
           camera.aspect = canvas.clientWidth / canvas.clientHeight
           camera.updateProjectionMatrix()
+        }
+
+        // RAYCASTER
+
+        raycaster.setFromCamera(rayMouse, camera)
+        const intersects = raycaster.intersectObjects(pivotGlobe.children, true)
+
+        if (
+          intersects.length >= 2 &&
+          intersects[0].object.name !== 'globe' &&
+          currentCity !== intersects[0].object.name
+        ) {
+          setCity(intersects[0].object.name)
+        }
+
+        if (intersects.length < 2 && currentCity) {
+          setCity(null)
         }
 
         if (moodObj1 && globe) {
@@ -635,7 +678,7 @@ export default {
 
           // CAMERA ZOOM
 
-          if (isDragging) {
+          if (isDragging && !currentCity) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
@@ -664,7 +707,7 @@ export default {
             }
 
             // GLOBE CONTINUOUS ROTATION
-            // globe.rotateOnAxis(globeAxis, 0.0015)
+            globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
         renderer.render(scene, camera)
