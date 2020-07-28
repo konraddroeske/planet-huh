@@ -80,9 +80,9 @@ export default {
 
       // camera zoom
 
-      const maxZoom = -0.5
+      const maxZoom = -0.4
       const minZoom = 0
-      const zoomInSpeed = 1.07
+      const zoomInSpeed = 1.05
       let zoomPosition = 0.005
       const zoomOutSpeed = 0.0015
 
@@ -154,9 +154,6 @@ export default {
         domElement.addEventListener('mousedown', mouseDown, false)
         domElement.addEventListener('mousemove', mouseMove, false)
         domElement.addEventListener('mouseup', mouseUp, false)
-
-        // Mouse - zoom
-        // domElement.addEventListener('wheel', wheel, false)
 
         /** Touch Interaction Controls (rotate & zoom, mobile) **/
         // Touch - move
@@ -279,14 +276,6 @@ export default {
           resetMousePosition()
         }
 
-        // function wheel(e) {
-        //   const delta = e.wheelDelta ? e.wheelDelta : e.deltaY * -1
-        //   if (delta > 0 && camera.position.z > minDistance) {
-        //     zoomIn()
-        //   } else if (delta < 0 && camera.position.z < maxDistance) {
-        //     zoomOut()
-        //   }
-        // }
         // TOUCH INTERACTION
 
         function onTouchStart(e) {
@@ -577,6 +566,38 @@ export default {
         new THREE.Matrix4().makeRotationZ(-globeRadians)
       )
 
+      // SPRITES
+
+      const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
+      const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap })
+      const sprite = new THREE.Sprite(spriteMaterial)
+      sprite.scale.set(0.1, 0.1, 1)
+
+      function calcPosition(lat, lon, radius) {
+        const phi = (90 - lat) * (Math.PI / 180)
+        const theta = (lon + 180) * (Math.PI / 180)
+
+        const x = -(radius * Math.sin(phi) * Math.cos(theta))
+        const z = radius * Math.sin(phi) * Math.sin(theta)
+        const y = radius * Math.cos(phi)
+
+        return [x, y, z]
+      }
+
+      const cities = [
+        [40.71427, -74.00597],
+        [52.52437, 13.41053],
+      ]
+
+      function addPoints() {
+        const position = calcPosition(cities[0][0], cities[0][1], 1.015)
+
+        globe.add(sprite)
+        sprite.position.set(position[0], position[1], position[2])
+      }
+
+      addPoints()
+
       // RENDER
 
       const render = (time) => {
@@ -640,7 +661,7 @@ export default {
             }
 
             // GLOBE CONTINUOUS ROTATION
-            globe.rotateOnAxis(globeAxis, 0.0015)
+            // globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
         renderer.render(scene, camera)
