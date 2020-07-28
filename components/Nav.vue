@@ -90,11 +90,15 @@ export default {
 
       const raycaster = new THREE.Raycaster()
       const rayMouse = new THREE.Vector2()
-      let currentCity = null
+      let currentTarget = null
+
+      function setTarget(target) {
+        target ? (currentTarget = target) : (currentTarget = null)
+      }
 
       const navRouter = () => {
-        if (currentCity) {
-          console.log(currentCity)
+        if (currentTarget) {
+          console.log(currentTarget.name)
         }
       }
 
@@ -591,6 +595,7 @@ export default {
 
       const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
       const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap })
+      spriteMaterial.transparent = true
       const raycastArr = []
 
       function calcPosition(lat, lon, radius) {
@@ -623,10 +628,6 @@ export default {
 
       addPoints()
 
-      function setCity(city) {
-        currentCity = city
-      }
-
       // RENDER
 
       const render = (time) => {
@@ -652,14 +653,20 @@ export default {
         if (
           intersects.length >= 2 &&
           intersects[0].object.name !== 'globe' &&
-          currentCity !== intersects[0].object.name
+          currentTarget !== intersects[0].object
         ) {
-          setCity(intersects[0].object.name)
+          setTarget(intersects[0].object)
         }
 
-        if (intersects.length < 2 && currentCity) {
-          setCity(null)
+        if (intersects.length < 2 && currentTarget) {
+          setTarget(null)
         }
+
+        // HOVER ANIMATIONS
+
+        // if (currentTarget) {
+        //   currentTarget.material.opacity -= 0.02
+        // }
 
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
@@ -678,7 +685,7 @@ export default {
 
           // CAMERA ZOOM
 
-          if (isDragging && !currentCity) {
+          if (isDragging && !currentTarget) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
