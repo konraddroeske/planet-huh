@@ -1,0 +1,35 @@
+$bp-desktop: '1024px';
+$font-display: '"Work Sans", sans-serif';
+$font-sans: 'Oswald, sans-serif';
+$font-body: 'Georgia, sans-serif';
+$z-above: 10;
+$z-modal: 20;
+$z-fixed: 30;
+
+html {
+  font-family: $font-display;
+}
+
+.visuallyHidden:not(:focus):not(:active) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  -webkit-clip-path: inset(100%);
+  clip-path: inset(100%);
+  clip: rect(0 0 0);
+  overflow: hidden;
+}
+
+/* inset: {
+  0: 0,
+  1: '0.25rem',
+  2: '0.5rem',
+  3: '0.75rem',
+  4: '1rem',
+  5: '1.25rem',
+  6: '1.5rem',
+}, */
