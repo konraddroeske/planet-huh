@@ -1,7 +1,7 @@
 <template>
   <nav>
     <ul
-      class="list-none my-8 desktop:my-20 desktop:flex justify-between text-center"
+      class="categoryList list-none my-8 desktop:my-20 desktop:flex justify-between text-center"
     >
       <li class="category mb-4">
         <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
@@ -21,7 +21,21 @@ export default {}
 </script>
 
 <style lang="scss" scoped>
+.categoryList {
+  list-style: none;
+  margin-top: 2rem;
+
+  @media (min-width: $bp-desktop) {
+    margin-top: 5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
 .category {
+  text-transform: uppercase;
+
   @apply uppercase;
   @apply font-extrabold;
   @apply text-6xl;
