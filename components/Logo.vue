@@ -1,6 +1,6 @@
 <template>
   <nuxt-link :to="{ name: 'index' }">
-    <img class="w-12" src="~/assets/logo.svg" />
+    <img src="~/assets/logo.svg" />
   </nuxt-link>
 </template>
 
@@ -8,4 +8,8 @@
 export default {}
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" scoped>
+img {
+  width: 3rem;
+}
+</style>

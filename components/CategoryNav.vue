@@ -1,12 +1,10 @@
 <template>
   <nav>
-    <ul
-      class="categoryList list-none my-8 desktop:my-20 desktop:flex justify-between text-center"
-    >
-      <li class="category mb-4">
+    <ul class="categoryList">
+      <li class="category">
         <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
       </li>
-      <li class="category mb-4">
+      <li class="category">
         <nuxt-link :to="{ name: 'senses' }">Senses</nuxt-link>
       </li>
       <li class="category">
@@ -23,22 +21,36 @@ export default {}
 <style lang="scss" scoped>
 .categoryList {
   list-style: none;
+  padding-left: 0;
   margin-top: 2rem;
+  text-align: center;
+
+  li:not(:last-child) {
+    margin-bottom: 1rem;
+  }
 
   @media (min-width: $bp-desktop) {
     margin-top: 5rem;
     display: flex;
     justify-content: space-between;
-    align-items: center;
   }
 }
 
 .category {
   text-transform: uppercase;
+  font-weight: $extrabold;
+  font-size: 4rem;
+  line-height: 1;
 
-  @apply uppercase;
-  @apply font-extrabold;
-  @apply text-6xl;
-  @apply leading-none;
+  a,
+  a:visited {
+    color: $white;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
+  }
 }
 </style>
