@@ -21,11 +21,12 @@ export default {}
   }
 }
 .searchInput {
+  font-family: $font-display;
   font-size: 1.5rem;
   border-radius: 180px;
   border: 2px solid $white;
   background: transparent;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.25rem;
   margin-bottom: 1.5rem;
 
   &::placeholder {
@@ -48,7 +49,7 @@ export default {}
   margin-right: auto;
   background: $white;
   color: $black;
-  padding: 0.75rem;
+  padding: 1.25rem 1rem;
   font-size: 1.25rem;
   font-weight: $extrabold;
 

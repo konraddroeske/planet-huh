@@ -22,7 +22,7 @@ export default {}
 .categoryList {
   list-style: none;
   padding-left: 0;
-  margin-top: 2rem;
+  margin: 2rem 0;
   text-align: center;
 
   li:not(:last-child) {
@@ -30,13 +30,14 @@ export default {}
   }
 
   @media (min-width: $bp-desktop) {
-    margin-top: 5rem;
+    margin: 5rem 0;
     display: flex;
     justify-content: space-between;
   }
 }
 
 .category {
+  font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
   font-size: 4rem;
