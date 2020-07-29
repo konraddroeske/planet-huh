@@ -22,10 +22,14 @@ header {
   top: 0;
   right: 0;
   left: 0;
-  padding: 1.5rem 2rem;
+  padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  @media (min-width: $bp-desktop) {
+    padding: 1.5rem 2rem;
+  }
 }
 
 .logoContainer {

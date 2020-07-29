@@ -15,7 +15,7 @@
     </div>
 
     <section class="modal" :class="{ visuallyHidden: !isOpen }">
-      <CategoryNav />
+      <CategoryNav variant="light" />
       <FooterNav />
       <Social />
       <SearchBar />
@@ -46,7 +46,7 @@ export default {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 0 10%;
+  padding: 2rem;
   background: $white;
 }
 
@@ -54,6 +54,7 @@ export default {
 .sandwichMenu {
   position: relative;
   z-index: $z-fixed;
+  left: 0.75rem;
 }
 
 #menuButton,

@@ -18,6 +18,10 @@ $z-above: 10;
 $z-modal: 20;
 $z-fixed: 30;
 
+body {
+  margin: 0;
+}
+
 html {
   font-family: $font-display;
 }

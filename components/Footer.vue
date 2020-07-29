@@ -7,7 +7,7 @@
         </span>
       </div>
 
-      <CategoryNav />
+      <CategoryNav variant="dark" />
 
       <div class="secondRow">
         <FooterNav />
