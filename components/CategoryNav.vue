@@ -104,7 +104,7 @@ nav {
   font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
-  font-size: 6rem;
+  font-size: 4rem;
   line-height: 1;
 
   a,
@@ -116,6 +116,10 @@ nav {
     &:focus {
       color: $accent;
     }
+  }
+
+  @media (min-width: $bp-desktop) {
+    font-size: 6rem;
   }
 }
 </style>
