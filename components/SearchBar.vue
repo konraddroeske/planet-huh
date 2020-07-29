@@ -80,6 +80,7 @@ export default {
 
   @media (min-width: $bp-desktop) {
     display: block;
+    flex: 1 1 auto;
   }
 }
 .searchInput-light {

@@ -26,6 +26,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+nav {
+  @media (min-width: $bp-desktop) {
+    grid-area: pageNav;
+    align-self: center;
+  }
+}
+
 .navList-dark {
   list-style: none;
   padding-left: 0;
@@ -53,15 +60,18 @@ export default {
   text-align: center;
 
   @media (min-width: $bp-desktop) {
-    text-align: left;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 6rem;
-    margin-bottom: 0;
+    width: 50%;
+    margin: 0 auto;
   }
 }
 
 .navItem-light {
   font-size: 1rem;
+
+  @media (min-width: $bp-desktop) {
+    font-size: 1.25rem;
+  }
 }
 </style>

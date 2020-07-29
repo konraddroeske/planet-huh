@@ -17,8 +17,10 @@
     <section class="modal" :class="{ visuallyHidden: !isOpen }">
       <CategoryNav variant="light" />
       <PageNav variant="light" />
-      <Social variant="light" />
-      <SearchBar variant="light" />
+      <div class="searchBarSocial">
+        <Social variant="light" />
+        <SearchBar variant="light" />
+      </div>
     </section>
   </div>
 </template>
@@ -48,6 +50,22 @@ export default {
   right: 0;
   padding: 2rem;
   background: $white;
+
+  @media (min-width: $bp-desktop) {
+    display: grid;
+    grid-template-rows: repeat(5, 1fr);
+    grid-template-areas: 'empty1' 'empty2' 'categoryNav' 'pageNav' 'searchBarSocial';
+  }
+}
+
+.searchBarSocial {
+  @media (min-width: $bp-desktop) {
+    grid-area: searchBarSocial;
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
 }
 
 // Styles for sandwich menu icon

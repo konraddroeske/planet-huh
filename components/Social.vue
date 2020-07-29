@@ -80,5 +80,9 @@ export default {
       color: $accent;
     }
   }
+
+  @media (min-width: $bp-desktop) {
+    margin: 0;
+  }
 }
 </style>

@@ -38,6 +38,7 @@ nav {
 
   @media (min-width: $bp-desktop) {
     margin-top: 0;
+    grid-area: categoryNav;
   }
 }
 
@@ -45,6 +46,10 @@ nav {
   color: $accent;
   text-transform: uppercase;
   text-align: center;
+
+  @media (min-width: $bp-desktop) {
+    font-size: 1.5rem;
+  }
 }
 
 .categoryList-dark {
@@ -90,9 +95,8 @@ nav {
   text-align: center;
 
   @media (min-width: $bp-desktop) {
-    margin: 5rem 0;
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
   }
 }
 
@@ -100,7 +104,7 @@ nav {
   font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
-  font-size: 4rem;
+  font-size: 6rem;
   line-height: 1;
 
   a,
