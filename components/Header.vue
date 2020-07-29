@@ -1,7 +1,5 @@
 <template>
-  <header
-    class="fixed z-fixed w-screen py-6 px-8 flex justify-between items-center"
-  >
+  <header>
     <Logo />
     <ModalNav />
   </header>
@@ -15,4 +13,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+header {
+  position: fixed;
+  z-index: $z-fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+</style>

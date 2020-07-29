@@ -1,28 +1,22 @@
 <template>
-  <footer class="bg-black">
-    <div class="w-10/12 mx-auto text-white">
-      <div class="flex justify-center">
-        <span class="bg-white relative bottom-6 rounded-full p-1">
+  <footer>
+    <div class="wrapper">
+      <div class="logoContainer">
+        <span class="logoSpan">
           <Logo />
         </span>
       </div>
 
       <CategoryNav />
 
-      <div
-        class="desktop:flex justify-between items-center mt-20 desktop:mt-0 mb-20"
-      >
+      <div class="secondRow">
         <FooterNav />
         <SearchBar />
       </div>
 
-      <div
-        class="flex flex-col desktop:flex-row justify-center desktop:justify-between items-center pb-12"
-      >
+      <div class="thirdRow">
         <Social />
-        <span class="text-xl block mt-20 desktop:mt-0 text-center"
-          >A Project by SOMEWHERELSE</span
-        >
+        <span class="credit">A Project by SOMEWHERELSE</span>
       </div>
     </div>
   </footer>
@@ -39,4 +33,63 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+footer {
+  background: $black;
+}
+
+.wrapper {
+  width: 80%;
+  margin: 0 auto;
+  color: $white;
+}
+
+.logoContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.logoSpan {
+  background: $white;
+  position: relative;
+  bottom: 1.5rem;
+  border-radius: 180px;
+  padding: 0.25rem;
+}
+
+.secondRow {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
+
+  @media (min-width: $bp-desktop) {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+  }
+}
+
+.thirdRow {
+  padding-bottom: 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  @media (min-width: $bp-desktop) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.credit {
+  font-size: 1.25rem;
+  text-align: center;
+  display: block;
+  margin-top: 5rem;
+
+  @media (min-width: $bp-desktop) {
+    margin-top: 0;
+  }
+}
+</style>
