@@ -9,7 +9,8 @@
 import * as THREE from 'three'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import globeTexture from '@/assets/images/globe5.png'
+// import globeTexture from '@/assets/images/globe5.png'
+import globeTexture from '@/assets/images/globe.png'
 
 export default {
   data() {
