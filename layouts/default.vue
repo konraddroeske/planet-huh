@@ -1,26 +1,19 @@
 <template>
   <div>
-    <div class="logoContainer">
-      <Logo />
-    </div>
-    <Nuxt />
+    <Header />
+    <main>
+      <Nuxt />
+    </main>
     <Footer />
   </div>
 </template>
 
 <script>
-import Logo from '~/components/Logo'
+import Header from '~/components/Header'
 import Footer from '~/components/Footer'
 export default {
-  components: { Logo, Footer },
+  components: { Header, Footer },
 }
 </script>
 
-<style lang="scss" scoped>
-.logoContainer {
-  position: fixed;
-  z-index: $z-above;
-  top: 1.5rem;
-  left: 2rem;
-}
-</style>
+<style lang="scss" scoped></style>
