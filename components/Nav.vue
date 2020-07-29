@@ -16,6 +16,11 @@ export default {
     return {
       toggle: false,
       pauseTime: null,
+      cities: [
+        [40.71427, -74.00597, 'New York City'],
+        [52.52437, 13.41053, 'Berlin'],
+        [51.5074, 0.1278, 'London'],
+      ],
     }
   },
   mounted() {
@@ -593,10 +598,18 @@ export default {
 
       // CITIES
 
+      const citiesArr = []
+
       const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
-      const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap })
-      spriteMaterial.transparent = true
-      const raycastArr = []
+      const spriteMapAlt = new THREE.TextureLoader().load(
+        '/sprites/mapDot2.png'
+      )
+
+      const spriteCities = []
+      const spriteCitiesMats = []
+
+      const spriteCitiesAlt = []
+      const spriteCitiesMatsAlt = []
 
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
@@ -609,21 +622,43 @@ export default {
         return [x, y, z]
       }
 
-      const cities = [
-        [40.71427, -74.00597, 'New York City'],
-        [52.52437, 13.41053, 'Berlin'],
-        [51.5074, 0.1278, 'London'],
-      ]
+      const addPoints = () => {
+        this.cities.forEach((city, index) => {
+          // City Location
+          const position = calcPosition(city[0], city[1], 1.02)
 
-      function addPoints() {
-        cities.forEach((city, index) => {
-          raycastArr.push(new THREE.Sprite(spriteMaterial))
-          const position = calcPosition(city[0], city[1], 1.015)
-          raycastArr[index].name = city[2]
-          raycastArr[index].scale.set(0.1, 0.1, 1)
-          raycastArr[index].position.set(position[0], position[1], position[2])
-          globe.add(raycastArr[index])
+          // Main Object
+          citiesArr.push(new THREE.Object3D())
+          citiesArr[index].position.set(position[0], position[1], position[2])
+          globe.add(citiesArr[index])
+
+          // Main Material for each Sprite
+          spriteCitiesMats.push(new THREE.SpriteMaterial({ map: spriteMap }))
+          spriteCitiesMats[index].name = 'Main'
+          spriteCitiesMats[index].transparent = true
+
+          // Main Sprite for each City
+          spriteCities.push(new THREE.Sprite(spriteCitiesMats[index]))
+          spriteCities[index].name = city[2]
+          spriteCities[index].scale.set(0.09, 0.09, 1)
+          citiesArr[index].add(spriteCities[index])
+
+          // Alt Material for each Sprite
+          spriteCitiesMatsAlt.push(
+            new THREE.SpriteMaterial({ map: spriteMapAlt })
+          )
+          spriteCitiesMatsAlt[index].name = 'Alt'
+          spriteCitiesMatsAlt[index].transparent = true
+
+          // Alt Sprite for each City
+          spriteCitiesAlt.push(new THREE.Sprite(spriteCitiesMatsAlt[index]))
+          spriteCitiesAlt[index].name = city[2]
+          spriteCitiesAlt[index].scale.set(0.09, 0.09, 1)
+          spriteCitiesAlt[index].material.opacity = 0
+          citiesArr[index].add(spriteCitiesAlt[index])
         })
+
+        spriteCities.push(globe)
       }
 
       addPoints()
@@ -648,7 +683,7 @@ export default {
         // RAYCASTER
 
         raycaster.setFromCamera(rayMouse, camera)
-        const intersects = raycaster.intersectObjects(pivotGlobe.children, true)
+        const intersects = raycaster.intersectObjects(spriteCities)
 
         if (
           intersects.length >= 2 &&
@@ -664,9 +699,34 @@ export default {
 
         // HOVER ANIMATIONS
 
-        // if (currentTarget) {
-        //   currentTarget.material.opacity -= 0.02
-        // }
+        // main sprite
+
+        if (currentTarget && currentTarget.material.opacity >= 0) {
+          currentTarget.material.opacity -= 0.03
+        }
+
+        spriteCities.forEach((obj) => {
+          if (obj !== currentTarget && obj.material.opacity <= 1) {
+            obj.material.opacity += 0.03
+          }
+        })
+
+        // alt sprite
+
+        spriteCitiesAlt.forEach((obj) => {
+          if (currentTarget) {
+            if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
+              obj.material.opacity += 0.03
+            } else if (
+              obj.name !== currentTarget.name &&
+              obj.material.opacity >= 0
+            ) {
+              obj.material.opacity -= 0.03
+            }
+          } else if (obj.material.opacity >= 0) {
+            obj.material.opacity -= 0.03
+          }
+        })
 
         if (moodObj1 && globe) {
           pivotMain.rotation.y = timer * speed
