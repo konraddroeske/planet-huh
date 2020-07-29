@@ -16,20 +16,20 @@
 
     <section class="modal" :class="{ visuallyHidden: !isOpen }">
       <CategoryNav variant="light" />
-      <FooterNav />
-      <Social />
-      <SearchBar />
+      <PageNav variant="light" />
+      <Social variant="light" />
+      <SearchBar variant="light" />
     </section>
   </div>
 </template>
 
 <script>
 import CategoryNav from './CategoryNav'
-import FooterNav from './FooterNav'
+import PageNav from './PageNav'
 import Social from './Social'
 import SearchBar from './SearchBar'
 export default {
-  components: { CategoryNav, FooterNav, Social, SearchBar },
+  components: { CategoryNav, PageNav, Social, SearchBar },
   data() {
     return {
       isOpen: false,

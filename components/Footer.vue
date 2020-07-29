@@ -10,12 +10,12 @@
       <CategoryNav variant="dark" />
 
       <div class="secondRow">
-        <FooterNav />
-        <SearchBar />
+        <PageNav variant="dark" />
+        <SearchBar variant="dark" />
       </div>
 
       <div class="thirdRow">
-        <Social />
+        <Social variant="dark" />
         <span class="credit">A Project by SOMEWHERELSE</span>
       </div>
     </div>
@@ -25,11 +25,11 @@
 <script>
 import Logo from './Logo'
 import CategoryNav from './CategoryNav'
-import FooterNav from './FooterNav'
+import PageNav from './PageNav'
 import SearchBar from './SearchBar'
 import Social from './Social'
 export default {
-  components: { Logo, CategoryNav, FooterNav, SearchBar, Social },
+  components: { Logo, CategoryNav, PageNav, SearchBar, Social },
 }
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <ul class="socialList">
+  <ul :class="`socialList-${variant}`">
     <li>
       <a href="https://facebook.com">
         <FontAwesomeIcon :icon="['fab', 'facebook-f']" />
@@ -22,11 +22,21 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    variant: {
+      type: String,
+      required: true,
+      validator(value) {
+        return ['light', 'dark'].includes(value)
+      },
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>
-.socialList {
+.socialList-dark {
   list-style: none;
   padding-left: 0;
   font-size: 1.875rem;
@@ -39,6 +49,30 @@ export default {}
   a,
   a:visited {
     color: $white;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
+  }
+}
+
+.socialList-light {
+  list-style: none;
+  padding-left: 0;
+  font-size: 1.875rem;
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+
+  li:not(:last-child) {
+    margin-right: 2rem;
+  }
+
+  a,
+  a:visited {
+    color: $black;
     text-decoration: none;
 
     &:hover,
