@@ -9,7 +9,6 @@
 import * as THREE from 'three'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
-// import globeTexture from '@/assets/images/globe5.png'
 import globeTexture from '@/assets/images/globe.png'
 
 export default {
@@ -33,14 +32,14 @@ export default {
         x: {
           // Vertical from bottom to top.
           enabled: true,
-          from: Math.PI / 3,
-          to: Math.PI / 3,
+          from: Math.PI / 4,
+          to: Math.PI / 4,
         },
         y: {
           // Horizontal from left to right.
           enabled: false,
-          from: Math.PI / 3,
-          to: Math.PI / 3,
+          from: Math.PI / 4,
+          to: Math.PI / 4,
         },
       }
 
