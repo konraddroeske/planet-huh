@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="sandwichMenu relative z-fixed">
+    <div class="sandwichMenu">
       <input
         id="menuButton"
         class="visuallyHidden"
@@ -41,16 +41,21 @@ export default {
 <style lang="scss" scoped>
 .modal {
   position: fixed;
+  z-index: $z-modal;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   padding: 0 10%;
-  @apply bg-white;
-  @apply z-modal;
+  background: $white;
 }
 
 // Styles for sandwich menu icon
+.sandwichMenu {
+  position: relative;
+  z-index: $z-fixed;
+}
+
 #menuButton,
 .labelText {
   position: absolute;

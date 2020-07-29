@@ -1,6 +1,8 @@
 <template>
   <header>
-    <Logo />
+    <div class="logoContainer">
+      <Logo />
+    </div>
     <ModalNav />
   </header>
 </template>
@@ -24,5 +26,10 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.logoContainer {
+  position: relative;
+  z-index: $z-fixed;
 }
 </style>
