@@ -7,6 +7,7 @@
 
 <script>
 import * as THREE from 'three'
+import SpriteText from 'three-spritetext'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import globeTexture from '@/assets/images/globe.png'
@@ -20,7 +21,17 @@ export default {
         [40.71427, -74.00597, 'New York City'],
         [52.52437, 13.41053, 'Berlin'],
         [51.5074, 0.1278, 'London'],
+        [30.0444, 31.2357, 'Cairo'],
       ],
+      moods: [
+        'Whimsical',
+        'Melancholy',
+        'Tense',
+        'Serene',
+        'Desolate',
+        'Exhausted',
+      ],
+      senses: ['Touch', 'Sight', 'Hearing', 'Smell'],
     }
   },
   mounted() {
@@ -611,6 +622,8 @@ export default {
       const spriteCitiesAlt = []
       const spriteCitiesMatsAlt = []
 
+      const spriteTextArr = []
+
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
         const theta = (lon + 180) * (Math.PI / 180)
@@ -656,6 +669,21 @@ export default {
           spriteCitiesAlt[index].scale.set(0.09, 0.09, 1)
           spriteCitiesAlt[index].material.opacity = 0
           citiesArr[index].add(spriteCitiesAlt[index])
+
+          // Sprite Text
+
+          const textPosition = calcPosition(city[0], city[1], 1.06)
+          const cityName = new SpriteText(city[2], 0.03, 'black')
+          cityName.center = new THREE.Vector2(0.5, 0)
+          spriteTextArr.push(cityName)
+          spriteTextArr[index].name = city[2]
+          globe.add(spriteTextArr[index])
+          spriteTextArr[index].material.opacity = 0
+          spriteTextArr[index].position.set(
+            textPosition[0],
+            textPosition[1],
+            textPosition[2]
+          )
         })
 
         spriteCities.push(globe)
@@ -713,7 +741,7 @@ export default {
 
         // alt sprite
 
-        spriteCitiesAlt.forEach((obj) => {
+        spriteCitiesAlt.forEach((obj, index) => {
           if (currentTarget) {
             if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
               obj.material.opacity += 0.03
@@ -725,6 +753,23 @@ export default {
             }
           } else if (obj.material.opacity >= 0) {
             obj.material.opacity -= 0.03
+          }
+        })
+
+        // text sprite
+
+        spriteTextArr.forEach((obj, index) => {
+          if (currentTarget) {
+            if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
+              obj.material.opacity += 0.02
+            } else if (
+              obj.name !== currentTarget.name &&
+              obj.material.opacity >= 0
+            ) {
+              obj.material.opacity -= 0.02
+            }
+          } else if (obj.material.opacity >= 0) {
+            obj.material.opacity -= 0.02
           }
         })
 
