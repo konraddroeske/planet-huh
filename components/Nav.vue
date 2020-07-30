@@ -20,8 +20,13 @@ export default {
       cities: [
         [40.71427, -74.00597, 'New York City'],
         [52.52437, 13.41053, 'Berlin'],
-        [51.5074, 0.1278, 'London'],
+        [51.5074, -0.1278, 'London'],
         [30.0444, 31.2357, 'Cairo'],
+        [-33.9249, 19.4241, 'Cape Town'], // Slightly off
+        [-37.8136, 144.9631, 'Melbourne'],
+        [-22.9068, -43.1729, 'Rio De Janeiro'], // Make distance from globe a fn of length of letters?
+        [43.6532, -79.3832, 'Toronto'],
+        [42.3601, -71.0589, 'Boston'],
       ],
       moods: [
         'Whimsical',
@@ -32,6 +37,7 @@ export default {
         'Exhausted',
       ],
       senses: ['Touch', 'Sight', 'Hearing', 'Smell'],
+      events: [],
     }
   },
   mounted() {
@@ -96,7 +102,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = -0.4
+      const maxZoom = -1
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -121,320 +127,59 @@ export default {
       document.addEventListener('click', navRouter)
 
       // OBJECT CONTROLS
+      // https://github.com/albertopiras/threeJS-object-controls
 
-      THREE.ObjectControls = function (camera, domElement, objectToMove) {
-        let mesh = objectToMove
-        domElement = domElement !== undefined ? domElement : document
+      // MOUSE DESKTOP
 
-        this.setObjectToMove = function (newMesh) {
-          mesh = newMesh
-        }
+      function mouseDown(e) {
+        isDragging = true
+        isThrowing = true
 
-        this.setDistance = function (min, max) {
-          minDistance = min
-          maxDistance = max
-        }
+        mouseXOnMouseDown = e.clientX - windowHalfX
+        targetRotationOnMouseDownX = targetRotationX
 
-        this.setZoomSpeed = function (newZoomSpeed) {
-          zoomSpeed = newZoomSpeed
-        }
+        mouseYOnMouseDown = e.clientY - windowHalfY
+        targetRotationOnMouseDownY = targetRotationY
+      }
 
-        // this.setRotationSpeed = function (newRotationSpeed) {
-        //   rotationSpeed = newRotationSpeed
-        // }
+      function mouseMove(e) {
+        // Raycaster
+        rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
+        rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
-        this.setRotationSpeedTouchDevices = function (newRotationSpeed) {
-          rotationSpeedTouchDevices = newRotationSpeed
-        }
+        if (isDragging) {
+          mouseX = e.clientX - windowHalfX
 
-        this.enableVerticalRotation = function () {
-          verticalRotationEnabled = true
-        }
+          targetRotationX =
+            targetRotationOnMouseDownX +
+            (mouseX - mouseXOnMouseDown) * rotationSpeed
 
-        this.disableVerticalRotation = function () {
-          verticalRotationEnabled = false
-        }
+          mouseY = e.clientY - windowHalfY
 
-        this.enableHorizontalRotation = function () {
-          horizontalRotationEnabled = true
-        }
+          const delta =
+            targetRotationOnMouseDownY +
+            (mouseY - mouseYOnMouseDown) * rotationSpeed
 
-        this.disableHorizontalRotation = function () {
-          horizontalRotationEnabled = false
-        }
-
-        this.setMaxVerticalRotationAngle = function (min, max) {
-          MAX_ROTATON_ANGLES.x.from = min
-          MAX_ROTATON_ANGLES.x.to = max
-          MAX_ROTATON_ANGLES.x.enabled = true
-        }
-
-        this.setMaxHorizontalRotationAngle = function (min, max) {
-          MAX_ROTATON_ANGLES.y.from = min
-          MAX_ROTATON_ANGLES.y.to = max
-          MAX_ROTATON_ANGLES.y.enabled = true
-        }
-
-        this.disableMaxHorizontalAngleRotation = function () {
-          MAX_ROTATON_ANGLES.y.enabled = false
-        }
-
-        this.disableMaxVerticalAngleRotation = function () {
-          MAX_ROTATON_ANGLES.x.enabled = false
-        }
-
-        /** Mouse Interaction Controls (rotate & zoom, desktop **/
-        // Mouse - move
-        domElement.addEventListener('mousedown', mouseDown, false)
-        domElement.addEventListener('mousemove', mouseMove, false)
-        domElement.addEventListener('mouseup', mouseUp, false)
-
-        /** Touch Interaction Controls (rotate & zoom, mobile) **/
-        // Touch - move
-        domElement.addEventListener('touchstart', onTouchStart, false)
-        domElement.addEventListener('touchmove', onTouchMove, false)
-        domElement.addEventListener('touchend', onTouchEnd, false)
-
-        // Control Variables
-
-        const MAX_ROTATON_ANGLES = {
-          x: {
-            // Vertical from bottom to top.
-            enabled: false,
-            from: Math.PI / 8,
-            to: Math.PI / 8,
-          },
-          y: {
-            // Horizontal from left to right.
-            enabled: false,
-            from: Math.PI / 4,
-            to: Math.PI / 4,
-          },
-        }
-
-        /**
-         * RotationSpeed
-         * 1= fast
-         * 0.01 = slow
-         * */
-        let maxDistance = 15
-        let minDistance = 6
-        let zoomSpeed = 0.5
-
-        let rotationSpeedTouchDevices = 0.05
-        let verticalRotationEnabled = false
-        let horizontalRotationEnabled = true
-
-        const mouseFlags = { MOUSEDOWN: 0, MOUSEMOVE: 1 }
-
-        let flag
-        let previousMousePosition = { x: 0, y: 0 }
-
-        /**
-         * CurrentTouches
-         * length 0 : no zoom
-         * length 2 : is zoomming
-         */
-        let currentTouches = []
-
-        const prevZoomDiff = { X: null, Y: null }
-
-        // SHARED FUNCTIONS
-
-        function zoomIn() {
-          camera.position.z -= zoomSpeed
-        }
-
-        function zoomOut() {
-          camera.position.z += zoomSpeed
-        }
-
-        function isWithinMaxAngle(delta, axe) {
-          if (MAX_ROTATON_ANGLES[axe].enabled) {
-            const condition =
-              MAX_ROTATON_ANGLES[axe].from * -1 < mesh.rotation[axe] + delta &&
-              mesh.rotation[axe] + delta < MAX_ROTATON_ANGLES[axe].to
-
-            return condition
-          }
-          return true
-        }
-
-        function resetMousePosition() {
-          previousMousePosition = { x: 0, y: 0 }
-        }
-
-        // MOUSE DESKTOP
-
-        function mouseDown(e) {
-          isDragging = true
-          isThrowing = true
-          flag = mouseFlags.MOUSEDOWN
-
-          mouseXOnMouseDown = e.clientX - windowHalfX
-          targetRotationOnMouseDownX = targetRotationX
-
-          mouseYOnMouseDown = e.clientY - windowHalfY
-          targetRotationOnMouseDownY = targetRotationY
-        }
-
-        function mouseMove(e) {
-          // Raycaster
-
-          rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
-          rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-          if (isDragging) {
-            mouseX = e.clientX - windowHalfX
-
-            targetRotationX =
-              targetRotationOnMouseDownX +
-              (mouseX - mouseXOnMouseDown) * rotationSpeed
-
-            mouseY = e.clientY - windowHalfY
-
-            const delta =
+          if (delta <= MAX_ANGLES.x.from * -1) {
+            targetRotationY = MAX_ANGLES.x.from * -1
+          } else if (delta >= MAX_ANGLES.x.from) {
+            targetRotationY = MAX_ANGLES.x.from
+          } else {
+            targetRotationY =
               targetRotationOnMouseDownY +
               (mouseY - mouseYOnMouseDown) * rotationSpeed
-
-            if (delta <= MAX_ANGLES.x.from * -1) {
-              targetRotationY = MAX_ANGLES.x.from * -1
-            } else if (delta >= MAX_ANGLES.x.from) {
-              targetRotationY = MAX_ANGLES.x.from
-            } else {
-              targetRotationY =
-                targetRotationOnMouseDownY +
-                (mouseY - mouseYOnMouseDown) * rotationSpeed
-            }
-          }
-        }
-
-        function mouseUp(e) {
-          isDragging = false
-          zoomPosition = 0.005
-          resetMousePosition()
-        }
-
-        // TOUCH INTERACTION
-
-        function onTouchStart(e) {
-          e.preventDefault()
-          flag = mouseFlags.MOUSEDOWN
-          if (e.touches.length === 2) {
-            prevZoomDiff.X = Math.abs(
-              e.touches[0].clientX - e.touches[1].clientX
-            )
-            prevZoomDiff.Y = Math.abs(
-              e.touches[0].clientY - e.touches[1].clientY
-            )
-            currentTouches = new Array(2)
-          } else {
-            previousMousePosition = {
-              x: e.touches[0].pageX,
-              y: e.touches[0].pageY,
-            }
-          }
-        }
-
-        function onTouchEnd(e) {
-          prevZoomDiff.X = null
-          prevZoomDiff.Y = null
-
-          /* If you were zooming out, currentTouches is updated for each finger you
-           * leave up the screen so each time a finger leaves up the screen,
-           * currentTouches length is decreased of a unit. When you leave up both 2
-           * fingers, currentTouches.length is 0, this means the zoomming phase is
-           * ended.
-           */
-          if (currentTouches.length > 0) {
-            currentTouches.pop()
-          } else {
-            currentTouches = []
-          }
-          e.preventDefault()
-          if (flag === mouseFlags.MOUSEDOWN) {
-            // TouchClick
-            // You can invoke more other functions for animations and so on...
-          } else if (flag === mouseFlags.MOUSEMOVE) {
-            // Touch drag
-            // You can invoke more other functions for animations and so on...
-          }
-          resetMousePosition()
-        }
-
-        function onTouchMove(e) {
-          e.preventDefault()
-          flag = mouseFlags.MOUSEMOVE
-          // Touch zoom.
-          // If two pointers are down, check for pinch gestures.
-          if (e.touches.length === 2) {
-            currentTouches = new Array(2)
-            // Calculate the distance between the two pointers.
-            const curDiffX = Math.abs(
-              e.touches[0].clientX - e.touches[1].clientX
-            )
-            const curDiffY = Math.abs(
-              e.touches[0].clientY - e.touches[1].clientY
-            )
-
-            if (prevZoomDiff && prevZoomDiff.X > 0 && prevZoomDiff.Y > 0) {
-              if (
-                curDiffX > prevZoomDiff.X &&
-                curDiffY > prevZoomDiff.Y &&
-                camera.position.z > minDistance
-              ) {
-                zoomIn()
-              } else if (
-                curDiffX < prevZoomDiff.X &&
-                camera.position.z < maxDistance &&
-                curDiffY < prevZoomDiff.Y
-              ) {
-                zoomOut()
-              }
-            }
-            // Cache the distance for the next move event.
-            prevZoomDiff.X = curDiffX
-            prevZoomDiff.Y = curDiffY
-
-            // Touch Rotate.
-          } else if (currentTouches.length === 0) {
-            prevZoomDiff.X = null
-            prevZoomDiff.Y = null
-            const deltaMove = {
-              x: e.touches[0].pageX - previousMousePosition.x,
-              y: e.touches[0].pageY - previousMousePosition.y,
-            }
-            previousMousePosition = {
-              x: e.touches[0].pageX,
-              y: e.touches[0].pageY,
-            }
-
-            if (horizontalRotationEnabled && deltaMove.x !== 0) {
-              if (
-                !isWithinMaxAngle(
-                  Math.sign(deltaMove.x) * rotationSpeedTouchDevices,
-                  'y'
-                )
-              )
-                return
-              mesh.rotation.y +=
-                Math.sign(deltaMove.x) * rotationSpeedTouchDevices
-            }
-
-            if (verticalRotationEnabled && deltaMove.y !== 0) {
-              if (
-                !isWithinMaxAngle(
-                  Math.sign(deltaMove.y) * rotationSpeedTouchDevices,
-                  'x'
-                )
-              )
-                return
-              mesh.rotation.x +=
-                Math.sign(deltaMove.y) * rotationSpeedTouchDevices
-            }
           }
         }
       }
+
+      function mouseUp(e) {
+        isDragging = false
+        zoomPosition = 0.005
+      }
+
+      document.addEventListener('mousedown', mouseDown, false)
+      document.addEventListener('mousemove', mouseMove, false)
+      document.addEventListener('mouseup', mouseUp, false)
 
       // INITIALIZE CANVAS
 
@@ -563,20 +308,6 @@ export default {
         0
       ).normalize()
 
-      // CLICK AND DRAG GLOBE
-
-      const objectControls = new THREE.ObjectControls(
-        camera,
-        document,
-        pivotGlobe
-      )
-
-      // objectControls.setDistance(8, 200) // set min - max distance for zoom
-      // objectControls.setZoomSpeed(0.5) // set zoom speed
-      // objectControls.enableVerticalRotation()
-      // objectControls.setMaxVerticalRotationAngle(Math.PI / 4, Math.PI / 4)
-      // objectControls.setRotationSpeed(0.02)
-
       // SWITCH OBJECTS
 
       let timer = 0
@@ -588,6 +319,8 @@ export default {
 
       {
         const toggleAnim = () => {
+          this.removeEvent(0)
+
           if (!clock.running) {
             this.toggle = !this.toggle
 
@@ -653,7 +386,7 @@ export default {
           // Main Sprite for each City
           spriteCities.push(new THREE.Sprite(spriteCitiesMats[index]))
           spriteCities[index].name = city[2]
-          spriteCities[index].scale.set(0.09, 0.09, 1)
+          spriteCities[index].scale.set(0.07, 0.07, 1)
           citiesArr[index].add(spriteCities[index])
 
           // Alt Material for each Sprite
@@ -666,15 +399,15 @@ export default {
           // Alt Sprite for each City
           spriteCitiesAlt.push(new THREE.Sprite(spriteCitiesMatsAlt[index]))
           spriteCitiesAlt[index].name = city[2]
-          spriteCitiesAlt[index].scale.set(0.09, 0.09, 1)
+          spriteCitiesAlt[index].scale.set(0.07, 0.07, 1)
           spriteCitiesAlt[index].material.opacity = 0
           citiesArr[index].add(spriteCitiesAlt[index])
 
           // Sprite Text
-
           const textPosition = calcPosition(city[0], city[1], 1.06)
-          const cityName = new SpriteText(city[2], 0.03, 'black')
-          cityName.center = new THREE.Vector2(0.5, 0)
+          const cityName = new SpriteText(city[2], 0.024, 'black')
+          cityName.center = new THREE.Vector2(0.5, 0.5)
+          cityName.fontFace = 'Work Sans'
           spriteTextArr.push(cityName)
           spriteTextArr[index].name = city[2]
           globe.add(spriteTextArr[index])
@@ -788,7 +521,7 @@ export default {
             pivotGlobe.rotation.x += deltaY
           }
 
-          // CAMERA ZOOM
+          // CAMERA ZOOM (Both)
 
           if (isDragging && !currentTarget) {
             if (camera.position.z >= maxZoom) {
@@ -818,7 +551,7 @@ export default {
               }
             }
 
-            // GLOBE CONTINUOUS ROTATION
+            // CONTINUOUS ROTATION (Both)
             globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
