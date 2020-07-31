@@ -1,31 +1,41 @@
 <template>
   <nav>
-    <div class="explore" :class="{ visuallyHidden: variant === 'dark' }">
+    <div class="explore" :class="{ visuallyHidden: variant !== 'light' }">
       Explore
     </div>
 
     <ul :class="`categoryList-${variant}`">
-      <li :class="`category-${variant}`">
-        <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
+      <li>
+        <Category
+          :name="'Cities'"
+          :to="{ name: 'cities' }"
+          :variant="variant"
+        />
       </li>
-      <li :class="`category-${variant}`">
-        <nuxt-link :to="{ name: 'senses' }">Senses</nuxt-link>
+      <li>
+        <Category
+          :name="'Senses'"
+          :to="{ name: 'senses' }"
+          :variant="variant"
+        />
       </li>
-      <li :class="`category-${variant}`">
-        <nuxt-link :to="{ name: 'moods' }">Moods</nuxt-link>
+      <li>
+        <Category :name="'Moods'" :to="{ name: 'moods' }" :variant="variant" />
       </li>
     </ul>
   </nav>
 </template>
 
 <script>
+import Category from './Category'
 export default {
+  components: { Category },
   props: {
     variant: {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark'].includes(value)
+        return ['light', 'dark', 'gradient'].includes(value)
       },
     },
   },
@@ -46,6 +56,7 @@ nav {
   color: $accent;
   text-transform: uppercase;
   text-align: center;
+  font-weight: $medium;
 
   @media (min-width: $bp-desktop) {
     font-size: 1.5rem;
@@ -69,25 +80,6 @@ nav {
   }
 }
 
-.category-dark {
-  font-family: $font-display;
-  text-transform: uppercase;
-  font-weight: $extrabold;
-  font-size: 4rem;
-  line-height: 1;
-
-  a,
-  a:visited {
-    color: $white;
-    text-decoration: none;
-
-    &:hover,
-    &:focus {
-      color: $accent;
-    }
-  }
-}
-
 .categoryList-light {
   list-style: none;
   padding-left: 0;
@@ -100,26 +92,24 @@ nav {
   }
 }
 
-.category-light {
-  font-family: $font-display;
-  text-transform: uppercase;
-  font-weight: $extrabold;
-  font-size: 4rem;
-  line-height: 1;
+.categoryList-gradient {
+  list-style: none;
+  padding-left: 0;
+  margin: 5rem 0;
+  text-align: center;
 
-  a,
-  a:visited {
-    color: $black;
-    text-decoration: none;
-
-    &:hover,
-    &:focus {
-      color: $accent;
-    }
+  li:not(:last-child) {
+    margin-bottom: 5rem;
   }
 
   @media (min-width: $bp-desktop) {
-    font-size: 6rem;
+    margin: 15rem 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    li:not(:last-child) {
+      margin-bottom: 0;
+    }
   }
 }
 </style>

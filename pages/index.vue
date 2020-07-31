@@ -3,6 +3,7 @@
     <Nav />
     <!-- <NavTest /> -->
     <CTA :title="ctaTitle" :text="ctaText" />
+    <CategoryNav variant="gradient" />
   </div>
 </template>
 
@@ -10,6 +11,7 @@
 import axios from 'axios'
 import Nav from '@/components/Nav'
 import CTA from '@/components/CTA'
+import CategoryNav from '@/components/CategoryNav'
 // import NavTest from '@/components/NavTest'
 
 export default {
@@ -17,6 +19,7 @@ export default {
     Nav,
     // NavTest,
     CTA,
+    CategoryNav,
   },
   data() {
     return {
