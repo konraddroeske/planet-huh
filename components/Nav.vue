@@ -28,12 +28,12 @@ export default {
         [42.3601, -71.0589, 'Boston'],
       ],
       moods: [
-        'Whimsical',
-        'Melancholy',
-        'Tense',
-        'Serene',
-        'Desolate',
-        'Exhausted',
+        [40.71427, -74.00597, 'Whimsical'],
+        [52.52437, 13.41053, 'Melancholy'],
+        [51.5074, -0.1278, 'Tense'],
+        [30.0444, 31.2357, 'Serene'],
+        [-33.9249, 19.4241, 'Desolate'], // Slightly off
+        [-37.8136, 144.9631, 'Exhausted'],
       ],
       senses: ['Touch', 'Sight', 'Hearing', 'Smell'],
       currentNav: null,
@@ -323,7 +323,7 @@ export default {
       // TOGGLE OBJECTS
 
       let timer = 0
-      const speed = 4
+      const speed = 2
       const rotateSpeed = Math.PI / speed
       let delta = 0
       const clock = new THREE.Clock()
@@ -331,11 +331,11 @@ export default {
 
       {
         const toggleAnim = () => {
-          this.currentNav === pivotGlobe
-            ? (this.currentNav = pivotMood)
-            : (this.currentNav = pivotGlobe)
-
           if (!clock.running) {
+            this.currentNav === pivotGlobe
+              ? (this.currentNav = pivotMood)
+              : (this.currentNav = pivotGlobe)
+
             this.toggle = !this.toggle
 
             this.toggle ? (delta = 0) : (delta = rotateSpeed)
@@ -438,10 +438,37 @@ export default {
 
       addPoints()
 
+      // GLOW
+
+      // Sprite Glow w/ Globe
+
+      // Main Material for each Sprite
+      const earthGlowMat = new THREE.SpriteMaterial({ map: spriteMap })
+      earthGlowMat.transparent = true
+
+      // Main Sprite for each City
+      const glowX = 4.5
+      const glowY = 4.5
+
+      const earthGlow = new THREE.Sprite(earthGlowMat)
+      earthGlow.scale.set(glowX, glowY, 1)
+      earthGlow.position.set(0, 0, 0)
+      pivotGlobe.add(earthGlow)
+
       // RENDER
 
       const render = (time) => {
         time *= 0.0001
+
+        // RESIZE
+
+        if (resizeRendererToDisplaySize(renderer)) {
+          const canvas = renderer.domElement
+          camera.aspect = canvas.clientWidth / canvas.clientHeight
+          camera.updateProjectionMatrix()
+        }
+
+        // TOGGLE OBJECTS
 
         if (clock.getElapsedTime() <= rotateSpeed) {
           timer = clock.getElapsedTime() + delta
@@ -449,11 +476,23 @@ export default {
           clock.stop()
         }
 
-        if (resizeRendererToDisplaySize(renderer)) {
-          const canvas = renderer.domElement
-          camera.aspect = canvas.clientWidth / canvas.clientHeight
-          camera.updateProjectionMatrix()
-        }
+        // SPRITE RESIZE ON TOGGLE
+
+        // if (clock.running) {
+        //   const rate = 0.05
+
+        //   if (this.currentNav === pivotMood && glowX >= 2.8) {
+        //     glowX += -rate
+        //     glowY += -rate
+        //     earthGlow.scale.set(glowX, glowY, 1)
+        //   }
+
+        //   if (this.currentNav === pivotGlobe && glowX <= 5) {
+        //     glowX += rate
+        //     glowY += rate
+        //     earthGlow.scale.set(glowX, glowY, 1)
+        //   }
+        // }
 
         // RAYCASTER
 
