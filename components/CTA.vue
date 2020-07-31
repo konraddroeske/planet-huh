@@ -1,14 +1,9 @@
 <template>
   <div class="container">
     <Wrapper>
-      <h1>Huh?</h1>
+      <h1>{{ title }}</h1>
       <p>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Saepe maiores
-        non ut provident, exercitationem sit vitae optio excepturi nihil aliquid
-        magni, sint ea totam. Earum, officiis. Exercitationem alias, amet, sed
-        quos eligendi eum dolorem dolore itaque quas inventore vero architecto
-        corporis natus, ut accusantium fuga molestias quod? Earum, magnam
-        pariatur!
+        {{ text }}
       </p>
       <Button :to="{ name: 'cities' }">Learn More</Button>
     </Wrapper>
@@ -18,7 +13,19 @@
 <script>
 import Wrapper from './Wrapper'
 import Button from './Button'
-export default { components: { Wrapper, Button } }
+export default {
+  components: { Wrapper, Button },
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>
