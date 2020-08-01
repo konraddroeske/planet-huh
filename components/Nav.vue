@@ -7,15 +7,37 @@
 
 <script>
 import * as THREE from 'three'
-// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import SpriteText from 'three-spritetext'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import globeTexture from '@/assets/images/globe.png'
+import moodTexture from '@/assets/images/mood.png'
 
 export default {
   data() {
     return {
       toggle: false,
       pauseTime: null,
+      cities: [
+        [40.71427, -74.00597, 'New York City'],
+        [52.52437, 13.41053, 'Berlin'],
+        [51.5074, -0.1278, 'London'],
+        [30.0444, 31.2357, 'Cairo'],
+        [-33.9249, 19.4241, 'Cape Town'], // Slightly off
+        [-37.8136, 144.9631, 'Melbourne'],
+        [-22.9068, -43.1729, 'Rio De Janeiro'], // Make distance from globe a fn of length of letters?
+        [43.6532, -79.3832, 'Toronto'],
+        [42.3601, -71.0589, 'Boston'],
+      ],
+      moods: [
+        [40.71427, -74.00597, 'Whimsical'],
+        [52.52437, 13.41053, 'Melancholy'],
+        [51.5074, -0.1278, 'Tense'],
+        [30.0444, 31.2357, 'Serene'],
+        [-33.9249, 19.4241, 'Desolate'], // Slightly off
+        [-37.8136, 144.9631, 'Exhausted'],
+      ],
+      senses: ['Touch', 'Sight', 'Hearing', 'Smell'],
+      currentNav: null,
     }
   },
   mounted() {
@@ -48,7 +70,8 @@ export default {
 
       // horizonal rotation
 
-      let targetRotationX = 0
+      let targetRotationXGlobe = 0
+      let targetRotationXMood = 0
       let targetRotationOnMouseDownX = 0
 
       let mouseX = 0
@@ -60,7 +83,8 @@ export default {
 
       // vertical rotation
 
-      let targetRotationY = 0
+      let targetRotationYGlobe = 0
+      let targetRotationYMood = 0
       let targetRotationOnMouseDownY = 0
 
       let mouseY = 0
@@ -80,7 +104,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = -0.4
+      const maxZoom = -0.55
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -92,7 +116,7 @@ export default {
       const rayMouse = new THREE.Vector2()
       let currentTarget = null
 
-      function setTarget(target) {
+      const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
       }
 
@@ -105,320 +129,84 @@ export default {
       document.addEventListener('click', navRouter)
 
       // OBJECT CONTROLS
+      // https://github.com/albertopiras/threeJS-object-controls
 
-      THREE.ObjectControls = function (camera, domElement, objectToMove) {
-        let mesh = objectToMove
-        domElement = domElement !== undefined ? domElement : document
+      // MOUSE DESKTOP
 
-        this.setObjectToMove = function (newMesh) {
-          mesh = newMesh
+      const mouseDown = (e) => {
+        isDragging = true
+        isThrowing = true
+
+        mouseXOnMouseDown = e.clientX - windowHalfX
+        mouseYOnMouseDown = e.clientY - windowHalfY
+
+        if (this.currentNav === pivotGlobe) {
+          targetRotationOnMouseDownX = targetRotationXGlobe
+          targetRotationOnMouseDownY = targetRotationYGlobe
         }
 
-        this.setDistance = function (min, max) {
-          minDistance = min
-          maxDistance = max
+        if (this.currentNav === pivotMood) {
+          targetRotationOnMouseDownX = targetRotationXMood
+          targetRotationOnMouseDownY = -targetRotationYMood
         }
+      }
 
-        this.setZoomSpeed = function (newZoomSpeed) {
-          zoomSpeed = newZoomSpeed
-        }
+      const mouseMove = (e) => {
+        // Raycaster
+        rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
+        rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
 
-        // this.setRotationSpeed = function (newRotationSpeed) {
-        //   rotationSpeed = newRotationSpeed
-        // }
+        if (isDragging) {
+          mouseX = e.clientX - windowHalfX
+          mouseY = e.clientY - windowHalfY
 
-        this.setRotationSpeedTouchDevices = function (newRotationSpeed) {
-          rotationSpeedTouchDevices = newRotationSpeed
-        }
+          const delta =
+            targetRotationOnMouseDownY +
+            (mouseY - mouseYOnMouseDown) * rotationSpeed
 
-        this.enableVerticalRotation = function () {
-          verticalRotationEnabled = true
-        }
-
-        this.disableVerticalRotation = function () {
-          verticalRotationEnabled = false
-        }
-
-        this.enableHorizontalRotation = function () {
-          horizontalRotationEnabled = true
-        }
-
-        this.disableHorizontalRotation = function () {
-          horizontalRotationEnabled = false
-        }
-
-        this.setMaxVerticalRotationAngle = function (min, max) {
-          MAX_ROTATON_ANGLES.x.from = min
-          MAX_ROTATON_ANGLES.x.to = max
-          MAX_ROTATON_ANGLES.x.enabled = true
-        }
-
-        this.setMaxHorizontalRotationAngle = function (min, max) {
-          MAX_ROTATON_ANGLES.y.from = min
-          MAX_ROTATON_ANGLES.y.to = max
-          MAX_ROTATON_ANGLES.y.enabled = true
-        }
-
-        this.disableMaxHorizontalAngleRotation = function () {
-          MAX_ROTATON_ANGLES.y.enabled = false
-        }
-
-        this.disableMaxVerticalAngleRotation = function () {
-          MAX_ROTATON_ANGLES.x.enabled = false
-        }
-
-        /** Mouse Interaction Controls (rotate & zoom, desktop **/
-        // Mouse - move
-        domElement.addEventListener('mousedown', mouseDown, false)
-        domElement.addEventListener('mousemove', mouseMove, false)
-        domElement.addEventListener('mouseup', mouseUp, false)
-
-        /** Touch Interaction Controls (rotate & zoom, mobile) **/
-        // Touch - move
-        domElement.addEventListener('touchstart', onTouchStart, false)
-        domElement.addEventListener('touchmove', onTouchMove, false)
-        domElement.addEventListener('touchend', onTouchEnd, false)
-
-        // Control Variables
-
-        const MAX_ROTATON_ANGLES = {
-          x: {
-            // Vertical from bottom to top.
-            enabled: false,
-            from: Math.PI / 8,
-            to: Math.PI / 8,
-          },
-          y: {
-            // Horizontal from left to right.
-            enabled: false,
-            from: Math.PI / 4,
-            to: Math.PI / 4,
-          },
-        }
-
-        /**
-         * RotationSpeed
-         * 1= fast
-         * 0.01 = slow
-         * */
-        let maxDistance = 15
-        let minDistance = 6
-        let zoomSpeed = 0.5
-
-        let rotationSpeedTouchDevices = 0.05
-        let verticalRotationEnabled = false
-        let horizontalRotationEnabled = true
-
-        const mouseFlags = { MOUSEDOWN: 0, MOUSEMOVE: 1 }
-
-        let flag
-        let previousMousePosition = { x: 0, y: 0 }
-
-        /**
-         * CurrentTouches
-         * length 0 : no zoom
-         * length 2 : is zoomming
-         */
-        let currentTouches = []
-
-        const prevZoomDiff = { X: null, Y: null }
-
-        // SHARED FUNCTIONS
-
-        function zoomIn() {
-          camera.position.z -= zoomSpeed
-        }
-
-        function zoomOut() {
-          camera.position.z += zoomSpeed
-        }
-
-        function isWithinMaxAngle(delta, axe) {
-          if (MAX_ROTATON_ANGLES[axe].enabled) {
-            const condition =
-              MAX_ROTATON_ANGLES[axe].from * -1 < mesh.rotation[axe] + delta &&
-              mesh.rotation[axe] + delta < MAX_ROTATON_ANGLES[axe].to
-
-            return condition
-          }
-          return true
-        }
-
-        function resetMousePosition() {
-          previousMousePosition = { x: 0, y: 0 }
-        }
-
-        // MOUSE DESKTOP
-
-        function mouseDown(e) {
-          isDragging = true
-          isThrowing = true
-          flag = mouseFlags.MOUSEDOWN
-
-          mouseXOnMouseDown = e.clientX - windowHalfX
-          targetRotationOnMouseDownX = targetRotationX
-
-          mouseYOnMouseDown = e.clientY - windowHalfY
-          targetRotationOnMouseDownY = targetRotationY
-        }
-
-        function mouseMove(e) {
-          // Raycaster
-
-          rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
-          rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
-          if (isDragging) {
-            mouseX = e.clientX - windowHalfX
-
-            targetRotationX =
+          if (this.currentNav === pivotGlobe) {
+            targetRotationXGlobe =
               targetRotationOnMouseDownX +
               (mouseX - mouseXOnMouseDown) * rotationSpeed
 
-            mouseY = e.clientY - windowHalfY
-
-            const delta =
-              targetRotationOnMouseDownY +
-              (mouseY - mouseYOnMouseDown) * rotationSpeed
-
             if (delta <= MAX_ANGLES.x.from * -1) {
-              targetRotationY = MAX_ANGLES.x.from * -1
+              targetRotationYGlobe = MAX_ANGLES.x.from * -1
             } else if (delta >= MAX_ANGLES.x.from) {
-              targetRotationY = MAX_ANGLES.x.from
+              targetRotationYGlobe = MAX_ANGLES.x.from
             } else {
-              targetRotationY =
+              targetRotationYGlobe =
                 targetRotationOnMouseDownY +
                 (mouseY - mouseYOnMouseDown) * rotationSpeed
             }
           }
-        }
 
-        function mouseUp(e) {
-          isDragging = false
-          zoomPosition = 0.005
-          resetMousePosition()
-        }
+          if (this.currentNav === pivotMood) {
+            targetRotationXMood =
+              targetRotationOnMouseDownX +
+              (mouseX - mouseXOnMouseDown) * rotationSpeed
 
-        // TOUCH INTERACTION
-
-        function onTouchStart(e) {
-          e.preventDefault()
-          flag = mouseFlags.MOUSEDOWN
-          if (e.touches.length === 2) {
-            prevZoomDiff.X = Math.abs(
-              e.touches[0].clientX - e.touches[1].clientX
-            )
-            prevZoomDiff.Y = Math.abs(
-              e.touches[0].clientY - e.touches[1].clientY
-            )
-            currentTouches = new Array(2)
-          } else {
-            previousMousePosition = {
-              x: e.touches[0].pageX,
-              y: e.touches[0].pageY,
-            }
-          }
-        }
-
-        function onTouchEnd(e) {
-          prevZoomDiff.X = null
-          prevZoomDiff.Y = null
-
-          /* If you were zooming out, currentTouches is updated for each finger you
-           * leave up the screen so each time a finger leaves up the screen,
-           * currentTouches length is decreased of a unit. When you leave up both 2
-           * fingers, currentTouches.length is 0, this means the zoomming phase is
-           * ended.
-           */
-          if (currentTouches.length > 0) {
-            currentTouches.pop()
-          } else {
-            currentTouches = []
-          }
-          e.preventDefault()
-          if (flag === mouseFlags.MOUSEDOWN) {
-            // TouchClick
-            // You can invoke more other functions for animations and so on...
-          } else if (flag === mouseFlags.MOUSEMOVE) {
-            // Touch drag
-            // You can invoke more other functions for animations and so on...
-          }
-          resetMousePosition()
-        }
-
-        function onTouchMove(e) {
-          e.preventDefault()
-          flag = mouseFlags.MOUSEMOVE
-          // Touch zoom.
-          // If two pointers are down, check for pinch gestures.
-          if (e.touches.length === 2) {
-            currentTouches = new Array(2)
-            // Calculate the distance between the two pointers.
-            const curDiffX = Math.abs(
-              e.touches[0].clientX - e.touches[1].clientX
-            )
-            const curDiffY = Math.abs(
-              e.touches[0].clientY - e.touches[1].clientY
-            )
-
-            if (prevZoomDiff && prevZoomDiff.X > 0 && prevZoomDiff.Y > 0) {
-              if (
-                curDiffX > prevZoomDiff.X &&
-                curDiffY > prevZoomDiff.Y &&
-                camera.position.z > minDistance
-              ) {
-                zoomIn()
-              } else if (
-                curDiffX < prevZoomDiff.X &&
-                camera.position.z < maxDistance &&
-                curDiffY < prevZoomDiff.Y
-              ) {
-                zoomOut()
-              }
-            }
-            // Cache the distance for the next move event.
-            prevZoomDiff.X = curDiffX
-            prevZoomDiff.Y = curDiffY
-
-            // Touch Rotate.
-          } else if (currentTouches.length === 0) {
-            prevZoomDiff.X = null
-            prevZoomDiff.Y = null
-            const deltaMove = {
-              x: e.touches[0].pageX - previousMousePosition.x,
-              y: e.touches[0].pageY - previousMousePosition.y,
-            }
-            previousMousePosition = {
-              x: e.touches[0].pageX,
-              y: e.touches[0].pageY,
-            }
-
-            if (horizontalRotationEnabled && deltaMove.x !== 0) {
-              if (
-                !isWithinMaxAngle(
-                  Math.sign(deltaMove.x) * rotationSpeedTouchDevices,
-                  'y'
-                )
-              )
-                return
-              mesh.rotation.y +=
-                Math.sign(deltaMove.x) * rotationSpeedTouchDevices
-            }
-
-            if (verticalRotationEnabled && deltaMove.y !== 0) {
-              if (
-                !isWithinMaxAngle(
-                  Math.sign(deltaMove.y) * rotationSpeedTouchDevices,
-                  'x'
-                )
-              )
-                return
-              mesh.rotation.x +=
-                Math.sign(deltaMove.y) * rotationSpeedTouchDevices
+            if (delta <= MAX_ANGLES.x.from * -1) {
+              targetRotationYMood = MAX_ANGLES.x.from
+            } else if (delta >= MAX_ANGLES.x.from) {
+              targetRotationYMood = MAX_ANGLES.x.from * -1
+            } else {
+              targetRotationYMood =
+                (targetRotationOnMouseDownY +
+                  (mouseY - mouseYOnMouseDown) * rotationSpeed) *
+                -1
             }
           }
         }
       }
+
+      const mouseUp = (e) => {
+        isDragging = false
+        zoomPosition = 0.005
+      }
+
+      document.addEventListener('mousedown', mouseDown, false)
+      document.addEventListener('mousemove', mouseMove, false)
+      document.addEventListener('mouseup', mouseUp, false)
 
       // INITIALIZE CANVAS
 
@@ -437,21 +225,14 @@ export default {
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
-      // camera.position.set(4.5, 0, -2)
-      // camera.lookAt(0, 0, 1.5)
-
       pivotCamera.add(camera)
       camera.lookAt(0, 0, -3.2)
-
-      // const controls = new OrbitControls(camera, canvas)
-      // controls.target.set(0, 5, 0)
-      // controls.update()
 
       // LIGHTING
 
       {
         const color = 0xffffff
-        const intensity = 0.9
+        const intensity = 0.95
         const light = new THREE.AmbientLight(color, intensity)
         scene.add(light)
       }
@@ -462,26 +243,21 @@ export default {
       pivotMain.position.set(1.2, 0, -2)
       scene.add(pivotMain)
 
-      // GLOBE PARENT
-
-      const parentGlobe = new THREE.Object3D()
-      parentGlobe.position.set(-1.2, 0, 2)
-      pivotMain.add(parentGlobe)
-
       // GLOBE PIVOT
 
       const pivotGlobe = new THREE.Object3D()
-      pivotGlobe.position.set(0, 0, 0)
-      parentGlobe.add(pivotGlobe)
+      pivotGlobe.position.set(-1.2, 0, 2)
+      pivotMain.add(pivotGlobe)
+      this.currentNav = pivotGlobe
 
       // GLOBE OBJECT
 
       let globe
       const loader = new THREE.TextureLoader()
-      const texture = loader.load(globeTexture)
-      texture.anisotropy = renderer.getMaxAnisotropy()
 
       {
+        const texture = loader.load(globeTexture)
+        texture.anisotropy = renderer.getMaxAnisotropy()
         const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
@@ -492,32 +268,91 @@ export default {
         pivotGlobe.add(globe)
       }
 
+      // MOOD PIVOT
+
+      const pivotMood = new THREE.Object3D()
+      pivotMood.position.set(1.2, 0, -2)
+      pivotMain.add(pivotMood)
+
       // MOOD OBJECT
 
-      let moodObj1
+      let mood
+
+      // Shader
+      // const clockShader = new THREE.Clock()
+
+      const textureShader = loader.load(moodTexture)
+      textureShader.anisotropy = renderer.getMaxAnisotropy()
+
+      // const uniforms = {
+      //   time: { value: 1.0 },
+      //   textureColor: { value: textureShader },
+      // }
+
+      // uniforms.textureColor.value.wrapT = THREE.RepeatWrapping
+
+      // const vertexShader = `
+      //   varying vec2 vUv;
+
+      //   void main()
+      //   {
+      //     vUv = uv;
+      //     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+      //     gl_Position = projectionMatrix * mvPosition;
+      //   }
+      // `
+
+      // const fragmentShader = `
+      //   uniform float time;
+
+      //   uniform sampler2D textureColor;
+
+      //   varying vec2 vUv;
+
+      //   void main( void ) {
+
+      //     vec2 position = - 1.0 + 2.0 * vUv;
+
+      //     float a = atan( position.y, position.x );
+      //     float r = sqrt( dot( position, position ) );
+
+      //     vec2 uv;
+      //     uv.x = cos( a ) / r;
+      //     uv.y = sin( a ) / r;
+      //     uv /= 10.0;
+      //     uv += time * 0.05;
+
+      //     vec3 color = texture2D( textureColor, uv ).rgb;
+
+      //     gl_FragColor = vec4( color * r * 1.5, 1.0 );
+
+      //   }
+      // `
+
+      // const shaderMat = new THREE.ShaderMaterial({
+      //   uniforms,
+      //   vertexShader,
+      //   fragmentShader,
+      // })
 
       {
-        const gltfLoader = new GLTFLoader()
-        gltfLoader.load('/mood.glb', (gltf) => {
-          moodObj1 = gltf
-          moodObj1.scene.position.set(1.2, 0, -2)
-          pivotMain.add(moodObj1.scene)
-
-          const box = new THREE.Box3().setFromObject(moodObj1.scene)
-
-          const boxSize = box.getSize(new THREE.Vector3()).length()
-          const boxCenter = box.getCenter(new THREE.Vector3())
-
-          // update the Trackball controls to handle the new size
-          // controls.maxDistance = boxSize * 10
-          // controls.target.copy(boxCenter)
-          // controls.update()
+        const geometry = new THREE.SphereGeometry(1, 64, 64)
+        const material = new THREE.MeshPhongMaterial({
+          map: textureShader,
         })
+
+        material.transparent = true
+        material.opacity = 0.8
+        material.map.minFilter = THREE.LinearFilter
+
+        mood = new THREE.Mesh(geometry, material)
+        mood.name = 'mood'
+        pivotMood.add(mood)
       }
 
       // RESIZE
 
-      function resizeRendererToDisplaySize(renderer) {
+      const resizeRendererToDisplaySize = (renderer) => {
         windowHalfX = window.innerWidth / 2
         windowHalfY = window.innerHeight / 2
 
@@ -531,13 +366,11 @@ export default {
         return needResize
       }
 
-      // EULER QUATERNIAN
+      // SLERP PIVOT GLOBE
 
-      function toRadians(angle) {
+      const toRadians = (angle) => {
         return angle * (Math.PI / 180)
       }
-
-      // SLERP PIVOT GLOBE
 
       const globeRadians = toRadians(0)
 
@@ -547,21 +380,7 @@ export default {
         0
       ).normalize()
 
-      // CLICK AND DRAG GLOBE
-
-      const objectControls = new THREE.ObjectControls(
-        camera,
-        document,
-        pivotGlobe
-      )
-
-      // objectControls.setDistance(8, 200) // set min - max distance for zoom
-      // objectControls.setZoomSpeed(0.5) // set zoom speed
-      // objectControls.enableVerticalRotation()
-      // objectControls.setMaxVerticalRotationAngle(Math.PI / 4, Math.PI / 4)
-      // objectControls.setRotationSpeed(0.02)
-
-      // SWITCH OBJECTS
+      // TOGGLE OBJECTS
 
       let timer = 0
       const speed = 4
@@ -573,6 +392,10 @@ export default {
       {
         const toggleAnim = () => {
           if (!clock.running) {
+            this.currentNav === pivotGlobe
+              ? (this.currentNav = pivotMood)
+              : (this.currentNav = pivotGlobe)
+
             this.toggle = !this.toggle
 
             this.toggle ? (delta = 0) : (delta = rotateSpeed)
@@ -585,7 +408,7 @@ export default {
         document.querySelector('.toggle').addEventListener('click', toggleAnim)
       }
 
-      // SET GLOBE AXIS
+      // SET ROTATION AXIS
 
       globe.geometry.applyMatrix(
         new THREE.Matrix4().makeRotationZ(-globeRadians)
@@ -593,10 +416,20 @@ export default {
 
       // CITIES
 
+      const citiesArr = []
+
       const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
-      const spriteMaterial = new THREE.SpriteMaterial({ map: spriteMap })
-      spriteMaterial.transparent = true
-      const raycastArr = []
+      const spriteMapAlt = new THREE.TextureLoader().load(
+        '/sprites/mapDot2.png'
+      )
+
+      const spriteCities = []
+      const spriteCitiesMats = []
+
+      const spriteCitiesAlt = []
+      const spriteCitiesMatsAlt = []
+
+      const spriteTextArr = []
 
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
@@ -609,35 +442,91 @@ export default {
         return [x, y, z]
       }
 
-      const cities = [
-        [40.71427, -74.00597, 'New York City'],
-        [52.52437, 13.41053, 'Berlin'],
-        [51.5074, 0.1278, 'London'],
-      ]
-
-      function addPoints() {
-        cities.forEach((city, index) => {
-          raycastArr.push(new THREE.Sprite(spriteMaterial))
+      const addPoints = () => {
+        this.cities.forEach((city, index) => {
+          // City Location
           const position = calcPosition(city[0], city[1], 1.015)
-          raycastArr[index].name = city[2]
-          raycastArr[index].scale.set(0.1, 0.1, 1)
-          raycastArr[index].position.set(position[0], position[1], position[2])
-          globe.add(raycastArr[index])
+
+          // Main Object
+          citiesArr.push(new THREE.Object3D())
+          citiesArr[index].position.set(position[0], position[1], position[2])
+          globe.add(citiesArr[index])
+
+          // Main Material for each Sprite
+          spriteCitiesMats.push(new THREE.SpriteMaterial({ map: spriteMap }))
+          spriteCitiesMats[index].name = 'Main'
+          spriteCitiesMats[index].transparent = true
+
+          // Main Sprite for each City
+          spriteCities.push(new THREE.Sprite(spriteCitiesMats[index]))
+          spriteCities[index].name = city[2]
+          spriteCities[index].scale.set(0.07, 0.07, 1)
+          citiesArr[index].add(spriteCities[index])
+
+          // Alt Material for each Sprite
+          spriteCitiesMatsAlt.push(
+            new THREE.SpriteMaterial({ map: spriteMapAlt })
+          )
+          spriteCitiesMatsAlt[index].name = 'Alt'
+          spriteCitiesMatsAlt[index].transparent = true
+
+          // Alt Sprite for each City
+          spriteCitiesAlt.push(new THREE.Sprite(spriteCitiesMatsAlt[index]))
+          spriteCitiesAlt[index].name = city[2]
+          spriteCitiesAlt[index].scale.set(0.07, 0.07, 1)
+          spriteCitiesAlt[index].material.opacity = 0
+          citiesArr[index].add(spriteCitiesAlt[index])
+
+          // Sprite Text
+          const textPosition = calcPosition(city[0], city[1], 1.06)
+          const cityName = new SpriteText(city[2], 0.024, 'black')
+          cityName.center = new THREE.Vector2(0.5, 0.5)
+          cityName.fontFace = 'Work Sans'
+          spriteTextArr.push(cityName)
+          spriteTextArr[index].name = city[2]
+          globe.add(spriteTextArr[index])
+          spriteTextArr[index].material.opacity = 0
+          spriteTextArr[index].position.set(
+            textPosition[0],
+            textPosition[1],
+            textPosition[2]
+          )
         })
+
+        spriteCities.push(globe)
       }
 
       addPoints()
 
+      // GLOW
+
+      // Globe
+      const earthGlowMat = new THREE.SpriteMaterial({ map: spriteMap })
+      earthGlowMat.transparent = true
+
+      const glowX = 4.5
+      const glowY = 4.5
+
+      const earthGlow = new THREE.Sprite(earthGlowMat)
+      earthGlow.scale.set(glowX, glowY, 1)
+      earthGlow.position.set(0, 0, 0)
+      pivotGlobe.add(earthGlow)
+
+      // Mood
+
+      const moodGlow = new THREE.Sprite(earthGlowMat)
+      moodGlow.scale.set(glowX, glowY, 1)
+      moodGlow.position.set(0, 0, 0)
+      pivotMood.add(moodGlow)
+
       // RENDER
 
-      const render = (time) => {
-        time *= 0.0001
+      const render = () => {
+        // SHADERS
+        // const deltaShader = clockShader.getDelta()
+        // uniforms.time.value += deltaShader * 2
 
-        if (clock.getElapsedTime() <= rotateSpeed) {
-          timer = clock.getElapsedTime() + delta
-        } else {
-          clock.stop()
-        }
+        // RESIZE
 
         if (resizeRendererToDisplaySize(renderer)) {
           const canvas = renderer.domElement
@@ -645,10 +534,36 @@ export default {
           camera.updateProjectionMatrix()
         }
 
+        // TOGGLE OBJECTS
+
+        if (clock.getElapsedTime() <= rotateSpeed) {
+          timer = clock.getElapsedTime() + delta
+        } else {
+          clock.stop()
+        }
+
+        // SPRITE RESIZE ON TOGGLE
+
+        // if (clock.running) {
+        //   const rate = 0.05
+
+        //   if (this.currentNav === pivotMood && glowX >= 2.8) {
+        //     glowX += -rate
+        //     glowY += -rate
+        //     earthGlow.scale.set(glowX, glowY, 1)
+        //   }
+
+        //   if (this.currentNav === pivotGlobe && glowX <= 5) {
+        //     glowX += rate
+        //     glowY += rate
+        //     earthGlow.scale.set(glowX, glowY, 1)
+        //   }
+        // }
+
         // RAYCASTER
 
         raycaster.setFromCamera(rayMouse, camera)
-        const intersects = raycaster.intersectObjects(pivotGlobe.children, true)
+        const intersects = raycaster.intersectObjects(spriteCities)
 
         if (
           intersects.length >= 2 &&
@@ -664,26 +579,84 @@ export default {
 
         // HOVER ANIMATIONS
 
-        // if (currentTarget) {
-        //   currentTarget.material.opacity -= 0.02
-        // }
+        // main sprite
 
-        if (moodObj1 && globe) {
+        if (currentTarget && currentTarget.material.opacity >= 0) {
+          currentTarget.material.opacity -= 0.03
+        }
+
+        spriteCities.forEach((obj) => {
+          if (obj !== currentTarget && obj.material.opacity <= 1) {
+            obj.material.opacity += 0.03
+          }
+        })
+
+        // alt sprite
+
+        spriteCitiesAlt.forEach((obj, index) => {
+          if (currentTarget) {
+            if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
+              obj.material.opacity += 0.03
+            } else if (
+              obj.name !== currentTarget.name &&
+              obj.material.opacity >= 0
+            ) {
+              obj.material.opacity -= 0.03
+            }
+          } else if (obj.material.opacity >= 0) {
+            obj.material.opacity -= 0.03
+          }
+        })
+
+        // text sprite
+
+        spriteTextArr.forEach((obj, index) => {
+          if (currentTarget) {
+            if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
+              obj.material.opacity += 0.02
+            } else if (
+              obj.name !== currentTarget.name &&
+              obj.material.opacity >= 0
+            ) {
+              obj.material.opacity -= 0.02
+            }
+          } else if (obj.material.opacity >= 0) {
+            obj.material.opacity -= 0.02
+          }
+        })
+
+        if (pivotMain && mood && globe) {
           pivotMain.rotation.y = timer * speed
 
-          // HORIZONAL ROTATION
+          if (this.currentNav === pivotGlobe) {
+            // HORIZONAL ROTATION
+            deltaX =
+              (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
+            pivotGlobe.rotation.y += deltaX
 
-          deltaX = (targetRotationX - pivotGlobe.rotation.y) * rotationInertia
-          pivotGlobe.rotation.y += deltaX
-
-          // VERTICAL ROTATION
-
-          deltaY = (targetRotationY - pivotGlobe.rotation.x) * rotationInertia
-          if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
-            pivotGlobe.rotation.x += deltaY
+            // VERTICAL ROTATION
+            deltaY =
+              (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
+            if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
+              pivotGlobe.rotation.x += deltaY
+            }
           }
 
-          // CAMERA ZOOM
+          if (this.currentNav === pivotMood) {
+            // HORIZONAL ROTATION
+            deltaX =
+              (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
+            pivotMood.rotation.y += deltaX
+
+            // VERTICAL ROTATION
+            deltaY =
+              (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
+            if (isThrowing && checkMaxAngle(pivotMood, deltaY, 'x')) {
+              pivotMood.rotation.x += deltaY
+            }
+          }
+
+          // CAMERA ZOOM (Both)
 
           if (isDragging && !currentTarget) {
             if (camera.position.z >= maxZoom) {
@@ -701,20 +674,29 @@ export default {
               isThrowing = false
             }
 
-            // GLOBE CORRECTION LERP
+            // OBJECT CORRECTION LERP
 
             if (!isThrowing) {
-              targetRotationY = pivotGlobe.rotation.x
+              targetRotationYGlobe = pivotGlobe.rotation.x
+              targetRotationYMood = pivotMood.rotation.x
 
               if (pivotGlobe.rotation.x > 0.01) {
                 pivotGlobe.rotation.x += -0.0015
               } else if (pivotGlobe.rotation.x < -0.01) {
                 pivotGlobe.rotation.x += 0.0015
               }
+
+              if (pivotMood.rotation.x > 0.01) {
+                pivotMood.rotation.x += -0.0015
+              } else if (pivotMood.rotation.x < -0.01) {
+                pivotMood.rotation.x += 0.0015
+              }
             }
 
-            // GLOBE CONTINUOUS ROTATION
+            // CONTINUOUS ROTATION (Both)
             globe.rotateOnAxis(globeAxis, 0.0015)
+            mood.rotateOnAxis(globeAxis, 0.0015)
+            // mood.scene.rotation.y += 0.0015
           }
         }
         renderer.render(scene, camera)

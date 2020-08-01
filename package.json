@@ -9,7 +9,8 @@
     "export": "nuxt export",
     "serve": "nuxt serve",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "lint": "npm run lint:js"
+    "lint": "npm run lint:js",
+    "postinstall": "npx patch-package"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.30",
@@ -20,7 +21,8 @@
     "@nuxtjs/pwa": "^3.0.0-beta.20",
     "gsap": "file:gsap-bonus.tgz",
     "nuxt": "^2.13.0",
-    "three": "^0.118.3"
+    "three": "^0.118.3",
+    "three-spritetext": "^1.5.2"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^3.0.0",
