@@ -15,14 +15,12 @@ import Wrapper from './Wrapper'
 import Button from './Button'
 export default {
   components: { Wrapper, Button },
-  props: {
-    title: {
-      type: String,
-      required: true,
+  computed: {
+    title() {
+      return this.$store.state.homepage.ctaTitle
     },
-    text: {
-      type: String,
-      required: true,
+    text() {
+      return this.$store.state.homepage.ctaText
     },
   },
 }
