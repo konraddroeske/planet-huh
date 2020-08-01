@@ -19,6 +19,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.10",
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
+    "gsap": "file:gsap-bonus.tgz",
     "nuxt": "^2.13.0",
     "three": "^0.118.3",
     "three-spritetext": "^1.5.2"
