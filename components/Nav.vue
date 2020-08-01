@@ -285,6 +285,30 @@ export default {
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
+
+        const vertexShader = `
+          varying vec2 vUv;
+
+          void main()
+          {
+            vUv = uv;
+            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+            gl_Position = projectionMatrix * mvPosition;
+          }
+        `
+
+        // const shaderMat = new THREE.ShaderMaterial({
+        //   uniforms: uniforms,
+        //   vertexShader: MaterialsShader.vertexShader,
+        //   fragmentShader: MaterialsShader.fragmentShader,
+        //   map: texture,
+        //   defines: {
+        //     USE_MAP: true,
+        //   },
+        // })
+
+        // console.log(shaderMat)
+
         material.transparent = true
         material.opacity = 1
         material.map.minFilter = THREE.LinearFilter
