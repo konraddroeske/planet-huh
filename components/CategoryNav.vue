@@ -1,6 +1,6 @@
 <template>
   <nav>
-    <div class="explore" :class="{ visuallyHidden: variant !== 'light' }">
+    <div v-if="variant === 'gradient'" class="explore">
       Explore
     </div>
 
@@ -110,6 +110,41 @@ nav {
     li:not(:last-child) {
       margin-bottom: 0;
     }
+  }
+}
+
+.categoryList-light {
+  list-style: none;
+  padding-left: 0;
+  margin: 1rem 0 2rem;
+  text-align: center;
+
+  @media (min-width: $bp-desktop) {
+    display: flex;
+    justify-content: space-around;
+  }
+}
+
+.category-light {
+  font-family: $font-display;
+  text-transform: uppercase;
+  font-weight: $extrabold;
+  font-size: 4rem;
+  line-height: 1;
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
+  }
+
+  @media (min-width: $bp-desktop) {
+    font-size: 6rem;
   }
 }
 </style>
