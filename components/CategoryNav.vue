@@ -1,31 +1,45 @@
 <template>
   <nav>
-    <div class="explore" :class="{ visuallyHidden: variant === 'dark' }">
+    <div
+      v-if="variant !== 'gradient'"
+      :class="{ visuallyHidden: variant === 'dark' }"
+      class="explore"
+    >
       Explore
     </div>
 
     <ul :class="`categoryList-${variant}`">
-      <li :class="`category-${variant}`">
-        <nuxt-link :to="{ name: 'cities' }">Cities</nuxt-link>
+      <li>
+        <Category
+          :name="'Cities'"
+          :to="{ name: 'cities' }"
+          :variant="variant"
+        />
       </li>
-      <li :class="`category-${variant}`">
-        <nuxt-link :to="{ name: 'senses' }">Senses</nuxt-link>
+      <li>
+        <Category
+          :name="'Senses'"
+          :to="{ name: 'senses' }"
+          :variant="variant"
+        />
       </li>
-      <li :class="`category-${variant}`">
-        <nuxt-link :to="{ name: 'moods' }">Moods</nuxt-link>
+      <li>
+        <Category :name="'Moods'" :to="{ name: 'moods' }" :variant="variant" />
       </li>
     </ul>
   </nav>
 </template>
 
 <script>
+import Category from './Category'
 export default {
+  components: { Category },
   props: {
     variant: {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark'].includes(value)
+        return ['light', 'dark', 'gradient'].includes(value)
       },
     },
   },
@@ -46,6 +60,7 @@ nav {
   color: $accent;
   text-transform: uppercase;
   text-align: center;
+  font-weight: $medium;
 
   @media (min-width: $bp-desktop) {
     font-size: 1.5rem;
@@ -69,21 +84,47 @@ nav {
   }
 }
 
-.category-dark {
-  font-family: $font-display;
-  text-transform: uppercase;
-  font-weight: $extrabold;
-  font-size: 4rem;
-  line-height: 1;
+.categoryList-light {
+  list-style: none;
+  padding-left: 0;
+  margin: 1rem 0 2rem;
+  text-align: center;
 
-  a,
-  a:visited {
-    color: $white;
-    text-decoration: none;
+  @media (min-width: $bp-desktop) {
+    display: flex;
+    justify-content: space-around;
+  }
+}
 
-    &:hover,
-    &:focus {
-      color: $accent;
+.categoryList-gradient {
+  list-style: none;
+  padding-left: 0;
+  margin: 5rem 0;
+  text-align: center;
+
+  li {
+    padding: 2.5rem 0;
+    border-top: 1px solid $black;
+  }
+
+  li:last-child {
+    border-bottom: 1px solid $black;
+  }
+
+  @media (min-width: $bp-desktop) {
+    margin: 15rem 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    li {
+      border-top: 0;
+      border-bottom: 0;
+      padding: 0;
+      border-top: 0;
+    }
+
+    li:last-child {
+      border-bottom: 0;
     }
   }
 }

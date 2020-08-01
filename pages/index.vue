@@ -1,18 +1,24 @@
 <template>
   <div>
     <Nav />
-    <!-- <NavTest /> -->
+    <CTA />
+    <CategoryNav variant="gradient" />
   </div>
 </template>
 
 <script>
 import Nav from '@/components/Nav'
-// import NavTest from '@/components/NavTest'
+import CTA from '@/components/CTA'
+import CategoryNav from '@/components/CategoryNav'
 
 export default {
   components: {
     Nav,
-    // NavTest,
+    CTA,
+    CategoryNav,
+  },
+  created() {
+    this.$store.dispatch('homepage/getHomepage')
   },
 }
 </script>

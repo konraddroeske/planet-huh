@@ -6,6 +6,8 @@ $font-display: 'Work Sans', sans-serif;
 $font-sans: Oswald, sans-serif;
 $font-body: Georgia, sans-serif;
 
+$medium: 400;
+$semibold: 600;
 $extrabold: 900;
 
 // Color
@@ -38,4 +40,8 @@ html {
   clip-path: inset(100%);
   clip: rect(0 0 0);
   overflow: hidden;
+}
+
+p {
+  font-size: 1.2rem;
 }

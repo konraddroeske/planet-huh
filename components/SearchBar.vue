@@ -42,6 +42,7 @@ export default {
   background: transparent;
   padding: 0.75rem 1.25rem;
   margin-bottom: 1.5rem;
+  color: $white;
 
   &::placeholder {
     color: #707070;
@@ -91,6 +92,7 @@ export default {
   background: transparent;
   padding: 0.75rem 1.25rem;
   margin-right: 0.5rem;
+  color: $black;
 
   &::placeholder {
     color: $black;
