@@ -10,6 +10,7 @@ import * as THREE from 'three'
 import SpriteText from 'three-spritetext'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import globeTexture from '@/assets/images/globe.png'
+import moodTexture from '@/assets/images/mood.png'
 
 export default {
   data() {
@@ -103,7 +104,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = -0.75
+      const maxZoom = -0.55
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -231,7 +232,7 @@ export default {
 
       {
         const color = 0xffffff
-        const intensity = 0.9
+        const intensity = 0.95
         const light = new THREE.AmbientLight(color, intensity)
         scene.add(light)
       }
@@ -253,10 +254,10 @@ export default {
 
       let globe
       const loader = new THREE.TextureLoader()
-      const texture = loader.load(globeTexture)
-      texture.anisotropy = renderer.getMaxAnisotropy()
 
       {
+        const texture = loader.load(globeTexture)
+        texture.anisotropy = renderer.getMaxAnisotropy()
         const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
@@ -278,17 +279,36 @@ export default {
       let mood
 
       {
-        const gltfLoader = new GLTFLoader()
-        gltfLoader.load('/mood.glb', (gltf) => {
-          mood = gltf
-          pivotMood.add(mood.scene)
-
-          // console.log(mood.scene)
-          // mood.scene.geometry.applyMatrix(
-          //   new THREE.Matrix4().makeRotationZ(-globeRadians)
-          // )
+        const texture = loader.load(moodTexture)
+        texture.anisotropy = renderer.getMaxAnisotropy()
+        const geometry = new THREE.SphereGeometry(1, 64, 64)
+        const material = new THREE.MeshPhongMaterial({
+          map: texture,
         })
+        material.transparent = true
+        material.opacity = 1
+        material.map.minFilter = THREE.LinearFilter
+        mood = new THREE.Mesh(geometry, material)
+        mood.name = 'mood'
+        pivotMood.add(mood)
       }
+
+      // {
+      //   const gltfLoader = new GLTFLoader()
+      //   gltfLoader.load('/mood.glb', (gltf) => {
+      //     mood = gltf
+      //     pivotMood.add(mood.scene)
+
+      //     mood.scene.children.forEach((obj) => {
+      //       if (obj.material) {
+      //         console.log(obj.material)
+      //         obj.material.side = 0
+      //         obj.material.transparent = true
+      //         obj.material.opacity = 0.8
+      //       }
+      //     })
+      //   })
+      // }
 
       // RESIZE
 
@@ -323,7 +343,7 @@ export default {
       // TOGGLE OBJECTS
 
       let timer = 0
-      const speed = 2
+      const speed = 4
       const rotateSpeed = Math.PI / speed
       let delta = 0
       const clock = new THREE.Clock()
@@ -440,13 +460,10 @@ export default {
 
       // GLOW
 
-      // Sprite Glow w/ Globe
-
-      // Main Material for each Sprite
+      // Globe
       const earthGlowMat = new THREE.SpriteMaterial({ map: spriteMap })
       earthGlowMat.transparent = true
 
-      // Main Sprite for each City
       const glowX = 4.5
       const glowY = 4.5
 
@@ -454,6 +471,13 @@ export default {
       earthGlow.scale.set(glowX, glowY, 1)
       earthGlow.position.set(0, 0, 0)
       pivotGlobe.add(earthGlow)
+
+      // Mood
+
+      const moodGlow = new THREE.Sprite(earthGlowMat)
+      moodGlow.scale.set(glowX, glowY, 1)
+      moodGlow.position.set(0, 0, 0)
+      pivotMood.add(moodGlow)
 
       // RENDER
 
@@ -629,7 +653,8 @@ export default {
 
             // CONTINUOUS ROTATION (Both)
             globe.rotateOnAxis(globeAxis, 0.0015)
-            mood.scene.rotation.y += 0.0015
+            mood.rotateOnAxis(globeAxis, 0.0015)
+            // mood.scene.rotation.y += 0.0015
           }
         }
         renderer.render(scene, camera)
