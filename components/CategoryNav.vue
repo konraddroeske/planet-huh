@@ -102,8 +102,13 @@ nav {
   margin: 5rem 0;
   text-align: center;
 
-  li:not(:last-child) {
-    margin-bottom: 5rem;
+  li {
+    padding: 2.5rem 0;
+    border-top: 1px solid $black;
+  }
+
+  li:last-child {
+    border-bottom: 1px solid $black;
   }
 
   @media (min-width: $bp-desktop) {
@@ -111,8 +116,15 @@ nav {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
 
-    li:not(:last-child) {
-      margin-bottom: 0;
+    li {
+      border-top: 0;
+      border-bottom: 0;
+      padding: 0;
+      border-top: 0;
+    }
+
+    li:last-child {
+      border-bottom: 0;
     }
   }
 }
