@@ -11,10 +11,12 @@
               :alt="post.title"
             />
           </nuxt-link>
-          <span class="postDate">{{ post.date }}</span>
-          <nuxt-link :to="`/post/${post.slug}`" class="postLink">
-            <h3 class="postTitle">{{ post.title }}</h3>
-          </nuxt-link>
+          <p class="postDate">{{ post.date }}</p>
+          <h3 class="postTitle">
+            <nuxt-link :to="`/post/${post.slug}`" class="postLink">
+              {{ post.title }}
+            </nuxt-link>
+          </h3>
           <p class="postTags">{{ post.tags.join(', ') }}</p>
         </li>
       </ul>
@@ -101,6 +103,13 @@ ul {
   color: $accent;
   font-size: 1.1rem;
   text-transform: uppercase;
+  margin: 0;
+}
+
+.postTitle {
+  font-weight: $medium;
+  font-size: 1.75rem;
+  margin: 1rem 0;
 }
 
 .postLink,
@@ -114,14 +123,9 @@ ul {
   }
 }
 
-.postTitle {
-  font-weight: $medium;
-  font-size: 1.75rem;
-  margin: 1rem 0;
-}
-
 .postTags {
   text-transform: uppercase;
   font-size: 1rem;
+  margin: 0;
 }
 </style>
