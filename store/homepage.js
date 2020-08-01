@@ -48,6 +48,7 @@ export const actions = {
     try {
       const { data } = await fetchContent(`{
         posts(orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
+          id
           title
           slug
           date
