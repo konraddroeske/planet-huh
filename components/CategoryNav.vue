@@ -1,6 +1,10 @@
 <template>
   <nav>
-    <div v-if="variant === 'gradient'" class="explore">
+    <div
+      v-if="variant !== 'gradient'"
+      :class="{ visuallyHidden: variant === 'dark' }"
+      class="explore"
+    >
       Explore
     </div>
 
