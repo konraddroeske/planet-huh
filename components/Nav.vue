@@ -278,61 +278,77 @@ export default {
 
       let mood
 
+      // Shader
+      // const clockShader = new THREE.Clock()
+
+      const textureShader = loader.load(moodTexture)
+      textureShader.anisotropy = renderer.getMaxAnisotropy()
+
+      // const uniforms = {
+      //   time: { value: 1.0 },
+      //   textureColor: { value: textureShader },
+      // }
+
+      // uniforms.textureColor.value.wrapT = THREE.RepeatWrapping
+
+      // const vertexShader = `
+      //   varying vec2 vUv;
+
+      //   void main()
+      //   {
+      //     vUv = uv;
+      //     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+      //     gl_Position = projectionMatrix * mvPosition;
+      //   }
+      // `
+
+      // const fragmentShader = `
+      //   uniform float time;
+
+      //   uniform sampler2D textureColor;
+
+      //   varying vec2 vUv;
+
+      //   void main( void ) {
+
+      //     vec2 position = - 1.0 + 2.0 * vUv;
+
+      //     float a = atan( position.y, position.x );
+      //     float r = sqrt( dot( position, position ) );
+
+      //     vec2 uv;
+      //     uv.x = cos( a ) / r;
+      //     uv.y = sin( a ) / r;
+      //     uv /= 10.0;
+      //     uv += time * 0.05;
+
+      //     vec3 color = texture2D( textureColor, uv ).rgb;
+
+      //     gl_FragColor = vec4( color * r * 1.5, 1.0 );
+
+      //   }
+      // `
+
+      // const shaderMat = new THREE.ShaderMaterial({
+      //   uniforms,
+      //   vertexShader,
+      //   fragmentShader,
+      // })
+
       {
-        const texture = loader.load(moodTexture)
-        texture.anisotropy = renderer.getMaxAnisotropy()
         const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
-          map: texture,
+          map: textureShader,
         })
 
-        const vertexShader = `
-          varying vec2 vUv;
-
-          void main()
-          {
-            vUv = uv;
-            vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-            gl_Position = projectionMatrix * mvPosition;
-          }
-        `
-
-        // const shaderMat = new THREE.ShaderMaterial({
-        //   uniforms: uniforms,
-        //   vertexShader: MaterialsShader.vertexShader,
-        //   fragmentShader: MaterialsShader.fragmentShader,
-        //   map: texture,
-        //   defines: {
-        //     USE_MAP: true,
-        //   },
-        // })
-
-        // console.log(shaderMat)
-
         material.transparent = true
-        material.opacity = 1
+        material.opacity = 0.8
         material.map.minFilter = THREE.LinearFilter
+
         mood = new THREE.Mesh(geometry, material)
         mood.name = 'mood'
         pivotMood.add(mood)
       }
-
-      // {
-      //   const gltfLoader = new GLTFLoader()
-      //   gltfLoader.load('/mood.glb', (gltf) => {
-      //     mood = gltf
-      //     pivotMood.add(mood.scene)
-
-      //     mood.scene.children.forEach((obj) => {
-      //       if (obj.material) {
-      //         console.log(obj.material)
-      //         obj.material.side = 0
-      //         obj.material.transparent = true
-      //         obj.material.opacity = 0.8
-      //       }
-      //     })
-      //   })
-      // }
 
       // RESIZE
 
@@ -505,8 +521,10 @@ export default {
 
       // RENDER
 
-      const render = (time) => {
-        time *= 0.0001
+      const render = () => {
+        // SHADERS
+        // const deltaShader = clockShader.getDelta()
+        // uniforms.time.value += deltaShader * 2
 
         // RESIZE
 
