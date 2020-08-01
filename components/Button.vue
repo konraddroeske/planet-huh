@@ -1,11 +1,11 @@
 <template>
   <nuxt-link v-if="to" :to="to" tab-index="-1">
-    <button>
+    <button @click="onClick">
       <slot />
     </button>
   </nuxt-link>
 
-  <button v-else>
+  <button v-else @click="onClick">
     <slot />
   </button>
 </template>
@@ -16,6 +16,10 @@ export default {
     to: {
       type: [String, Object],
       default: null,
+    },
+    onClick: {
+      type: Function,
+      default: () => {},
     },
   },
 }
