@@ -44,7 +44,7 @@ export const actions = {
     }
   },
 
-  async getSomePosts({ commit, state }, numPosts = 1) {
+  async getSomePosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
         posts(orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
@@ -52,7 +52,11 @@ export const actions = {
           title
           slug
           date
-          tags
+          city {
+            latitude
+          }
+          sense
+          mood
           coverImage {
             url
           }

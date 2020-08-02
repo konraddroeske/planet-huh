@@ -2,7 +2,7 @@
   <section>
     <Wrapper>
       <h2 class="visuallyHidden">Posts Feed</h2>
-      <ul>
+      <ul class="postList">
         <li v-for="post in formattedPosts" :key="post.id" class="postContainer">
           <nuxt-link :to="`/post/${post.slug}`">
             <img
@@ -17,7 +17,9 @@
               {{ post.title }}
             </nuxt-link>
           </h3>
-          <p class="postTags">{{ post.tags.join(', ') }}</p>
+          <p class="postTags">
+            {{ post.city }}, {{ post.sense }}, {{ post.mood }}
+          </p>
         </li>
       </ul>
       <Button
@@ -57,6 +59,7 @@ export default {
       return this.$props.posts.map((post) => ({
         ...post,
         date: moment(post.date).format('MMMM D, YYYY'),
+        city: 'Toronto',
       }))
     },
   },
@@ -85,13 +88,32 @@ section {
   text-align: center;
 }
 
-ul {
+.postList {
   list-style: none;
   padding-left: 0;
+
+  @media (min-width: $bp-desktop) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(30%, 70%));
+    grid-auto-rows: minmax(35rem, auto);
+    grid-gap: 1.5rem;
+
+    .postContainer:nth-child(odd) {
+      align-self: start;
+    }
+
+    .postContainer:nth-child(even) {
+      align-self: end;
+    }
+  }
 }
 
 .postContainer {
   margin-bottom: 4rem;
+
+  @media (min-width: $bp-desktop) {
+    margin-bottom: 0;
+  }
 }
 
 .postImage {
@@ -104,12 +126,21 @@ ul {
   font-size: 1.1rem;
   text-transform: uppercase;
   margin: 0;
+
+  @media (min-width: $bp-desktop) {
+    color: $gray;
+    text-align: left;
+  }
 }
 
 .postTitle {
   font-weight: $medium;
   font-size: 1.75rem;
   margin: 1rem 0;
+
+  @media (min-width: $bp-desktop) {
+    text-align: left;
+  }
 }
 
 .postLink,
@@ -127,5 +158,9 @@ ul {
   text-transform: uppercase;
   font-size: 1rem;
   margin: 0;
+
+  @media (min-width: $bp-desktop) {
+    text-align: left;
+  }
 }
 </style>
