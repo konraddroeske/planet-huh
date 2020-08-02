@@ -59,6 +59,8 @@ export const actions = {
           mood
           coverImage {
             url
+            height
+            width
           }
         }
       }`)

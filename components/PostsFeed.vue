@@ -3,7 +3,14 @@
     <Wrapper>
       <h2 class="visuallyHidden">Posts Feed</h2>
       <ul class="postList">
-        <li v-for="post in formattedPosts" :key="post.id" class="postContainer">
+        <li
+          v-for="post in formattedPosts"
+          :key="post.id"
+          class="postContainer"
+          :class="{
+            portraitMode: post.coverImage.height > post.coverImage.width,
+          }"
+        >
           <nuxt-link :to="`/post/${post.slug}`">
             <img
               class="postImage"
@@ -93,6 +100,7 @@ section {
   padding-left: 0;
 
   @media (min-width: $bp-desktop) {
+    margin-bottom: 5rem;
     display: grid;
     grid-template-columns: repeat(2, minmax(30%, 70%));
     grid-auto-rows: minmax(35rem, auto);
@@ -113,6 +121,12 @@ section {
 
   @media (min-width: $bp-desktop) {
     margin-bottom: 0;
+  }
+}
+
+.portraitMode {
+  @media (min-width: $bp-desktop) {
+    width: 30%;
   }
 }
 
