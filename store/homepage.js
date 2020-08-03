@@ -13,33 +13,33 @@ export const actions = {
     try {
       const { data } = await fetchContent(`{
         homePages {
-          ctaTitle
-          ctaText
-          featuredPosts {
-            title
-            date
-            slug
-            coverImage {
-              url
+            ctaTitle
+            ctaText
+            featuredPosts {
+              title
+              date
+              slug
+              coverImage {
+                url
+              }
+            }
+            featuredCollabPosts(where: {featured: true}) {
+              title
+              slug
+              date
+              featured
+              headline
+              artist {
+                name
+                location
+              }
+              images {
+                url
+                id
+                fileName
+              }
             }
           }
-        }
-        featuredCollabPosts(where: {featured: true}) {
-          title
-          slug
-          date
-          featured
-          headline
-          artist {
-            name
-            location
-          }
-          images {
-            url
-            id
-            fileName
-          }
-        }
       }`)
 
       const {
@@ -48,6 +48,7 @@ export const actions = {
         featuredPosts,
         featuredCollabPosts,
       } = data.data.homePages[0]
+
       commit('setHomepage', {
         ctaTitle,
         ctaText,
@@ -58,7 +59,6 @@ export const actions = {
       console.log(error) // TODO: error handling
     }
   },
-
   async getSomePosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
@@ -79,6 +79,7 @@ export const actions = {
           }
         }
       }`)
+
       const { posts } = data.data
       commit('setSomePosts', posts)
     } catch (error) {

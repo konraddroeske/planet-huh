@@ -2,12 +2,9 @@
   <div>
     <Nav />
     <CTA />
-    <FeaturedCollabs />
     <CategoryNav variant="gradient" />
-    <PostsFeed
-      :posts="postsFeed"
-      :get-some-posts="() => this.$store.dispatch('homepage/getSomePosts', 4)"
-    />
+    <FeaturedCollabs />
+    <PostsFeed />
   </div>
 </template>
 
@@ -26,13 +23,9 @@ export default {
     CategoryNav,
     PostsFeed,
   },
-  computed: {
-    postsFeed() {
-      return this.$store.state.homepage.postsFeed
-    },
-  },
-  created() {
-    this.$store.dispatch('homepage/getHomepage')
+  async fetch({ store }) {
+    await store.dispatch('homepage/getHomepage')
+    await store.dispatch('homepage/getSomePosts', 4)
   },
 }
 </script>

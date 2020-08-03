@@ -43,29 +43,24 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import moment from 'moment'
 import Wrapper from '@/components/Wrapper'
 import Button from '@/components/Button'
+
 export default {
   components: { Wrapper, Button },
-  props: {
-    posts: {
-      type: Array,
-      required: true,
-    },
-    getSomePosts: {
-      type: Function,
-      required: true,
-    },
-  },
   data() {
     return {
       allPostsFetched: false,
     }
   },
   computed: {
+    ...mapState({
+      posts: (state) => state.homepage.postsFeed,
+    }),
     formattedPosts() {
-      return this.$props.posts.map((post) => ({
+      return this.posts.map((post) => ({
         ...post,
         date: moment(post.date).format('MMMM D, YYYY'),
         city: 'Toronto',
@@ -79,13 +74,13 @@ export default {
       }
     },
   },
-  created() {
-    this.$props.getSomePosts()
-  },
   methods: {
+    getSomePosts() {
+      this.$store.dispatch('homepage/getSomePosts', 4)
+    },
     getSomePostsAndUnfocus() {
       this.$refs.load.$el.blur()
-      this.$props.getSomePosts()
+      this.getSomePosts()
     },
   },
 }
@@ -98,7 +93,6 @@ section {
 }
 
 .postList {
-  list-style: none;
   padding-left: 0;
 
   @media (min-width: $bp-desktop) {
