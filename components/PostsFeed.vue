@@ -102,7 +102,7 @@ section {
   padding-left: 0;
 
   @media (min-width: $bp-desktop) {
-    margin-bottom: 10rem;
+    margin-bottom: 5rem;
     display: flex;
     flex-wrap: wrap;
   }
