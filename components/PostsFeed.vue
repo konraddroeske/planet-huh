@@ -176,6 +176,7 @@ section {
 
   @media (min-width: $bp-desktop) {
     text-align: left;
+    font-size: 2rem;
   }
 }
 
