@@ -4,15 +4,8 @@ export const state = () => ({
   ctaTitle: '',
   ctaText: '',
   featuredPosts: [],
+  featuredCollabPosts: [],
 })
-
-export const mutations = {
-  setHomepage(state, { ctaTitle, ctaText, featuredPosts }) {
-    state.ctaTitle = ctaTitle
-    state.ctaText = ctaText
-    state.featuredPosts = featuredPosts
-  },
-}
 
 export const actions = {
   async getHomepage({ commit }) {
@@ -34,15 +27,53 @@ export const actions = {
                   url
                 }
               }
+              featuredCollabPosts(where: {featured: true}) {
+                title
+                slug
+                date
+                featured
+                headline
+                artist {
+                  name
+                  location
+                }
+                images {
+                  url
+                  id
+                  fileName
+                }
+              }
             }
           }`,
         },
       })
 
-      const { ctaTitle, ctaText, featuredPosts } = data.data.homePages[0]
-      commit('setHomepage', { ctaTitle, ctaText, featuredPosts })
+      const {
+        ctaTitle,
+        ctaText,
+        featuredPosts,
+        featuredCollabPosts,
+      } = data.data.homePages[0]
+      commit('setHomepage', {
+        ctaTitle,
+        ctaText,
+        featuredPosts,
+        featuredCollabPosts,
+      })
     } catch (error) {
       console.log(error) // TODO: error handling
     }
+  },
+}
+
+export const mutations = {
+  setHomepage(
+    state,
+    { ctaTitle, ctaText, featuredPosts, featuredCollabPosts }
+  ) {
+    state.ctaTitle = ctaTitle
+    state.ctaText = ctaText
+    state.featuredPosts = featuredPosts
+    state.featuredCollabPosts = featuredCollabPosts
   },
 }
