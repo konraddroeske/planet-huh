@@ -14,7 +14,7 @@ export default {}
   margin: 0 auto;
 
   @media (min-width: $bp-desktop) {
-    width: 90%;
+    width: 85%;
   }
 }
 </style>

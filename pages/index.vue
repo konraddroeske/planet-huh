@@ -5,7 +5,7 @@
     <CategoryNav variant="gradient" />
     <PostsFeed
       :posts="postsFeed"
-      :get-some-posts="() => this.$store.dispatch('homepage/getSomePosts', 2)"
+      :get-some-posts="() => this.$store.dispatch('homepage/getSomePosts', 4)"
     />
   </div>
 </template>

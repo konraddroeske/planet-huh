@@ -4,11 +4,13 @@
       <h2 class="visuallyHidden">Posts Feed</h2>
       <ul class="postList">
         <li
-          v-for="post in formattedPosts"
+          v-for="(post, index) of formattedPosts"
           :key="post.id"
           class="postContainer"
           :class="{
-            portraitMode: post.coverImage.height > post.coverImage.width,
+            portraitMode: post.coverImage.height >= post.coverImage.width,
+            isOddLastPost:
+              index % 2 === 0 && index === formattedPosts.length - 1,
           }"
         >
           <nuxt-link :to="`/post/${post.slug}`">
@@ -100,19 +102,9 @@ section {
   padding-left: 0;
 
   @media (min-width: $bp-desktop) {
-    margin-bottom: 5rem;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(30%, 70%));
-    grid-auto-rows: minmax(35rem, auto);
-    grid-gap: 1.5rem;
-
-    .postContainer:nth-child(odd) {
-      align-self: start;
-    }
-
-    .postContainer:nth-child(even) {
-      align-self: end;
-    }
+    margin-bottom: 10rem;
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 
@@ -120,13 +112,43 @@ section {
   margin-bottom: 4rem;
 
   @media (min-width: $bp-desktop) {
-    margin-bottom: 0;
+    margin-bottom: 15rem;
+  }
+
+  @media (min-width: $bp-lg-desktop) {
+    margin-bottom: 17.5rem;
   }
 }
 
-.portraitMode {
+.postContainer:nth-child(odd) {
   @media (min-width: $bp-desktop) {
-    width: 30%;
+    flex: 1 0 calc(50% - 1.25rem);
+    margin-right: 2.5rem;
+  }
+}
+
+.postContainer:nth-child(even) {
+  @media (min-width: $bp-desktop) {
+    flex: 1 0 calc(50% - 1.25rem);
+    position: relative;
+    top: 12.5rem;
+  }
+
+  @media (min-width: $bp-lg-desktop) {
+    top: 20rem;
+  }
+}
+
+.portraitMode:nth-child(odd),
+.portraitMode:nth-child(even) {
+  @media (min-width: $bp-desktop) {
+    flex: 1 0 10%;
+  }
+}
+
+.isOddLastPost {
+  @media (min-width: $bp-desktop) {
+    max-width: 50%;
   }
 }
 
