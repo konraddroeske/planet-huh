@@ -19,6 +19,7 @@
     "@fortawesome/vue-fontawesome": "^0.1.10",
     "@nuxtjs/axios": "^5.11.0",
     "@nuxtjs/pwa": "^3.0.0-beta.20",
+    "@nuxtjs/svg": "^0.1.11",
     "axios": "^0.19.2",
     "gsap": "file:gsap-bonus.tgz",
     "moment": "^2.27.0",
