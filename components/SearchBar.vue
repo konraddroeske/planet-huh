@@ -45,7 +45,7 @@ export default {
   color: $white;
 
   &::placeholder {
-    color: #707070;
+    color: $gray;
   }
 
   @media (min-width: $bp-desktop) {

@@ -1,52 +1,46 @@
-import axios from 'axios'
+import { fetchContent } from '@/utils/api'
 
 export const state = () => ({
   ctaTitle: '',
   ctaText: '',
   featuredPosts: [],
   featuredCollabPosts: [],
+  postsFeed: [],
 })
 
 export const actions = {
   async getHomepage({ commit }) {
     try {
-      const { data } = await axios({
-        method: 'post',
-        url:
-          'https://api-us-east-1.graphcms.com/v2/ckcmojoyd1vly01xo5ubkgptp/master',
-        data: {
-          query: `{
-            homePages {
-              ctaTitle
-              ctaText
-              featuredPosts {
-                title
-                date
-                slug
-                coverImage {
-                  url
-                }
-              }
-              featuredCollabPosts(where: {featured: true}) {
-                title
-                slug
-                date
-                featured
-                headline
-                artist {
-                  name
-                  location
-                }
-                images {
-                  url
-                  id
-                  fileName
-                }
-              }
+      const { data } = await fetchContent(`{
+        homePages {
+          ctaTitle
+          ctaText
+          featuredPosts {
+            title
+            date
+            slug
+            coverImage {
+              url
             }
-          }`,
-        },
-      })
+          }
+        }
+        featuredCollabPosts(where: {featured: true}) {
+          title
+          slug
+          date
+          featured
+          headline
+          artist {
+            name
+            location
+          }
+          images {
+            url
+            id
+            fileName
+          }
+        }
+      }`)
 
       const {
         ctaTitle,
@@ -64,6 +58,33 @@ export const actions = {
       console.log(error) // TODO: error handling
     }
   },
+
+  async getSomePosts({ commit, state }, numPosts = 4) {
+    try {
+      const { data } = await fetchContent(`{
+        posts(orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
+          id
+          title
+          slug
+          date
+          city {
+            latitude
+          }
+          sense
+          mood
+          coverImage {
+            url
+            height
+            width
+          }
+        }
+      }`)
+      const { posts } = data.data
+      commit('setSomePosts', posts)
+    } catch (error) {
+      console.log(error)
+    }
+  },
 }
 
 export const mutations = {
@@ -75,5 +96,9 @@ export const mutations = {
     state.ctaText = ctaText
     state.featuredPosts = featuredPosts
     state.featuredCollabPosts = featuredCollabPosts
+  },
+
+  setSomePosts(state, newPosts) {
+    state.postsFeed = state.postsFeed.concat(newPosts)
   },
 }
