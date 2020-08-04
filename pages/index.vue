@@ -3,16 +3,15 @@
     <Nav />
     <CTA />
     <CategoryNav variant="gradient" />
-    <PostsFeed
-      :posts="postsFeed"
-      :get-some-posts="() => this.$store.dispatch('homepage/getSomePosts', 4)"
-    />
+    <FeaturedCollabs />
+    <PostsFeed />
   </div>
 </template>
 
 <script>
 import Nav from '@/components/Nav'
 import CTA from '@/components/CTA'
+import FeaturedCollabs from '@/components/FeaturedCollabs'
 import CategoryNav from '@/components/CategoryNav'
 import PostsFeed from '@/components/PostsFeed'
 
@@ -20,16 +19,13 @@ export default {
   components: {
     Nav,
     CTA,
+    FeaturedCollabs,
     CategoryNav,
     PostsFeed,
   },
-  computed: {
-    postsFeed() {
-      return this.$store.state.homepage.postsFeed
-    },
-  },
-  created() {
-    this.$store.dispatch('homepage/getHomepage')
+  async fetch({ store }) {
+    await store.dispatch('homepage/getHomepage')
+    await store.dispatch('homepage/getSomePosts', 4)
   },
 }
 </script>

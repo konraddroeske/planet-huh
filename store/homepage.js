@@ -4,46 +4,61 @@ export const state = () => ({
   ctaTitle: '',
   ctaText: '',
   featuredPosts: [],
+  featuredCollabPosts: [],
   postsFeed: [],
 })
-
-export const mutations = {
-  setHomepage(state, { ctaTitle, ctaText, featuredPosts }) {
-    state.ctaTitle = ctaTitle
-    state.ctaText = ctaText
-    state.featuredPosts = featuredPosts
-  },
-
-  setSomePosts(state, newPosts) {
-    state.postsFeed = state.postsFeed.concat(newPosts)
-  },
-}
 
 export const actions = {
   async getHomepage({ commit }) {
     try {
       const { data } = await fetchContent(`{
         homePages {
-          ctaTitle
-          ctaText
-          featuredPosts {
-            title
-            date
-            slug
-            coverImage {
-              url
+            ctaTitle
+            ctaText
+            featuredPosts {
+              title
+              date
+              slug
+              coverImage {
+                url
+              }
+            }
+            featuredCollabPosts(where: {featured: true}) {
+              title
+              slug
+              date
+              featured
+              headline
+              artist {
+                name
+                location
+              }
+              images {
+                url
+                id
+                fileName
+              }
             }
           }
-        }
       }`)
 
-      const { ctaTitle, ctaText, featuredPosts } = data.data.homePages[0]
-      commit('setHomepage', { ctaTitle, ctaText, featuredPosts })
+      const {
+        ctaTitle,
+        ctaText,
+        featuredPosts,
+        featuredCollabPosts,
+      } = data.data.homePages[0]
+
+      commit('setHomepage', {
+        ctaTitle,
+        ctaText,
+        featuredPosts,
+        featuredCollabPosts,
+      })
     } catch (error) {
       console.log(error) // TODO: error handling
     }
   },
-
   async getSomePosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
@@ -64,10 +79,27 @@ export const actions = {
           }
         }
       }`)
+
       const { posts } = data.data
       commit('setSomePosts', posts)
     } catch (error) {
       console.log(error)
     }
+  },
+}
+
+export const mutations = {
+  setHomepage(
+    state,
+    { ctaTitle, ctaText, featuredPosts, featuredCollabPosts }
+  ) {
+    state.ctaTitle = ctaTitle
+    state.ctaText = ctaText
+    state.featuredPosts = featuredPosts
+    state.featuredCollabPosts = featuredCollabPosts
+  },
+
+  setSomePosts(state, newPosts) {
+    state.postsFeed = state.postsFeed.concat(newPosts)
   },
 }
