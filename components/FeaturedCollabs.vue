@@ -225,8 +225,6 @@ export default {
         Object.values(this.$refs).map((ele) => ele[0])
       )
 
-      console.log(this.slideHeight)
-
       gsap.set(this.proxyRef, {
         x: norm * this.wrapWidth,
       })
