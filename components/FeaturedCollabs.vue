@@ -3,51 +3,49 @@
     <h2 class="title">Featured Collabs</h2>
     <div class="leftArrow"><LeftArrow /></div>
     <div class="rightArrow"><RightArrow /></div>
-    <div class="collabsContainer">
-      <ul class="collabsList">
-        <li
-          v-for="(post, index) of posts"
-          :key="post.id"
-          :ref="'post' + index"
-          class="collab"
-        >
-          <div class="collabContent">
-            <div class="leftImage">
-              <img
-                class="postImage"
-                :src="post.images[0].url"
-                :alt="post.title"
-              />
-            </div>
-            <div class="rightImage">
-              <img
-                class="postImage"
-                :src="post.images[1].url"
-                :alt="post.title"
-              />
-            </div>
-            <Wrapper>
-              <div class="content">
-                <div class="headline">
-                  <p>
-                    {{ post.headline }}
-                  </p>
-                </div>
-                <div class="title">
-                  <h3>
-                    {{ post.artist[0].name }} + {{ post.artist[1].name }}
-                    {{ post.title }}
-                  </h3>
-                </div>
-                <div class="buttonContainer">
-                  <Button>Explore</Button>
-                </div>
-              </div>
-            </Wrapper>
+    <ul class="collabsList">
+      <li
+        v-for="(post, index) of posts"
+        :key="post.id"
+        :ref="'post' + index"
+        class="collab"
+      >
+        <div class="collabContent">
+          <div class="leftImage">
+            <img
+              class="postImage"
+              :src="post.images[0].url"
+              :alt="post.title"
+            />
           </div>
-        </li>
-      </ul>
-    </div>
+          <div class="rightImage">
+            <img
+              class="postImage"
+              :src="post.images[1].url"
+              :alt="post.title"
+            />
+          </div>
+          <Wrapper>
+            <div class="content">
+              <div class="headline">
+                <p>
+                  {{ post.headline }}
+                </p>
+              </div>
+              <div class="title">
+                <h3>
+                  {{ post.artist[0].name }} + {{ post.artist[1].name }}
+                  {{ post.title }}
+                </h3>
+              </div>
+              <div class="buttonContainer">
+                <Button>Explore</Button>
+              </div>
+            </div>
+          </Wrapper>
+        </div>
+      </li>
+    </ul>
   </section>
 </template>
 
@@ -108,7 +106,7 @@ export default {
     const that = this
 
     this.dragInstance = Draggable.create(this.proxyRef, {
-      trigger: '.collabsContainer',
+      trigger: '.collabsList',
       type: 'x',
       // edgeResistance: 0.65,
       inertia: true,
@@ -222,7 +220,7 @@ export default {
       this.animateSlides(-direction)
     },
     updateAnimation() {
-      this.animation = gsap.to(this.$refs, 0.8, {
+      this.animation = gsap.to('.collab', 0.8, {
         xPercent: '+=' + this.numSlides * 100,
         ease: 'none',
         paused: true,
@@ -283,19 +281,12 @@ h3 {
   line-height: 1;
 }
 
-.collabsContainer {
-  position: relative;
-  min-height: 60vh;
-}
-
 ul {
   margin: 0;
   padding: 0;
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
+  position: relative;
+  min-height: 60vh;
+  overflow: hidden;
 }
 
 .collab {
