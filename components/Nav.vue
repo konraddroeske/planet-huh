@@ -8,7 +8,6 @@
 <script>
 import * as THREE from 'three'
 import SpriteText from 'three-spritetext'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import globeTexture from '@/assets/images/globe.png'
 import moodTexture from '@/assets/images/mood.png'
 
