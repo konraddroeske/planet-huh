@@ -34,7 +34,7 @@
       <Button
         v-if="!allPostsFetched"
         ref="load"
-        :on-click="getSomePostsAndUnfocus"
+        @clicked="getSomePostsAndUnfocus"
       >
         Load More
       </Button>

@@ -17,9 +17,10 @@ export default {
       type: [String, Object],
       default: null,
     },
-    onClick: {
-      type: Function,
-      default: () => {},
+  },
+  methods: {
+    onClick(event) {
+      this.$emit('clicked')
     },
   },
 }

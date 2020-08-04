@@ -1,8 +1,12 @@
 <template>
   <section class="featuredCollabs">
     <h2 class="title">Featured Collabs</h2>
-    <div class="leftArrow"><LeftArrow /></div>
-    <div class="rightArrow"><RightArrow /></div>
+    <ButtonArrow class="leftArrow" @clicked="handleSlide(-1)"
+      ><LeftArrow
+    /></ButtonArrow>
+    <ButtonArrow class="rightArrow" @clicked="handleSlide(1)"
+      ><RightArrow
+    /></ButtonArrow>
     <ul class="collabsList">
       <li
         v-for="(post, index) of posts"
@@ -39,7 +43,7 @@
                 </h3>
               </div>
               <div class="buttonContainer">
-                <Button>Explore</Button>
+                <Button @clicked="onClick(post.slug)">Explore</Button>
               </div>
             </div>
           </Wrapper>
@@ -54,6 +58,7 @@ import { mapState } from 'vuex'
 import gsap from 'gsap'
 import { Draggable, InertiaPlugin } from 'gsap/all'
 import Button from '@/components/Button'
+import ButtonArrow from '@/components/ButtonArrow'
 import Wrapper from '@/components/Wrapper'
 import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
 import RightArrow from '~/assets/icons/rightArrow.svg?inline'
@@ -61,6 +66,7 @@ import RightArrow from '~/assets/icons/rightArrow.svg?inline'
 export default {
   components: {
     Button,
+    ButtonArrow,
     Wrapper,
     LeftArrow,
     RightArrow,
@@ -72,6 +78,8 @@ export default {
       proxyRef: null,
       transform: null,
       slideWidth: null,
+      slideHeight: null,
+      imageHeight: null,
       wrapWidth: null,
       slideAnimation: gsap.to({}, 0.1, {}),
       switchPosition: null,
@@ -99,9 +107,12 @@ export default {
 
     // SET POSITION
 
-    this.switchPosition = window.matchMedia('(max-width: 650px)')
-    this.handleSwitchPosition(this.switchPosition)
-    this.switchPosition.addListener(this.handleSwitchPosition)
+    this.setPosition()
+    this.updateAnimation()
+
+    // this.switchPosition = window.matchMedia('(max-width: 650px)')
+    // this.handleSwitchPosition(this.switchPosition)
+    // this.switchPosition.addListener(this.handleSwitchPosition)
 
     const that = this
 
@@ -137,9 +148,12 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
-    this.switchPosition.removeListener(this.handleSwitchPosition)
+    // this.switchPosition.removeListener(this.handleSwitchPosition)
   },
   methods: {
+    onClick(slug) {
+      this.$router.push(`/post/${slug}`)
+    },
     wrapPartial(min, max) {
       const r = max - min
 
@@ -149,7 +163,7 @@ export default {
         return ((r + (v % r)) % r) + min
       }
     },
-    setPosition(below) {
+    setPosition() {
       for (let i = 0; i < this.numSlides; i++) {
         gsap.set(this.$refs[`post${i}`][0], {
           xPercent: i * 100,
@@ -157,15 +171,6 @@ export default {
             xPercent: this.wrap,
           },
         })
-      }
-    },
-    handleSwitchPosition(mediaQuery) {
-      if (mediaQuery.matches) {
-        this.setPosition(true)
-        this.updateAnimation()
-      } else {
-        this.setPosition(false)
-        this.updateAnimation()
       }
     },
     animateSlides(direction) {
@@ -199,6 +204,13 @@ export default {
 
       this.animation.progress(trans)
     },
+    getMaxHeight(eleArr) {
+      const heights = eleArr.map((post) => {
+        return post.getBoundingClientRect().height
+      })
+
+      return Math.max(...heights)
+    },
     resize() {
       const xVal = parseFloat(
         this.transform.x.substring(0, this.transform.x.length - 2)
@@ -209,8 +221,18 @@ export default {
       this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
       this.wrapWidth = this.slideWidth * this.numSlides
 
+      this.slideHeight = this.getMaxHeight(
+        Object.values(this.$refs).map((ele) => ele[0])
+      )
+
+      console.log(this.slideHeight)
+
       gsap.set(this.proxyRef, {
         x: norm * this.wrapWidth,
+      })
+
+      gsap.set('.collabsList', {
+        height: this.slideHeight,
       })
 
       this.animateSlides(0)
@@ -242,8 +264,7 @@ export default {
 .leftArrow,
 .rightArrow {
   position: absolute;
-  width: 2rem;
-  top: 10rem;
+  top: calc(32px + 22.5vw);
   z-index: 10;
 }
 
@@ -285,7 +306,6 @@ ul {
   margin: 0;
   padding: 0;
   position: relative;
-  min-height: 60vh;
   overflow: hidden;
 }
 
@@ -304,24 +324,19 @@ ul {
   .leftImage,
   .rightImage {
     width: 50%;
-    overflow: hidden;
     position: relative;
-    height: 14rem;
+    height: 45vw;
   }
 
   img {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: auto;
-    min-width: 100%;
-    min-height: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .content {
     width: 100%;
-    margin: 2rem 0 4rem 0;
+    margin: 2rem 0 0 0;
   }
 
   .title {
@@ -331,6 +346,87 @@ ul {
   .buttonContainer {
     display: flex;
     justify-content: center;
+  }
+}
+
+@media (min-width: $bp-desktop) {
+  .leftArrow,
+  .rightArrow {
+    top: calc(48px + 35vh);
+  }
+
+  h2 {
+    margin: 1.5rem 0;
+  }
+
+  h2,
+  h3 {
+    font-size: 3rem;
+  }
+
+  .collabsList {
+    border: 1px solid $black;
+    margin-bottom: 8rem;
+  }
+
+  .collabContent {
+    min-height: 70vh;
+    .leftImage {
+      order: 1;
+      width: 35%;
+    }
+
+    .wrapper {
+      order: 2;
+      width: 30%;
+    }
+
+    .rightImage {
+      order: 3;
+      width: 35%;
+    }
+
+    .leftImage,
+    .rightImage {
+      height: 70vh;
+    }
+
+    .content {
+      min-width: 280px;
+      width: 70%;
+      margin: 4rem auto 4rem auto;
+    }
+
+    .title {
+      margin: 2.5rem 0 3rem 0;
+    }
+  }
+}
+
+@media (min-width: $bp-lg-desktop) {
+  .leftArrow,
+  .rightArrow {
+    top: calc(56px + 36.5vh);
+  }
+
+  h2,
+  h3 {
+    font-size: 3.5rem;
+  }
+
+  p {
+    font-size: 1.25rem;
+  }
+
+  .collabContent {
+    .content {
+      min-width: 325px;
+    }
+
+    .leftImage,
+    .rightImage {
+      height: 73vh;
+    }
   }
 }
 </style>
