@@ -423,7 +423,7 @@ ul {
 
     .leftImage,
     .rightImage {
-      height: 73vh;
+      height: 75vh;
     }
   }
 }
