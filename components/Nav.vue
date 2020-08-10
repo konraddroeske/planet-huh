@@ -9,7 +9,6 @@
 import * as THREE from 'three'
 import SpriteText from 'three-spritetext'
 import globeTexture from '@/assets/images/globe.png'
-import moodTexture from '@/assets/images/mood.png'
 
 export default {
   data() {
@@ -27,15 +26,86 @@ export default {
         [43.6532, -79.3832, 'Toronto'],
         [42.3601, -71.0589, 'Boston'],
       ],
-      moods: [
-        [40.71427, -74.00597, 'Whimsical'],
-        [52.52437, 13.41053, 'Melancholy'],
-        [51.5074, -0.1278, 'Tense'],
-        [30.0444, 31.2357, 'Serene'],
-        [-33.9249, 19.4241, 'Desolate'], // Slightly off
-        [-37.8136, 144.9631, 'Exhausted'],
+      colors: [
+        {
+          r: 116,
+          g: 155,
+          b: 255,
+          latitude: 45,
+          longitude: 0,
+          posts: [
+            { title: 'a' },
+            { title: 'b' },
+            { title: 'c' },
+            { title: 'd' },
+            { title: 'e' },
+            { title: 'f' },
+          ],
+          name: 'blue',
+        },
+        {
+          r: 255,
+          g: 147,
+          b: 30,
+          latitude: 45,
+          longitude: -120,
+          posts: [{ title: 'a' }, { title: 'b' }, { title: 'c' }],
+          name: 'orange',
+        },
+        {
+          r: 209,
+          g: 221,
+          b: 188,
+          latitude: 45,
+          longitude: 120,
+          posts: [
+            { title: 'a' },
+            { title: 'b' },
+            { title: 'c' },
+            { title: 'd' },
+            { title: 'e' },
+            { title: 'f' },
+          ],
+          name: 'green',
+        },
+        {
+          r: 193,
+          g: 146,
+          b: 224,
+          latitude: -45,
+          longitude: 60,
+          posts: [{ title: 'a' }, { title: 'b' }, { title: 'c' }],
+          name: 'magenta',
+        },
+        {
+          r: 255,
+          g: 123,
+          b: 172,
+          latitude: -45,
+          longitude: -60,
+          posts: [{ title: 'a' }, { title: 'b' }, { title: 'c' }],
+          name: 'red',
+        },
+        {
+          r: 255,
+          g: 229,
+          b: 172,
+          latitude: -45,
+          longitude: 180,
+          posts: [
+            { title: 'a' },
+            { title: 'b' },
+            { title: 'c' },
+            { title: 'd' },
+            { title: 'e' },
+            { title: 'f' },
+            { title: 'g' },
+            { title: 'h' },
+            { title: 'i' },
+          ],
+          name: 'yellow',
+        },
       ],
-      senses: ['Touch', 'Sight', 'Hearing', 'Smell'],
       currentNav: null,
     }
   },
@@ -275,74 +345,131 @@ export default {
 
       // MOOD OBJECT
 
+      // functions
+
+      const calcWeight = (moodsArr, index) => {
+        function getSum(total, num) {
+          return total + Math.round(num)
+        }
+
+        const multiplier = 0.4
+
+        const moodsAvg =
+          moodsArr.map((mood) => mood.posts.length).reduce(getSum, 0) /
+          moodsArr.length
+
+        return moodsArr[index].posts.length - moodsAvg === 0
+          ? 1
+          : 1 +
+              ((moodsArr[index].posts.length - moodsAvg) / moodsAvg) *
+                multiplier
+      }
+
+      this.colors.forEach((color, index) => {
+        // calculate weight
+        const weight = calcWeight(this.colors, index)
+
+        // calculate position
+        const [x, y, z] = calcPosition(color.latitude, color.longitude, 1)
+
+        this.colors[index] = { ...this.colors[index], weight, x, y, z }
+
+        // add positions
+        this.colors[index].positions = []
+      })
+
+      const distance = (x1, y1, z1, x2, y2, z2) => {
+        const dx = x1 - x2
+        const dy = y1 - y2
+        const dz = z1 - z2
+        return Math.sqrt(dx * dx + dy * dy + dz * dz)
+      }
+
+      const calculateColor = (colors, x, y, z) => {
+        let total = 0
+        const distances = []
+
+        // for all colors
+        for (let i = 0; i < colors.length; i += 1) {
+          const c = colors[i]
+          let d = distance(c.x, c.y, c.z, x, y, z) / colors[i].weight
+          distances.push(d)
+
+          d = 1 / d ** 3
+          c.d = d
+          c.d = d
+          total += d
+        }
+
+        // find minumum value
+        const minDistance = Math.min.apply(null, distances)
+
+        // add position to colors
+
+        if (y >= -0.7 && y <= 0.7) {
+          colors[distances.indexOf(minDistance)].positions.push([x, y, z])
+        }
+
+        // push coordinates into mood locations object
+        let r = 0
+        let g = 0
+        let b = 0
+
+        for (let i = 0; i < colors.length; i += 1) {
+          const c = colors[i]
+          const ratio = c.d / total
+
+          r += ratio * c.r
+          g += ratio * c.g
+          b += ratio * c.b
+        }
+
+        r = Math.floor(r)
+        g = Math.floor(g)
+        b = Math.floor(b)
+        return { r, g, b }
+      }
+
       let mood
 
-      // Shader
-      // const clockShader = new THREE.Clock()
-
-      const textureShader = loader.load(moodTexture)
-      textureShader.anisotropy = renderer.getMaxAnisotropy()
-
-      // const uniforms = {
-      //   time: { value: 1.0 },
-      //   textureColor: { value: textureShader },
-      // }
-
-      // uniforms.textureColor.value.wrapT = THREE.RepeatWrapping
-
-      // const vertexShader = `
-      //   varying vec2 vUv;
-
-      //   void main()
-      //   {
-      //     vUv = uv;
-      //     vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
-      //     gl_Position = projectionMatrix * mvPosition;
-      //   }
-      // `
-
-      // const fragmentShader = `
-      //   uniform float time;
-
-      //   uniform sampler2D textureColor;
-
-      //   varying vec2 vUv;
-
-      //   void main( void ) {
-
-      //     vec2 position = - 1.0 + 2.0 * vUv;
-
-      //     float a = atan( position.y, position.x );
-      //     float r = sqrt( dot( position, position ) );
-
-      //     vec2 uv;
-      //     uv.x = cos( a ) / r;
-      //     uv.y = sin( a ) / r;
-      //     uv /= 10.0;
-      //     uv += time * 0.05;
-
-      //     vec3 color = texture2D( textureColor, uv ).rgb;
-
-      //     gl_FragColor = vec4( color * r * 1.5, 1.0 );
-
-      //   }
-      // `
-
-      // const shaderMat = new THREE.ShaderMaterial({
-      //   uniforms,
-      //   vertexShader,
-      //   fragmentShader,
-      // })
-
       {
-        const geometry = new THREE.SphereGeometry(1, 64, 64)
+        const radius = 1
+        const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
+
+        const { count } = geometry.attributes.position
+        geometry.setAttribute(
+          'color',
+          new THREE.BufferAttribute(new Float32Array(count * 3), 3)
+        )
+
+        const positions = geometry.attributes.position
+        const positionColor = geometry.attributes.color
+
+        for (let i = 0; i < count; i += 1) {
+          const calculatedColor = calculateColor(
+            this.colors,
+            positions.getX(i),
+            positions.getY(i),
+            positions.getZ(i)
+          )
+
+          positionColor.setXYZ(
+            i,
+            calculatedColor.r / 255,
+            calculatedColor.g / 255,
+            calculatedColor.b / 255
+          )
+        }
+
         const material = new THREE.MeshPhongMaterial({
-          map: textureShader,
+          color: 0xffffff,
+          flatShading: true,
+          vertexColors: true,
+          shininess: 0,
         })
 
         material.transparent = true
         material.opacity = 0.8
-        material.map.minFilter = THREE.LinearFilter
 
         mood = new THREE.Mesh(geometry, material)
         mood.name = 'mood'
@@ -417,8 +544,10 @@ export default {
 
       const citiesArr = []
 
-      const spriteMap = new THREE.TextureLoader().load('/sprites/mapDot.png')
-      const spriteMapAlt = new THREE.TextureLoader().load(
+      const spriteMapBlue = new THREE.TextureLoader().load(
+        '/sprites/mapDot.png'
+      )
+      const spriteMapWhite = new THREE.TextureLoader().load(
         '/sprites/mapDot2.png'
       )
 
@@ -441,7 +570,7 @@ export default {
         return [x, y, z]
       }
 
-      const addPoints = () => {
+      const addCities = () => {
         this.cities.forEach((city, index) => {
           // City Location
           const position = calcPosition(city[0], city[1], 1.015)
@@ -452,7 +581,9 @@ export default {
           globe.add(citiesArr[index])
 
           // Main Material for each Sprite
-          spriteCitiesMats.push(new THREE.SpriteMaterial({ map: spriteMap }))
+          spriteCitiesMats.push(
+            new THREE.SpriteMaterial({ map: spriteMapBlue })
+          )
           spriteCitiesMats[index].name = 'Main'
           spriteCitiesMats[index].transparent = true
 
@@ -464,7 +595,7 @@ export default {
 
           // Alt Material for each Sprite
           spriteCitiesMatsAlt.push(
-            new THREE.SpriteMaterial({ map: spriteMapAlt })
+            new THREE.SpriteMaterial({ map: spriteMapWhite })
           )
           spriteCitiesMatsAlt[index].name = 'Alt'
           spriteCitiesMatsAlt[index].transparent = true
@@ -495,12 +626,106 @@ export default {
         spriteCities.push(globe)
       }
 
-      addPoints()
+      addCities()
+
+      // MOODS
+
+      const moodsArr = {}
+      const spriteMoods = {}
+      const spriteMoodsMats = {}
+
+      this.colors.forEach((color) => {
+        moodsArr[color.name] = []
+        spriteMoods[color.name] = []
+        spriteMoodsMats[color.name] = []
+      })
+
+      // const spriteMoodsAlt = []
+      // const spriteMoodsMatsAlt = []
+
+      // const spriteTextArrMoods = []
+
+      const spriteMapBlack = new THREE.TextureLoader().load(
+        '/sprites/mapDot3.png'
+      )
+
+      const getPosition = (positions) => {
+        const position = positions[Math.floor(Math.random() * positions.length)]
+        // check distance to other moods positions
+
+        return position
+      }
+
+      const addMoods = () => {
+        this.colors.forEach((color) => {
+          color.posts.forEach((post, index) => {
+            // Get Position
+            const position = getPosition(color.positions)
+
+            // Main Object
+            moodsArr[color.name].push(new THREE.Object3D())
+            moodsArr[color.name][index].position.set(
+              position[0] * 1.015,
+              position[1] * 1.015,
+              position[2] * 1.015
+            )
+            mood.add(moodsArr[color.name][index])
+
+            // Main Material for each Sprite
+            spriteMoodsMats[color.name].push(
+              new THREE.SpriteMaterial({ map: spriteMapWhite })
+            )
+            spriteMoodsMats[color.name][index].name = 'Main'
+            spriteMoodsMats[color.name][index].transparent = true
+
+            // Main Sprite for each City
+            spriteMoods[color.name].push(
+              new THREE.Sprite(spriteMoodsMats[color.name][index])
+            )
+            spriteMoods[color.name][index].name = post.title
+            spriteMoods[color.name][index].scale.set(0.07, 0.07, 1)
+            moodsArr[color.name][index].add(spriteMoods[color.name][index])
+
+            // Alt Material for each Sprite
+            // spriteCitiesMatsAlt.push(
+            //   new THREE.SpriteMaterial({ map: spriteMapWhite })
+            // )
+            // spriteMoodsMatsAlt[index].name = 'Alt'
+            // spriteMoodsMatsAlt[index].transparent = true
+
+            // Alt Sprite for each City
+            // spriteMoodsAlt.push(new THREE.Sprite(spriteMoodsMatsAlt[index]))
+            // spriteMoodsAlt[index].name = city[2]
+            // spriteMoodsAlt[index].scale.set(0.07, 0.07, 1)
+            // spriteMoodsAlt[index].material.opacity = 0
+            // moodsArr[index].add(spriteMoodsAlt[index])
+
+            // Sprite Text
+            // const textPosition = calcPosition(city[0], city[1], 1.06)
+            // const moodsName = new SpriteText(city[2], 0.024, 'black')
+            // cityName.center = new THREE.Vector2(0.5, 0.5)
+            // cityName.fontFace = 'Work Sans'
+            // spriteTextArr.push(cityName)
+            // spriteTextArr[index].name = city[2]
+            // globe.add(spriteTextArr[index])
+            // spriteTextArr[index].material.opacity = 0
+            // spriteTextArr[index].position.set(
+            //   textPosition[0],
+            //   textPosition[1],
+            //   textPosition[2]
+            // )
+          })
+        })
+      }
+
+      console.log(moodsArr)
+
+      addMoods()
 
       // GLOW
 
       // Globe
-      const earthGlowMat = new THREE.SpriteMaterial({ map: spriteMap })
+      const earthGlowMat = new THREE.SpriteMaterial({ map: spriteMapBlue })
       earthGlowMat.transparent = true
 
       const glowX = 4.5
@@ -521,10 +746,6 @@ export default {
       // RENDER
 
       const render = () => {
-        // SHADERS
-        // const deltaShader = clockShader.getDelta()
-        // uniforms.time.value += deltaShader * 2
-
         // RESIZE
 
         if (resizeRendererToDisplaySize(renderer)) {
@@ -578,7 +799,7 @@ export default {
 
         // HOVER ANIMATIONS
 
-        // main sprite
+        // globe main sprite
 
         if (currentTarget && currentTarget.material.opacity >= 0) {
           currentTarget.material.opacity -= 0.03
@@ -590,7 +811,7 @@ export default {
           }
         })
 
-        // alt sprite
+        // globe alt sprite
 
         spriteCitiesAlt.forEach((obj, index) => {
           if (currentTarget) {
