@@ -2,12 +2,13 @@
   <div id="sceneContainer" class="sceneContainer">
     <canvas ref="scene" class="scene" />
     <button class="toggle">Toggle</button>
+    <p ref="navTitle" class="title">Title Example</p>
   </div>
 </template>
 
 <script>
 import * as THREE from 'three'
-import SpriteText from 'three-spritetext'
+import gsap from 'gsap'
 import globeTexture from '@/assets/images/globe.png'
 
 export default {
@@ -205,6 +206,19 @@ export default {
 
       document.addEventListener('click', navRouter)
 
+      // LERP TIMER
+
+      let lerpTimerBool = true
+      const lerpTimerFn = () => {
+        lerpTimerBool = true
+      }
+      let lerpTimer
+
+      const setLerpTimer = () => {
+        clearInterval(lerpTimer)
+        lerpTimer = setInterval(lerpTimerFn, 5000)
+      }
+
       // OBJECT CONTROLS
       // https://github.com/albertopiras/threeJS-object-controls
 
@@ -213,6 +227,9 @@ export default {
       const mouseDown = (e) => {
         isDragging = true
         isThrowing = true
+        lerpTimerBool = false
+
+        setLerpTimer()
 
         mouseXOnMouseDown = e.clientX - windowHalfX
         mouseYOnMouseDown = e.clientY - windowHalfY
@@ -569,8 +586,6 @@ export default {
       const spriteCitiesAlt = []
       const spriteCitiesMatsAlt = []
 
-      const spriteTextArr = []
-
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
         const theta = (lon + 180) * (Math.PI / 180)
@@ -602,7 +617,7 @@ export default {
           // Main Sprite for each City
           spriteCities.push(new THREE.Sprite(spriteCitiesMats[index]))
           spriteCities[index].name = city[2]
-          spriteCities[index].scale.set(0.08, 0.08, 1)
+          spriteCities[index].scale.set(0.07, 0.07, 1)
           citiesArr[index].add(spriteCities[index])
 
           // Alt Material for each Sprite
@@ -615,24 +630,9 @@ export default {
           // Alt Sprite for each City
           spriteCitiesAlt.push(new THREE.Sprite(spriteCitiesMatsAlt[index]))
           spriteCitiesAlt[index].name = city[2]
-          spriteCitiesAlt[index].scale.set(0.08, 0.08, 1)
+          spriteCitiesAlt[index].scale.set(0.07, 0.07, 1)
           spriteCitiesAlt[index].material.opacity = 0
           citiesArr[index].add(spriteCitiesAlt[index])
-
-          // Sprite Text
-          const textPosition = calcPosition(city[0], city[1], 1.06)
-          const cityName = new SpriteText(city[2], 0.024, 'black')
-          cityName.center = new THREE.Vector2(0.5, 0.5)
-          cityName.fontFace = 'Work Sans'
-          spriteTextArr.push(cityName)
-          spriteTextArr[index].name = city[2]
-          globe.add(spriteTextArr[index])
-          spriteTextArr[index].material.opacity = 0
-          spriteTextArr[index].position.set(
-            textPosition[0],
-            textPosition[1],
-            textPosition[2]
-          )
         })
 
         spriteCities.push(globe)
@@ -730,7 +730,7 @@ export default {
               new THREE.Sprite(spriteMoodsMats[color.name][index])
             )
             spriteMoods[color.name][index].name = post.title
-            spriteMoods[color.name][index].scale.set(0.08, 0.08, 1)
+            spriteMoods[color.name][index].scale.set(0.09, 0.09, 1)
             moodsArr[color.name][index].add(spriteMoods[color.name][index])
 
             // Alt Material for each Sprite
@@ -745,28 +745,9 @@ export default {
               new THREE.Sprite(spriteMoodsMatsAlt[color.name][index])
             )
             spriteMoodsAlt[color.name][index].name = post.title
-            spriteMoodsAlt[color.name][index].scale.set(0.08, 0.08, 1)
+            spriteMoodsAlt[color.name][index].scale.set(0.09, 0.09, 1)
             spriteMoodsAlt[color.name][index].material.opacity = 0
             moodsArr[color.name][index].add(spriteMoodsAlt[color.name][index])
-
-            // Sprite Text
-            const textPosition = [
-              position[0] * 1.015 * 1.06,
-              position[1] * 1.015 * 1.06,
-              position[2] * 1.015 * 1.06,
-            ]
-            const moodName = new SpriteText(post.title, 0.024, 'black')
-            moodName.center = new THREE.Vector2(0.5, 0.5)
-            moodName.fontFace = 'Work Sans'
-            spriteTextArrMoods[color.name].push(moodName)
-            spriteTextArrMoods[color.name][index].name = post.title
-            mood.add(spriteTextArrMoods[color.name][index])
-            spriteTextArrMoods[color.name][index].material.opacity = 0
-            spriteTextArrMoods[color.name][index].position.set(
-              textPosition[0],
-              textPosition[1],
-              textPosition[2]
-            )
           })
         })
 
@@ -781,9 +762,24 @@ export default {
       const spritesAllAlt = spriteCitiesAlt.concat(
         Object.values(spriteMoodsAlt).flat()
       )
-      const spritesAllText = spriteTextArr.concat(
-        Object.values(spriteTextArrMoods).flat()
-      )
+
+      // TITLE TEXT
+
+      let currentTextTarget = null
+
+      const setTextPosition = (object) => {
+        let pos = new THREE.Vector3()
+        pos = pos.setFromMatrixPosition(object.matrixWorld)
+        pos.project(camera)
+
+        const widthHalf = canvas.clientWidth / 2
+        const heightHalf = canvas.clientHeight / 2
+
+        pos.x = pos.x * widthHalf + widthHalf + 15
+        pos.y = -(pos.y * heightHalf) + heightHalf
+
+        gsap.set(this.$refs.navTitle, { x: pos.x, y: pos.y })
+      }
 
       // GLOW
 
@@ -855,6 +851,7 @@ export default {
           currentTarget !== intersects[0].object
         ) {
           setTarget(intersects[0].object)
+          currentTextTarget = intersects[0].object
         }
 
         if (intersects.length < 2 && currentTarget) {
@@ -894,20 +891,9 @@ export default {
 
         // text sprite
 
-        spritesAllText.forEach((obj, index) => {
-          if (currentTarget) {
-            if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
-              obj.material.opacity += 0.02
-            } else if (
-              obj.name !== currentTarget.name &&
-              obj.material.opacity >= 0
-            ) {
-              obj.material.opacity -= 0.02
-            }
-          } else if (obj.material.opacity >= 0) {
-            obj.material.opacity -= 0.02
-          }
-        })
+        if (currentTextTarget) {
+          setTextPosition(currentTextTarget)
+        }
 
         if (pivotMain && mood && globe) {
           pivotMain.rotation.y = timer * speed
@@ -949,7 +935,7 @@ export default {
             }
           }
 
-          if (!isDragging) {
+          if (!isDragging && lerpTimerBool) {
             if (camera.position.z <= minZoom) {
               camera.position.z += zoomOutSpeed
             }
@@ -980,7 +966,6 @@ export default {
             // CONTINUOUS ROTATION (Both)
             globe.rotateOnAxis(globeAxis, 0.0015)
             mood.rotateOnAxis(globeAxis, 0.0015)
-            // mood.scene.rotation.y += 0.0015
           }
         }
         renderer.render(scene, camera)
@@ -995,6 +980,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.sceneContainer {
+  min-height: 100vh;
+  text-align: center;
+  position: relative;
+  cursor: grab;
+  overflow: hidden;
+}
+
 .toggle {
   position: absolute;
   top: 50%;
@@ -1005,22 +998,21 @@ export default {
   border-radius: 25px;
 }
 
-.sceneContainer {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  position: relative;
-  cursor: grab;
-}
-
 .scene {
   width: 100%;
   height: 100vh;
   display: block;
+  pointer-events: none;
+}
+
+.title {
+  font-size: 0.8rem;
+  position: absolute;
+  display: block;
+  left: 0;
+  top: 0;
+  margin: 0;
+  transform: translateY(-50%);
   pointer-events: none;
 }
 </style>
