@@ -44,7 +44,7 @@ button {
   background: transparent;
   cursor: pointer;
   text-transform: uppercase;
-  font-weight: $semibold;
+  font-weight: $bold;
   font-size: 1.25rem;
 
   &:hover,

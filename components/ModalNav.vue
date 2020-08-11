@@ -97,10 +97,18 @@ export default {
 label[for='menuButton'] {
   display: block;
   height: 2rem;
-  width: 3.5rem;
+  width: 4rem;
   position: relative;
   float: right;
   cursor: pointer;
+
+  &:hover {
+    .menuIcon,
+    .menuIcon::before,
+    .menuIcon::after {
+      background: $accent;
+    }
+  }
 }
 
 .menuIcon,
@@ -108,8 +116,8 @@ label[for='menuButton'] {
 .menuIcon::after {
   content: '';
   display: block;
-  height: 0.1rem;
-  background: black;
+  height: 0.125rem;
+  background: $black;
   position: absolute;
 }
 
@@ -121,12 +129,12 @@ label[for='menuButton'] {
 
 .menuIcon::before {
   width: 100%;
-  bottom: 0.4rem;
+  bottom: 0.45rem;
 }
 
 .menuIcon::after {
   width: 100%;
-  top: 0.4rem;
+  top: 0.45rem;
 }
 
 .sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
