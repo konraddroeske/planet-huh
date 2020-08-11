@@ -68,8 +68,8 @@ export default {
     },
   },
   watch: {
-    posts(oldPosts, newPosts) {
-      if (oldPosts.length === newPosts.length) {
+    posts(newPosts, oldPosts) {
+      if (newPosts.length === oldPosts.length) {
         this.allPostsFetched = true
       }
     },

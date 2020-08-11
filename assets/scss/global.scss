@@ -55,3 +55,11 @@ ul {
 img {
   display: block;
 }
+
+.lockScroll {
+  overflow: hidden;
+}
+
+.blurContent {
+  filter: blur(10px);
+}

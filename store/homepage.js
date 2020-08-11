@@ -56,6 +56,7 @@ export const actions = {
         featuredCollabPosts,
       })
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log(error) // TODO: error handling
     }
   },
@@ -83,6 +84,7 @@ export const actions = {
       const { posts } = data.data
       commit('setSomePosts', posts)
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log(error)
     }
   },

@@ -1,10 +1,12 @@
 <template>
   <div>
     <Header />
-    <main>
-      <Nuxt />
-    </main>
-    <Footer />
+    <div id="blurrableContent">
+      <main>
+        <Nuxt />
+      </main>
+      <Footer />
+    </div>
   </div>
 </template>
 
