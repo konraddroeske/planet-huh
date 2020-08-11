@@ -20,9 +20,9 @@ export default {
         [52.52437, 13.41053, 'Berlin'],
         [51.5074, -0.1278, 'London'],
         [30.0444, 31.2357, 'Cairo'],
-        [-33.9249, 19.4241, 'Cape Town'], // Slightly off
+        [-33.9249, 19.4241, 'Cape Town'],
         [-37.8136, 144.9631, 'Melbourne'],
-        [-22.9068, -43.1729, 'Rio De Janeiro'], // Make distance from globe a fn of length of letters?
+        [-22.9068, -43.1729, 'Rio De Janeiro'],
         [43.6532, -79.3832, 'Toronto'],
         [42.3601, -71.0589, 'Boston'],
       ],
@@ -31,15 +31,15 @@ export default {
           r: 116,
           g: 155,
           b: 255,
-          latitude: 45,
+          latitude: 30,
           longitude: 0,
           posts: [
-            { title: 'a' },
-            { title: 'b' },
-            { title: 'c' },
-            { title: 'd' },
-            { title: 'e' },
-            { title: 'f' },
+            { title: 'blue0' },
+            { title: 'blue1' },
+            { title: 'blue2' },
+            { title: 'blue3' },
+            { title: 'blue4' },
+            { title: 'blue5' },
           ],
           name: 'blue',
         },
@@ -47,24 +47,28 @@ export default {
           r: 255,
           g: 147,
           b: 30,
-          latitude: 45,
+          latitude: 30,
           longitude: -120,
-          posts: [{ title: 'a' }, { title: 'b' }, { title: 'c' }],
+          posts: [
+            { title: 'orange1' },
+            { title: 'orange2' },
+            { title: 'orange3' },
+          ],
           name: 'orange',
         },
         {
           r: 209,
           g: 221,
           b: 188,
-          latitude: 45,
+          latitude: 30,
           longitude: 120,
           posts: [
-            { title: 'a' },
-            { title: 'b' },
-            { title: 'c' },
-            { title: 'd' },
-            { title: 'e' },
-            { title: 'f' },
+            { title: 'green0' },
+            { title: 'green1' },
+            { title: 'green2' },
+            { title: 'green3' },
+            { title: 'green4' },
+            { title: 'green5' },
           ],
           name: 'green',
         },
@@ -72,36 +76,40 @@ export default {
           r: 193,
           g: 146,
           b: 224,
-          latitude: -45,
+          latitude: -30,
           longitude: 60,
-          posts: [{ title: 'a' }, { title: 'b' }, { title: 'c' }],
+          posts: [
+            { title: 'magenta0' },
+            { title: 'magenta1' },
+            { title: 'magenta2' },
+          ],
           name: 'magenta',
         },
         {
           r: 255,
           g: 123,
           b: 172,
-          latitude: -45,
+          latitude: -30,
           longitude: -60,
-          posts: [{ title: 'a' }, { title: 'b' }, { title: 'c' }],
+          posts: [{ title: 'red0' }, { title: 'red1' }, { title: 'red2' }],
           name: 'red',
         },
         {
           r: 255,
           g: 229,
           b: 172,
-          latitude: -45,
+          latitude: -30,
           longitude: 180,
           posts: [
-            { title: 'a' },
-            { title: 'b' },
-            { title: 'c' },
-            { title: 'd' },
-            { title: 'e' },
-            { title: 'f' },
-            { title: 'g' },
-            { title: 'h' },
-            { title: 'i' },
+            { title: 'yellow0' },
+            { title: 'yellow1' },
+            { title: 'yellow2' },
+            { title: 'yellow3' },
+            { title: 'yellow4' },
+            { title: 'yellow5' },
+            { title: 'yellow6' },
+            { title: 'yellow7' },
+            { title: 'yellow8' },
           ],
           name: 'yellow',
         },
@@ -378,7 +386,7 @@ export default {
         this.colors[index].positions = []
       })
 
-      const distance = (x1, y1, z1, x2, y2, z2) => {
+      const getDistance = (x1, y1, z1, x2, y2, z2) => {
         const dx = x1 - x2
         const dy = y1 - y2
         const dz = z1 - z2
@@ -392,7 +400,7 @@ export default {
         // for all colors
         for (let i = 0; i < colors.length; i += 1) {
           const c = colors[i]
-          let d = distance(c.x, c.y, c.z, x, y, z) / colors[i].weight
+          let d = getDistance(c.x, c.y, c.z, x, y, z) / colors[i].weight
           distances.push(d)
 
           d = 1 / d ** 3
@@ -403,10 +411,11 @@ export default {
 
         // find minumum value
         const minDistance = Math.min.apply(null, distances)
+        // console.log(minDistance)
 
         // add position to colors
 
-        if (y >= -0.7 && y <= 0.7) {
+        if (y >= -0.7 && y <= 0.7 && minDistance < 0.5) {
           colors[distances.indexOf(minDistance)].positions.push([x, y, z])
         }
 
@@ -550,6 +559,9 @@ export default {
       const spriteMapWhite = new THREE.TextureLoader().load(
         '/sprites/mapDot2.png'
       )
+      const spriteMapBlack = new THREE.TextureLoader().load(
+        '/sprites/mapDot3.png'
+      )
 
       const spriteCities = []
       const spriteCitiesMats = []
@@ -590,7 +602,7 @@ export default {
           // Main Sprite for each City
           spriteCities.push(new THREE.Sprite(spriteCitiesMats[index]))
           spriteCities[index].name = city[2]
-          spriteCities[index].scale.set(0.07, 0.07, 1)
+          spriteCities[index].scale.set(0.08, 0.08, 1)
           citiesArr[index].add(spriteCities[index])
 
           // Alt Material for each Sprite
@@ -603,7 +615,7 @@ export default {
           // Alt Sprite for each City
           spriteCitiesAlt.push(new THREE.Sprite(spriteCitiesMatsAlt[index]))
           spriteCitiesAlt[index].name = city[2]
-          spriteCitiesAlt[index].scale.set(0.07, 0.07, 1)
+          spriteCitiesAlt[index].scale.set(0.08, 0.08, 1)
           spriteCitiesAlt[index].material.opacity = 0
           citiesArr[index].add(spriteCitiesAlt[index])
 
@@ -633,25 +645,57 @@ export default {
       const moodsArr = {}
       const spriteMoods = {}
       const spriteMoodsMats = {}
+      const spriteMoodsAlt = {}
+      const spriteMoodsMatsAlt = {}
+      const spriteTextArrMoods = {}
 
       this.colors.forEach((color) => {
         moodsArr[color.name] = []
         spriteMoods[color.name] = []
         spriteMoodsMats[color.name] = []
+        spriteMoodsAlt[color.name] = []
+        spriteMoodsMatsAlt[color.name] = []
+        spriteTextArrMoods[color.name] = []
       })
 
-      // const spriteMoodsAlt = []
-      // const spriteMoodsMatsAlt = []
+      const getMoodPosition = (moodsArr, positions) => {
+        let position
+        let distance
+        let distanceBool = false
+        const minDistance = 0.3
+        position = positions[Math.floor(Math.random() * positions.length)]
 
-      // const spriteTextArrMoods = []
+        if (moodsArr.length > 0) {
+          while (!distanceBool) {
+            let counter = 0
 
-      const spriteMapBlack = new THREE.TextureLoader().load(
-        '/sprites/mapDot3.png'
-      )
+            for (let i = 0; i < moodsArr.length; i += 1) {
+              distance = getDistance(
+                position[0],
+                position[1],
+                position[2],
+                moodsArr[i].position.x,
+                moodsArr[i].position.y,
+                moodsArr[i].position.z
+              )
 
-      const getPosition = (positions) => {
-        const position = positions[Math.floor(Math.random() * positions.length)]
-        // check distance to other moods positions
+              if (distance < minDistance) {
+                break
+              }
+
+              counter += 1
+            }
+
+            if (counter >= moodsArr.length) {
+              distanceBool = true
+            }
+
+            if (!distanceBool) {
+              counter = 0
+              position = positions[Math.floor(Math.random() * positions.length)]
+            }
+          }
+        }
 
         return position
       }
@@ -660,7 +704,10 @@ export default {
         this.colors.forEach((color) => {
           color.posts.forEach((post, index) => {
             // Get Position
-            const position = getPosition(color.positions)
+            const position = getMoodPosition(
+              moodsArr[color.name],
+              color.positions
+            )
 
             // Main Object
             moodsArr[color.name].push(new THREE.Object3D())
@@ -683,44 +730,60 @@ export default {
               new THREE.Sprite(spriteMoodsMats[color.name][index])
             )
             spriteMoods[color.name][index].name = post.title
-            spriteMoods[color.name][index].scale.set(0.07, 0.07, 1)
+            spriteMoods[color.name][index].scale.set(0.08, 0.08, 1)
             moodsArr[color.name][index].add(spriteMoods[color.name][index])
 
             // Alt Material for each Sprite
-            // spriteCitiesMatsAlt.push(
-            //   new THREE.SpriteMaterial({ map: spriteMapWhite })
-            // )
-            // spriteMoodsMatsAlt[index].name = 'Alt'
-            // spriteMoodsMatsAlt[index].transparent = true
+            spriteMoodsMatsAlt[color.name].push(
+              new THREE.SpriteMaterial({ map: spriteMapBlack })
+            )
+            spriteMoodsMatsAlt[color.name][index].name = 'Alt'
+            spriteMoodsMatsAlt[color.name][index].transparent = true
 
             // Alt Sprite for each City
-            // spriteMoodsAlt.push(new THREE.Sprite(spriteMoodsMatsAlt[index]))
-            // spriteMoodsAlt[index].name = city[2]
-            // spriteMoodsAlt[index].scale.set(0.07, 0.07, 1)
-            // spriteMoodsAlt[index].material.opacity = 0
-            // moodsArr[index].add(spriteMoodsAlt[index])
+            spriteMoodsAlt[color.name].push(
+              new THREE.Sprite(spriteMoodsMatsAlt[color.name][index])
+            )
+            spriteMoodsAlt[color.name][index].name = post.title
+            spriteMoodsAlt[color.name][index].scale.set(0.08, 0.08, 1)
+            spriteMoodsAlt[color.name][index].material.opacity = 0
+            moodsArr[color.name][index].add(spriteMoodsAlt[color.name][index])
 
             // Sprite Text
-            // const textPosition = calcPosition(city[0], city[1], 1.06)
-            // const moodsName = new SpriteText(city[2], 0.024, 'black')
-            // cityName.center = new THREE.Vector2(0.5, 0.5)
-            // cityName.fontFace = 'Work Sans'
-            // spriteTextArr.push(cityName)
-            // spriteTextArr[index].name = city[2]
-            // globe.add(spriteTextArr[index])
-            // spriteTextArr[index].material.opacity = 0
-            // spriteTextArr[index].position.set(
-            //   textPosition[0],
-            //   textPosition[1],
-            //   textPosition[2]
-            // )
+            const textPosition = [
+              position[0] * 1.015 * 1.06,
+              position[1] * 1.015 * 1.06,
+              position[2] * 1.015 * 1.06,
+            ]
+            const moodName = new SpriteText(post.title, 0.024, 'black')
+            moodName.center = new THREE.Vector2(0.5, 0.5)
+            moodName.fontFace = 'Work Sans'
+            spriteTextArrMoods[color.name].push(moodName)
+            spriteTextArrMoods[color.name][index].name = post.title
+            mood.add(spriteTextArrMoods[color.name][index])
+            spriteTextArrMoods[color.name][index].material.opacity = 0
+            spriteTextArrMoods[color.name][index].position.set(
+              textPosition[0],
+              textPosition[1],
+              textPosition[2]
+            )
           })
         })
+
+        spriteMoods.mood = mood
       }
 
-      console.log(moodsArr)
-
       addMoods()
+
+      // RAYCASTER ARRAYS
+
+      const spritesAll = spriteCities.concat(Object.values(spriteMoods).flat())
+      const spritesAllAlt = spriteCitiesAlt.concat(
+        Object.values(spriteMoodsAlt).flat()
+      )
+      const spritesAllText = spriteTextArr.concat(
+        Object.values(spriteTextArrMoods).flat()
+      )
 
       // GLOW
 
@@ -783,11 +846,12 @@ export default {
         // RAYCASTER
 
         raycaster.setFromCamera(rayMouse, camera)
-        const intersects = raycaster.intersectObjects(spriteCities)
+        const intersects = raycaster.intersectObjects(spritesAll)
 
         if (
           intersects.length >= 2 &&
           intersects[0].object.name !== 'globe' &&
+          intersects[0].object.name !== 'mood' &&
           currentTarget !== intersects[0].object
         ) {
           setTarget(intersects[0].object)
@@ -805,7 +869,7 @@ export default {
           currentTarget.material.opacity -= 0.03
         }
 
-        spriteCities.forEach((obj) => {
+        spritesAll.forEach((obj) => {
           if (obj !== currentTarget && obj.material.opacity <= 1) {
             obj.material.opacity += 0.03
           }
@@ -813,7 +877,7 @@ export default {
 
         // globe alt sprite
 
-        spriteCitiesAlt.forEach((obj, index) => {
+        spritesAllAlt.forEach((obj, index) => {
           if (currentTarget) {
             if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
               obj.material.opacity += 0.03
@@ -830,7 +894,7 @@ export default {
 
         // text sprite
 
-        spriteTextArr.forEach((obj, index) => {
+        spritesAllText.forEach((obj, index) => {
           if (currentTarget) {
             if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
               obj.material.opacity += 0.02
