@@ -15,7 +15,6 @@ export default {
   data() {
     return {
       toggle: false,
-      pauseTime: null,
       cities: [
         [40.71427, -74.00597, 'New York City'],
         [52.52437, 13.41053, 'Berlin'],
@@ -216,7 +215,12 @@ export default {
 
       const setLerpTimer = () => {
         clearInterval(lerpTimer)
-        lerpTimer = setInterval(lerpTimerFn, 5000)
+        lerpTimer = setInterval(lerpTimerFn, 3000)
+      }
+
+      const clearLerpTimer = () => {
+        clearInterval(lerpTimer)
+        lerpTimerBool = true
       }
 
       // OBJECT CONTROLS
@@ -543,6 +547,8 @@ export default {
 
       {
         const toggleAnim = () => {
+          clearLerpTimer()
+
           if (!clock.running) {
             this.currentNav === pivotGlobe
               ? (this.currentNav = pivotMood)
@@ -926,7 +932,7 @@ export default {
             }
           }
 
-          // CAMERA ZOOM (Both)
+          // CAMERA ZOOM IN
 
           if (isDragging && !currentTarget) {
             if (camera.position.z >= maxZoom) {
@@ -935,37 +941,67 @@ export default {
             }
           }
 
+          // CAMERA ZOOM OUT
+
           if (!isDragging && lerpTimerBool) {
             if (camera.position.z <= minZoom) {
               camera.position.z += zoomOutSpeed
             }
 
+            // if momentum is below certain amount, we are not throwing
             if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
               isThrowing = false
             }
+          }
 
-            // OBJECT CORRECTION LERP
+          if (this.currentNav === pivotGlobe) {
+            if (!isDragging && lerpTimerBool) {
+              // OBJECT CORRECTION LERP
 
-            if (!isThrowing) {
-              targetRotationYGlobe = pivotGlobe.rotation.x
-              targetRotationYMood = pivotMood.rotation.x
+              if (!isThrowing) {
+                targetRotationYGlobe = pivotGlobe.rotation.x
 
-              if (pivotGlobe.rotation.x > 0.01) {
-                pivotGlobe.rotation.x += -0.0015
-              } else if (pivotGlobe.rotation.x < -0.01) {
-                pivotGlobe.rotation.x += 0.0015
+                if (pivotGlobe.rotation.x > 0.01) {
+                  pivotGlobe.rotation.x += -0.0015
+                } else if (pivotGlobe.rotation.x < -0.01) {
+                  pivotGlobe.rotation.x += 0.0015
+                }
               }
 
-              if (pivotMood.rotation.x > 0.01) {
-                pivotMood.rotation.x += -0.0015
-              } else if (pivotMood.rotation.x < -0.01) {
-                pivotMood.rotation.x += 0.0015
-              }
+              globe.rotateOnAxis(globeAxis, 0.0015)
             }
 
-            // CONTINUOUS ROTATION (Both)
-            globe.rotateOnAxis(globeAxis, 0.0015)
+            targetRotationYMood = pivotMood.rotation.x
+            if (pivotMood.rotation.x > 0.01) {
+              pivotMood.rotation.x += -0.0015
+            } else if (pivotMood.rotation.x < -0.01) {
+              pivotMood.rotation.x += 0.0015
+            }
             mood.rotateOnAxis(globeAxis, 0.0015)
+          }
+
+          if (this.currentNav === pivotMood) {
+            if (!isDragging && lerpTimerBool) {
+              if (!isThrowing) {
+                targetRotationYMood = pivotMood.rotation.x
+                if (pivotMood.rotation.x > 0.01) {
+                  pivotMood.rotation.x += -0.0015
+                } else if (pivotMood.rotation.x < -0.01) {
+                  pivotMood.rotation.x += 0.0015
+                }
+              }
+              mood.rotateOnAxis(globeAxis, 0.0015)
+            }
+
+            targetRotationYGlobe = pivotGlobe.rotation.x
+
+            if (pivotGlobe.rotation.x > 0.01) {
+              pivotGlobe.rotation.x += -0.0015
+            } else if (pivotGlobe.rotation.x < -0.01) {
+              pivotGlobe.rotation.x += 0.0015
+            }
+
+            globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
         renderer.render(scene, camera)
