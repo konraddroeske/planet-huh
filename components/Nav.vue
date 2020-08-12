@@ -229,30 +229,38 @@ export default {
       // MOUSE DESKTOP
 
       const mouseDown = (e) => {
-        isDragging = true
-        isThrowing = true
-        lerpTimerBool = false
+        if (e.button === 0) {
+          isDragging = true
+          isThrowing = true
+          lerpTimerBool = false
 
-        setLerpTimer()
+          setLerpTimer()
 
-        mouseXOnMouseDown = e.clientX - windowHalfX
-        mouseYOnMouseDown = e.clientY - windowHalfY
+          mouseXOnMouseDown = e.clientX - windowHalfX
+          mouseYOnMouseDown = e.clientY - windowHalfY
 
-        if (this.currentNav === pivotGlobe) {
-          targetRotationOnMouseDownX = targetRotationXGlobe
-          targetRotationOnMouseDownY = targetRotationYGlobe
-        }
+          if (this.currentNav === pivotGlobe) {
+            targetRotationOnMouseDownX = targetRotationXGlobe
+            targetRotationOnMouseDownY = targetRotationYGlobe
+          }
 
-        if (this.currentNav === pivotMood) {
-          targetRotationOnMouseDownX = targetRotationXMood
-          targetRotationOnMouseDownY = -targetRotationYMood
+          if (this.currentNav === pivotMood) {
+            targetRotationOnMouseDownX = targetRotationXMood
+            targetRotationOnMouseDownY = -targetRotationYMood
+          }
         }
       }
 
       const mouseMove = (e) => {
         // Raycaster
-        rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
-        rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+        // rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
+        // rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
+
+        const rect = renderer.domElement.getBoundingClientRect()
+        rayMouse.x =
+          ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1
+        rayMouse.y =
+          -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1
 
         if (isDragging) {
           mouseX = e.clientX - windowHalfX
