@@ -191,6 +191,7 @@ export default {
       const raycaster = new THREE.Raycaster()
       const rayMouse = new THREE.Vector2()
       let currentTarget = null
+      let intersects = null
 
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
@@ -763,7 +764,8 @@ export default {
 
       // RAYCASTER ARRAYS
 
-      const spritesAll = spriteCities.concat(Object.values(spriteMoods).flat())
+      const spriteMoodsFlat = Object.values(spriteMoods).flat()
+      const spritesAll = spriteCities.concat(spriteMoodsFlat)
       const spritesAllAlt = spriteCitiesAlt.concat(
         Object.values(spriteMoodsAlt).flat()
       )
@@ -799,13 +801,14 @@ export default {
 
         const text = document.createTextNode(`${object.name}`)
         title.append(text)
+        title.style.position = 'absolute'
         this.$refs.sceneContainer.append(title)
 
         const tl = gsap.timeline()
         tl.set(title, {
           fontSize: '0.8rem',
-          position: 'absolute',
-          display: 'block',
+          // position: 'absolute',
+          // display: 'block',
           opacity: 0,
           left: 0,
           top: 0,
@@ -907,7 +910,14 @@ export default {
         // RAYCASTER
 
         raycaster.setFromCamera(rayMouse, camera)
-        const intersects = raycaster.intersectObjects(spritesAll)
+
+        if (this.currentNav === pivotGlobe) {
+          intersects = raycaster.intersectObjects(spriteCities)
+        }
+
+        if (this.currentNav === pivotMood) {
+          intersects = raycaster.intersectObjects(spriteMoodsFlat)
+        }
 
         if (
           intersects.length >= 2 &&
@@ -1104,16 +1114,4 @@ export default {
   display: block;
   pointer-events: none;
 }
-
-// .title {
-//   font-size: 0.8rem;
-//   position: absolute;
-//   display: block;
-//   opacity: 0;
-//   left: 0;
-//   top: 0;
-//   margin: 0;
-//   transform: translateY(-50%);
-//   pointer-events: none;
-// }
 </style>
