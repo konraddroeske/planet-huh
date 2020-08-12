@@ -1,8 +1,7 @@
 <template>
-  <div id="sceneContainer" class="sceneContainer">
+  <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
     <canvas ref="scene" class="scene" />
     <button class="toggle">Toggle</button>
-    <p ref="navTitle" class="title">Title Example</p>
   </div>
 </template>
 
@@ -215,7 +214,7 @@ export default {
 
       const setLerpTimer = () => {
         clearInterval(lerpTimer)
-        lerpTimer = setInterval(lerpTimerFn, 3000)
+        lerpTimer = setInterval(lerpTimerFn, 6000)
       }
 
       const clearLerpTimer = () => {
@@ -770,21 +769,81 @@ export default {
       )
 
       // TITLE TEXT
+      const activeTitles = []
 
-      let currentTextTarget = null
+      const setActiveTitles = () => {
+        for (let i = 0; i < activeTitles.length; i += 1) {
+          let pos = new THREE.Vector3()
+          pos = pos.setFromMatrixPosition(activeTitles[i][0].matrixWorld)
+          pos.project(camera)
 
-      const setTextPosition = (object) => {
-        let pos = new THREE.Vector3()
-        pos = pos.setFromMatrixPosition(object.matrixWorld)
-        pos.project(camera)
+          const widthHalf = canvas.clientWidth / 2
+          const heightHalf = canvas.clientHeight / 2
 
-        const widthHalf = canvas.clientWidth / 2
-        const heightHalf = canvas.clientHeight / 2
+          pos.x = pos.x * widthHalf + widthHalf + 15
+          pos.y = -(pos.y * heightHalf) + heightHalf
 
-        pos.x = pos.x * widthHalf + widthHalf + 15
-        pos.y = -(pos.y * heightHalf) + heightHalf
+          gsap.set(activeTitles[i][1], {
+            x: pos.x,
+            y: pos.y,
+          })
+        }
+      }
 
-        gsap.set(this.$refs.navTitle, { x: pos.x, y: pos.y })
+      const addTitle = (object) => {
+        // const checkObject = activeTitles.map((obj) => obj[0]).includes(object)
+
+        // add new title
+        const title = document.createElement('p')
+        title.classList.add('title')
+
+        const text = document.createTextNode(`${object.name}`)
+        title.append(text)
+        this.$refs.sceneContainer.append(title)
+
+        const tl = gsap.timeline()
+        tl.set(title, {
+          fontSize: '0.8rem',
+          position: 'absolute',
+          display: 'block',
+          opacity: 0,
+          left: 0,
+          top: 0,
+          margin: 0,
+          transform: 'translateY(-50%)',
+          pointerEvents: 'none',
+        }).to(title, 0.3, { alpha: 1 })
+
+        const newTitle = [object, title]
+
+        activeTitles.push(newTitle)
+
+        // fade all others
+        removeTitle(newTitle)
+      }
+
+      const removeTitle = (newTitle) => {
+        if (!newTitle) {
+          newTitle = null
+        }
+
+        // iterate through all, except object and fade/remove all
+        for (let i = 0; i < activeTitles.length; i += 1) {
+          if (activeTitles[i] !== newTitle) {
+            const ele = activeTitles[i]
+
+            const tl = gsap.timeline({
+              onComplete: () => {
+                activeTitles[i][1].remove()
+
+                const index = activeTitles.indexOf(ele)
+                activeTitles.slice(index, 1)
+              },
+            })
+
+            tl.to(ele[1], 0.4, { autoAlpha: 0 })
+          }
+        }
       }
 
       // GLOW
@@ -857,11 +916,16 @@ export default {
           currentTarget !== intersects[0].object
         ) {
           setTarget(intersects[0].object)
-          currentTextTarget = intersects[0].object
+          addTitle(intersects[0].object)
         }
 
         if (intersects.length < 2 && currentTarget) {
           setTarget(null)
+          removeTitle()
+        }
+
+        if (activeTitles.length > 0) {
+          setActiveTitles()
         }
 
         // HOVER ANIMATIONS
@@ -897,9 +961,9 @@ export default {
 
         // text sprite
 
-        if (currentTextTarget) {
-          setTextPosition(currentTextTarget)
-        }
+        // if (currentTextTarget) {
+        //   setTextPosition(currentTextTarget)
+        // }
 
         if (pivotMain && mood && globe) {
           pivotMain.rotation.y = timer * speed
@@ -1041,14 +1105,15 @@ export default {
   pointer-events: none;
 }
 
-.title {
-  font-size: 0.8rem;
-  position: absolute;
-  display: block;
-  left: 0;
-  top: 0;
-  margin: 0;
-  transform: translateY(-50%);
-  pointer-events: none;
-}
+// .title {
+//   font-size: 0.8rem;
+//   position: absolute;
+//   display: block;
+//   opacity: 0;
+//   left: 0;
+//   top: 0;
+//   margin: 0;
+//   transform: translateY(-50%);
+//   pointer-events: none;
+// }
 </style>
