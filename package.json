@@ -10,7 +10,6 @@
     "serve": "nuxt serve",
     "lint:js": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "lint": "npm run lint:js",
-    "postinstall": "npx patch-package",
     "generate": "nuxt generate"
   },
   "dependencies": {

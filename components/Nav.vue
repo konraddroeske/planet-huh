@@ -253,9 +253,6 @@ export default {
 
       const mouseMove = (e) => {
         // Raycaster
-        // rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
-        // rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
         const rect = renderer.domElement.getBoundingClientRect()
         rayMouse.x =
           ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1
@@ -325,14 +322,14 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, 3.2)
+      pivotCamera.position.set(0, 0, 4.5)
       scene.add(pivotCamera)
 
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, -3.2)
+      camera.lookAt(0, 0, -4.5)
 
       // LIGHTING
 
@@ -1123,9 +1120,11 @@ export default {
 
 <style lang="scss" scoped>
 .sceneContainer {
-  min-height: 100vh;
   text-align: center;
-  position: relative;
+  position: absolute;
+  top: -24vh;
+  left: 0;
+  right: 0;
   cursor: grab;
   overflow: hidden;
 }
@@ -1142,7 +1141,7 @@ export default {
 
 .scene {
   width: 100%;
-  height: 100vh;
+  height: 150vh;
   display: block;
   pointer-events: none;
 }

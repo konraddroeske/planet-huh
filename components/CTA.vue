@@ -29,11 +29,13 @@ export default {
 <style lang="scss" scoped>
 .container {
   text-align: center;
-  margin: 5rem 0;
+  margin: 0 0 5rem 0;
+  position: relative;
+  z-index: 10;
 
   @media (min-width: $bp-desktop) {
     width: 40%;
-    margin: 5rem auto;
+    margin: 0 auto 5rem auto;
   }
 }
 
@@ -41,6 +43,7 @@ h1 {
   text-transform: uppercase;
   font-weight: $extrabold;
   font-size: 3rem;
+  margin-top: 0;
 }
 
 p {
