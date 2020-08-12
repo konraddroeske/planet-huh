@@ -1,8 +1,6 @@
 <template>
-  <nuxt-link v-if="to" :to="to" tab-index="-1">
-    <button @click="onClick">
-      <slot />
-    </button>
+  <nuxt-link v-if="to" :to="to">
+    <slot />
   </nuxt-link>
 
   <button v-else @click="onClick">
@@ -29,11 +27,21 @@ export default {
 <style lang="scss" scoped>
 a,
 a:visited {
+  display: inline-block;
   color: $black;
+  text-decoration: none;
+  border: 2px solid $accent;
+  border-radius: 180px;
+  padding: 1rem 2.5rem;
+  background: transparent;
+  text-transform: uppercase;
+  font-weight: $bold;
+  font-size: 1.25rem;
 
   &:hover,
   &:focus {
-    color: $black;
+    color: $white;
+    background: $accent;
   }
 }
 
