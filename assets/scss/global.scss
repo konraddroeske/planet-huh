@@ -23,8 +23,13 @@ $z-above: 10;
 $z-modal: 20;
 $z-fixed: 30;
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 html {

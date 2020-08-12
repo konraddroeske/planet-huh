@@ -1,7 +1,7 @@
 <template>
-  <div :class="`category-${variant}`">
+  <div ref="container" :class="`category-${variant}`">
     <div v-if="variant === 'gradient'" class="explore">Explore</div>
-    <nuxt-link :to="to">{{ name }}</nuxt-link>
+    <nuxt-link ref="link" :to="to">{{ name }}</nuxt-link>
   </div>
 </template>
 
@@ -22,6 +22,26 @@ export default {
     name: {
       type: String,
       required: true,
+    },
+  },
+  mounted() {
+    this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
+    this.$refs.link.$el.addEventListener('mouseout', this.endGradient)
+    this.$refs.link.$el.addEventListener('focus', this.startGradient)
+    this.$refs.link.$el.addEventListener('blur', this.endGradient)
+  },
+  beforeDestroy() {
+    this.$refs.link.$el.removeEventListener('mouseover', this.startGradient)
+    this.$refs.link.$el.removeEventListener('mouseout', this.endGradient)
+    this.$refs.link.$el.removeEventListener('focus', this.startGradient)
+    this.$refs.link.$el.removeEventListener('blur', this.endGradient)
+  },
+  methods: {
+    startGradient() {
+      this.$refs.container.classList.add('largeGradient')
+    },
+    endGradient() {
+      this.$refs.container.classList.remove('largeGradient')
     },
   },
 }
@@ -90,18 +110,27 @@ export default {
   font-weight: $extrabold;
   font-size: 4rem;
   line-height: 1;
-  border-radius: 180px;
   position: relative;
 
   ::before {
     content: '';
     position: absolute;
     z-index: -1;
-    height: 10rem;
-    width: 10rem;
-    left: calc(50% - 5rem);
-    top: calc(50% - 5rem);
-    background: radial-gradient(#c7cafe 0, #e5e4fe 35%, $white 70%);
+    height: 15rem;
+    width: 15rem;
+    left: calc(50% - 7.5rem);
+    top: calc(50% - 7.5rem);
+    border-radius: 180px;
+    background-image: radial-gradient(
+      circle,
+      $accent 0,
+      #a3b1ff 30%,
+      #c7cafe 40%,
+      #e5e4fe 50%,
+      #ffffff 70%
+    );
+    opacity: 0.2;
+    filter: blur(10px);
   }
 
   a,
@@ -111,7 +140,7 @@ export default {
 
     &:hover,
     &:focus {
-      color: $accent;
+      color: $white;
     }
   }
 
@@ -122,6 +151,29 @@ export default {
       width: 20rem;
       left: calc(50% - 10rem);
       top: calc(50% - 10rem);
+    }
+  }
+}
+
+.largeGradient {
+  .explore {
+    color: $white;
+  }
+
+  ::before {
+    opacity: 0.5;
+    height: 25rem;
+    width: 25rem;
+    left: calc(50% - 12.5rem);
+    top: calc(50% - 12.5rem);
+  }
+
+  @media (min-width: $bp-desktop) {
+    ::before {
+      height: 35rem;
+      width: 35rem;
+      left: calc(50% - 17.5rem);
+      top: calc(50% - 17.5rem);
     }
   }
 }
