@@ -20,5 +20,6 @@ module.exports = {
     'unicorn/number-literal-case': 'off',
     'no-unused-vars': 'warn',
     'no-lone-blocks': 'warn',
+    'prefer-const': 'warn',
   },
 }
