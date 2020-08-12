@@ -539,6 +539,7 @@ export default {
       // TOGGLE OBJECTS
 
       let timer = 0
+      let toggleHover = false
       const speed = 4
       const rotateSpeed = Math.PI / speed
       let delta = 0
@@ -564,6 +565,14 @@ export default {
         }
 
         document.querySelector('.toggle').addEventListener('click', toggleAnim)
+
+        const checkToggleHover = () => {
+          if (toggleHover) {
+            toggleAnim()
+          }
+        }
+
+        document.addEventListener('click', checkToggleHover)
       }
 
       // SET ROTATION AXIS
@@ -642,6 +651,7 @@ export default {
         })
 
         spriteCities.push(globe)
+        spriteCities.push(mood)
       }
 
       addCities()
@@ -758,6 +768,7 @@ export default {
         })
 
         spriteMoods.mood = mood
+        spriteMoods.globe = globe
       }
 
       addMoods()
@@ -913,10 +924,22 @@ export default {
 
         if (this.currentNav === pivotGlobe) {
           intersects = raycaster.intersectObjects(spriteCities)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+            toggleHover = true
+          } else {
+            toggleHover = false
+          }
         }
 
         if (this.currentNav === pivotMood) {
           intersects = raycaster.intersectObjects(spriteMoodsFlat)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
+            toggleHover = true
+          } else {
+            toggleHover = false
+          }
         }
 
         if (
@@ -934,6 +957,7 @@ export default {
           removeTitle()
         }
 
+        // adds tracking animation to titles
         if (activeTitles.length > 0) {
           setActiveTitles()
         }
