@@ -199,6 +199,7 @@ export default {
 
       const navRouter = () => {
         if (currentTarget) {
+          // eslint-disable-next-line no-console
           console.log(currentTarget.name)
         }
       }

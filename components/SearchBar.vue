@@ -110,7 +110,7 @@ export default {
   border: 2px solid $black;
   text-transform: uppercase;
   display: inline-block;
-  background: $white;
+  background: transparent;
   color: $black;
   padding: 0.75rem 0.5rem;
   font-size: 1rem;
@@ -118,7 +118,7 @@ export default {
 
   &:hover,
   &:focus {
-    background: $accent;
+    background: $black;
     color: $white;
   }
 }

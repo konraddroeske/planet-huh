@@ -6,7 +6,7 @@
         class="visuallyHidden"
         type="checkbox"
         name="menuButton"
-        @click="isOpen = !isOpen"
+        @click="toggleModal"
       />
       <label for="menuButton">
         <span class="labelText visuallyHidden">View Menu</span>
@@ -37,6 +37,19 @@ export default {
       isOpen: false,
     }
   },
+  methods: {
+    toggleModal() {
+      const blurrableContent = document.getElementById('blurrableContent')
+      if (this.isOpen) {
+        blurrableContent.classList.remove('blurContent')
+        document.body.classList.remove('lockScroll')
+      } else {
+        blurrableContent.classList.add('blurContent')
+        document.body.classList.add('lockScroll')
+      }
+      this.isOpen = !this.isOpen
+    },
+  },
 }
 </script>
 
@@ -49,7 +62,7 @@ export default {
   left: 0;
   right: 0;
   padding: 2rem;
-  background: $white;
+  background: rgba(255, 255, 255, 0.3);
 
   @media (min-width: $bp-desktop) {
     display: grid;
@@ -84,10 +97,18 @@ export default {
 label[for='menuButton'] {
   display: block;
   height: 2rem;
-  width: 3.5rem;
+  width: 4rem;
   position: relative;
   float: right;
   cursor: pointer;
+
+  &:hover {
+    .menuIcon,
+    .menuIcon::before,
+    .menuIcon::after {
+      background: $accent;
+    }
+  }
 }
 
 .menuIcon,
@@ -95,8 +116,8 @@ label[for='menuButton'] {
 .menuIcon::after {
   content: '';
   display: block;
-  height: 0.1rem;
-  background: black;
+  height: 0.125rem;
+  background: $black;
   position: absolute;
 }
 
@@ -108,12 +129,12 @@ label[for='menuButton'] {
 
 .menuIcon::before {
   width: 100%;
-  bottom: 0.4rem;
+  bottom: 0.45rem;
 }
 
 .menuIcon::after {
   width: 100%;
-  top: 0.4rem;
+  top: 0.45rem;
 }
 
 .sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
@@ -135,9 +156,4 @@ label[for='menuButton'] {
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
 }
-
-// .sandwichMenu input[type='checkbox']:focus + label {
-//   -webkit-box-shadow: 0 0 0 0.12rem black;
-//   box-shadow: 0 0 0 0.12rem black;
-// }
 </style>
