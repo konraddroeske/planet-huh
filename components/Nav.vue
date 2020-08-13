@@ -318,9 +318,110 @@ export default {
         zoomPosition = 0.005
       }
 
-      document.addEventListener('mousedown', mouseDown, false)
-      document.addEventListener('mousemove', mouseMove, false)
-      document.addEventListener('mouseup', mouseUp, false)
+      // TOUCH CONTROLS
+      const touchToggle = true
+
+      // mouse down
+      const onTouchStart = (e) => {
+        e.preventDefault()
+        isDragging = true
+        isThrowing = true
+        lerpTimerBool = false
+
+        mouseXOnMouseDown = e.touches[0].clientX - windowHalfX
+        mouseYOnMouseDown = e.touches[0].clientY - windowHalfY
+
+        if (this.currentNav === pivotGlobe) {
+          targetRotationOnMouseDownX = targetRotationXGlobe
+          targetRotationOnMouseDownY = targetRotationYGlobe
+        }
+
+        if (this.currentNav === pivotMood) {
+          targetRotationOnMouseDownX = targetRotationXMood
+          targetRotationOnMouseDownY = -targetRotationYMood
+        }
+      }
+
+      // on mouse move
+      const onTouchMove = (e) => {
+        e.preventDefault()
+
+        if (isDragging) {
+          mouseX = e.touches[0].clientX - windowHalfX
+          mouseY = e.touches[0].clientY - windowHalfY
+
+          const delta =
+            targetRotationOnMouseDownY +
+            (mouseY - mouseYOnMouseDown) * rotationSpeed
+
+          if (this.currentNav === pivotGlobe) {
+            targetRotationXGlobe =
+              targetRotationOnMouseDownX +
+              (mouseX - mouseXOnMouseDown) * rotationSpeed
+
+            if (delta <= MAX_ANGLES.x.from * -1) {
+              targetRotationYGlobe = MAX_ANGLES.x.from * -1
+            } else if (delta >= MAX_ANGLES.x.from) {
+              targetRotationYGlobe = MAX_ANGLES.x.from
+            } else {
+              targetRotationYGlobe =
+                targetRotationOnMouseDownY +
+                (mouseY - mouseYOnMouseDown) * rotationSpeed
+            }
+          }
+
+          if (this.currentNav === pivotMood) {
+            targetRotationXMood =
+              targetRotationOnMouseDownX +
+              (mouseX - mouseXOnMouseDown) * rotationSpeed
+
+            if (delta <= MAX_ANGLES.x.from * -1) {
+              targetRotationYMood = MAX_ANGLES.x.from
+            } else if (delta >= MAX_ANGLES.x.from) {
+              targetRotationYMood = MAX_ANGLES.x.from * -1
+            } else {
+              targetRotationYMood =
+                (targetRotationOnMouseDownY +
+                  (mouseY - mouseYOnMouseDown) * rotationSpeed) *
+                -1
+            }
+          }
+        }
+      }
+
+      // mouse up
+      const onTouchEnd = (e) => {
+        isDragging = false
+        zoomPosition = 0.005
+      }
+
+      // mouse event listeners
+
+      const sceneContainer = document.querySelector('#sceneContainer')
+
+      const addHandlers = () => {
+        sceneContainer.addEventListener('mousedown', mouseDown, false)
+        sceneContainer.addEventListener('mousemove', mouseMove, false)
+        sceneContainer.addEventListener('mouseup', mouseUp, false)
+      }
+
+      const removeHandlers = () => {
+        isDragging = false
+        zoomPosition = 0.005
+
+        sceneContainer.removeEventListener('mousedown', mouseDown, false)
+        sceneContainer.removeEventListener('mousemove', mouseMove, false)
+        sceneContainer.removeEventListener('mouseup', mouseUp, false)
+      }
+
+      sceneContainer.addEventListener('mouseover', addHandlers, false)
+      sceneContainer.addEventListener('mouseout', removeHandlers, false)
+
+      // touch event listeners
+
+      sceneContainer.addEventListener('touchstart', onTouchStart, false)
+      sceneContainer.addEventListener('touchmove', onTouchMove, false)
+      sceneContainer.addEventListener('touchend', onTouchEnd, false)
 
       // INITIALIZE CANVAS
 
