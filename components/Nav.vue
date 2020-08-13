@@ -1,7 +1,9 @@
 <template>
-  <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
-    <canvas ref="scene" class="scene" />
-    <button class="toggle">Toggle</button>
+  <div class="navContainer">
+    <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
+      <canvas ref="scene" class="scene" />
+    </div>
+    <button id="toggle" class="toggle">Toggle</button>
   </div>
 </template>
 
@@ -569,7 +571,7 @@ export default {
           }
         }
 
-        document.querySelector('.toggle').addEventListener('click', toggleAnim)
+        document.querySelector('#toggle').addEventListener('click', toggleAnim)
 
         const checkToggleHover = () => {
           if (toggleHover) {
@@ -823,8 +825,6 @@ export default {
         const tl = gsap.timeline()
         tl.set(title, {
           fontSize: '0.8rem',
-          // position: 'absolute',
-          // display: 'block',
           opacity: 0,
           left: 0,
           top: 0,
@@ -1119,30 +1119,65 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.navContainer {
+  position: relative;
+  height: 100vh;
+}
+
 .sceneContainer {
   text-align: center;
-  position: absolute;
-  top: -24vh;
-  left: 0;
-  right: 0;
   cursor: grab;
-  overflow: hidden;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+}
+
+.scene {
+  width: 100%;
+  height: 155vw;
+  display: block;
+  pointer-events: none;
 }
 
 .toggle {
   position: absolute;
-  top: 50%;
-  left: 2rem;
-  transform: translateY(-50%);
+  bottom: 0%;
+  left: 50%;
+  transform: translate(-50%, 0);
   border: 1px solid var(--tertiary-background-color);
   padding: 10px 15px;
   border-radius: 25px;
 }
 
-.scene {
-  width: 100%;
-  height: 150vh;
-  display: block;
-  pointer-events: none;
+@media (min-width: $bp-tablet) {
+  .scene {
+    width: 100%;
+    height: 135vh;
+    display: block;
+    pointer-events: none;
+  }
+
+  .toggle {
+    position: absolute;
+    top: 50%;
+    bottom: auto;
+    left: 1rem;
+    transform: translate(0, -50%);
+  }
+}
+
+@media (min-width: $bp-desktop) {
+  .scene {
+    width: 100%;
+    height: 135vh;
+    display: block;
+    pointer-events: none;
+  }
+
+  .toggle {
+    left: 2rem;
+  }
 }
 </style>

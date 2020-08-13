@@ -30,8 +30,6 @@ export default {
 .container {
   text-align: center;
   margin: 0 0 5rem 0;
-  position: relative;
-  z-index: 10;
 
   @media (min-width: $bp-desktop) {
     width: 40%;

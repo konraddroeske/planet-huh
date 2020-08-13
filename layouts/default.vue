@@ -19,11 +19,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.layout {
-  position: relative;
-}
-
 .main {
-  padding-top: 100vh;
+  z-index: $z-above;
+  position: relative;
 }
 </style>
