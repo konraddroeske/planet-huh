@@ -141,8 +141,14 @@ section {
 }
 
 .isOddLastPost {
+  margin-bottom: 0;
+
   @media (min-width: $bp-desktop) {
     max-width: 50%;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: $bp-lg-desktop) {
   }
 }
 
@@ -164,7 +170,7 @@ section {
 }
 
 .postTitle {
-  font-weight: $medium;
+  font-weight: $bold;
   font-size: 1.75rem;
   margin: 1rem 0;
 
@@ -188,6 +194,7 @@ section {
 .postTags {
   text-transform: uppercase;
   font-size: 1rem;
+  font-weight: $bold;
   margin: 0;
 
   @media (min-width: $bp-desktop) {

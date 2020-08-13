@@ -116,19 +116,13 @@ export default {
     content: '';
     position: absolute;
     z-index: -1;
-    height: 15rem;
-    width: 15rem;
-    left: calc(50% - 7.5rem);
-    top: calc(50% - 7.5rem);
+    height: 2.5rem;
+    width: 2.5rem;
+    left: calc(50% - 1.25rem);
+    top: calc(50% - 1.25rem);
     border-radius: 180px;
-    background-image: radial-gradient(
-      circle,
-      $accent 0,
-      #a3b1ff 30%,
-      #c7cafe 40%,
-      #e5e4fe 50%,
-      #ffffff 70%
-    );
+    background: $accent;
+    box-shadow: 0 0 5rem 2rem $accent;
     opacity: 0.2;
     filter: blur(10px);
   }
@@ -147,10 +141,7 @@ export default {
   @media (min-width: $bp-desktop) {
     font-size: 5rem;
     ::before {
-      height: 20rem;
-      width: 20rem;
-      left: calc(50% - 10rem);
-      top: calc(50% - 10rem);
+      box-shadow: 0 0 5rem 5rem $accent;
     }
   }
 }
@@ -162,18 +153,12 @@ export default {
 
   ::before {
     opacity: 0.5;
-    height: 25rem;
-    width: 25rem;
-    left: calc(50% - 12.5rem);
-    top: calc(50% - 12.5rem);
+    box-shadow: 0 0 5rem 6rem $accent;
   }
 
   @media (min-width: $bp-desktop) {
     ::before {
-      height: 35rem;
-      width: 35rem;
-      left: calc(50% - 17.5rem);
-      top: calc(50% - 17.5rem);
+      box-shadow: 0 0 5rem 8rem $accent;
     }
   }
 }
