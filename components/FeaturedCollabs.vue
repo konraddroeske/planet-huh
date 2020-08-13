@@ -14,40 +14,32 @@
         :ref="'post' + index"
         class="collab"
       >
-        <div class="collabContent">
-          <div class="leftImage">
-            <img
-              class="postImage"
-              :src="post.images[0].url"
-              :alt="post.title"
-            />
-          </div>
-          <div class="rightImage">
-            <img
-              class="postImage"
-              :src="post.images[1].url"
-              :alt="post.title"
-            />
-          </div>
-          <Wrapper>
-            <div class="content">
-              <div class="headline">
-                <p>
-                  {{ post.headline }}
-                </p>
-              </div>
-              <div class="title">
-                <h3>
-                  {{ post.artist[0].name }} + {{ post.artist[1].name }}
-                  {{ post.title }}
-                </h3>
-              </div>
-              <div class="buttonContainer">
-                <Button @clicked="onClick(post.slug)">Explore</Button>
-              </div>
-            </div>
-          </Wrapper>
+        <!-- <div class="collabContent"> -->
+        <div class="leftImage">
+          <img class="postImage" :src="post.images[0].url" :alt="post.title" />
         </div>
+        <div class="rightImage">
+          <img class="postImage" :src="post.images[1].url" :alt="post.title" />
+        </div>
+        <div class="collabsContent">
+          <div class="content">
+            <div class="headline">
+              <p>
+                {{ post.headline }}
+              </p>
+            </div>
+            <div class="collabsTitle">
+              <h3>
+                {{ post.artist[0].name }} + {{ post.artist[1].name }}
+                {{ post.title }}
+              </h3>
+            </div>
+            <div class="buttonContainer">
+              <Button @clicked="onClick(post.slug)">Explore</Button>
+            </div>
+          </div>
+        </div>
+        <!-- </div> -->
       </li>
     </ul>
   </section>
@@ -59,7 +51,6 @@ import gsap from 'gsap'
 import { Draggable, InertiaPlugin } from 'gsap/all'
 import Button from '@/components/Button'
 import ButtonArrow from '@/components/ButtonArrow'
-import Wrapper from '@/components/Wrapper'
 import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
 import RightArrow from '~/assets/icons/rightArrow.svg?inline'
 
@@ -67,7 +58,6 @@ export default {
   components: {
     Button,
     ButtonArrow,
-    Wrapper,
     LeftArrow,
     RightArrow,
   },
@@ -94,6 +84,15 @@ export default {
     },
     numSlides() {
       return this.posts.length
+    },
+    numChars() {
+      return this.posts.map((post) => {
+        const string = `${post.artist[0].name} + ${post.artist[1].name} ${post.title}`
+        return string.length
+      })
+    },
+    maxCharIndex() {
+      return this.numChars.indexOf(Math.max(...this.numChars))
     },
   },
   mounted() {
@@ -206,10 +205,10 @@ export default {
     },
     getMaxHeight(eleArr) {
       const heights = eleArr.map((post) => {
-        return post.getBoundingClientRect().height
+        return post.clientHeight
       })
 
-      return Math.max(...heights)
+      return heights
     },
     resize() {
       const xVal = parseFloat(
@@ -221,16 +220,35 @@ export default {
       this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
       this.wrapWidth = this.slideWidth * this.numSlides
 
-      this.slideHeight = this.getMaxHeight(
+      // List Height
+
+      this.slideHeights = this.getMaxHeight(
         Object.values(this.$refs).map((ele) => ele[0])
       )
 
-      gsap.set(this.proxyRef, {
-        x: norm * this.wrapWidth,
-      })
+      const maxHeight = Math.max(...this.slideHeights)
 
       gsap.set('.collabsList', {
-        height: this.slideHeight,
+        height: maxHeight,
+      })
+
+      // Content Height
+
+      const textElements = Array.from(document.querySelectorAll('.content'))
+      const textHeight = textElements[this.maxCharIndex].offsetHeight
+
+      for (let i = 0; i < this.posts.length; i += 1) {
+        if (i !== this.maxCharIndex) {
+          gsap.set(textElements[i], {
+            height: textHeight,
+          })
+        }
+      }
+
+      // Set Position of Posts
+
+      gsap.set(this.proxyRef, {
+        x: norm * this.wrapWidth,
       })
 
       this.animateSlides(0)
@@ -304,7 +322,7 @@ ul {
   margin: 0;
   padding: 0;
   position: relative;
-  overflow: hidden;
+  // overflow: hidden;
 }
 
 .collab {
@@ -312,9 +330,10 @@ ul {
   position: absolute;
   top: 0;
   left: 0;
+  // bottom: 0;
 }
 
-.collabContent {
+.collab {
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -332,12 +351,17 @@ ul {
     object-fit: cover;
   }
 
-  .content {
-    width: 100%;
-    margin: 2rem 0 0 0;
+  .collabsContent {
+    margin: 0 auto;
+    display: flex;
   }
 
-  .title {
+  .content {
+    width: 85%;
+    margin: 2rem auto 0 auto;
+  }
+
+  .collabsTitle {
     margin: 0.5rem 0 1.5rem 0;
   }
 
@@ -367,18 +391,26 @@ ul {
   }
 
   .collabsList {
-    border: 1px solid $black;
+    border-top: 1px solid $black;
+    border-bottom: 1px solid $black;
     margin-bottom: 8rem;
   }
 
-  .collabContent {
-    min-height: 70vh;
+  // .collab {
+  //   display: flex;
+  //   bottom: 0;
+  // }
+
+  .collab {
+    // min-height: 70vh;
+    flex-wrap: nowrap;
+
     .leftImage {
       order: 1;
       width: 35%;
     }
 
-    .wrapper {
+    .collabsContent {
       order: 2;
       width: 30%;
     }
@@ -390,16 +422,17 @@ ul {
 
     .leftImage,
     .rightImage {
-      height: 70vh;
+      height: auto;
     }
 
     .content {
       min-width: 280px;
       width: 70%;
-      margin: 4rem auto 4rem auto;
+      padding: 4rem 0;
+      margin: 0 auto;
     }
 
-    .title {
+    .collabsTitle {
       margin: 2.5rem 0 3rem 0;
     }
   }
@@ -420,15 +453,16 @@ ul {
     font-size: 1.25rem;
   }
 
-  .collabContent {
+  .collab {
     .content {
       min-width: 325px;
     }
 
-    .leftImage,
-    .rightImage {
-      height: 75vh;
-    }
+    // .leftImage,
+    // .rightImage,
+    // .wrapper {
+    //   height: 75vh;
+    // }
   }
 }
 </style>
