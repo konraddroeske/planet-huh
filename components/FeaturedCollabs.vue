@@ -347,6 +347,10 @@ ul {
   }
 }
 
+.headline {
+  font-weight: $semibold;
+}
+
 @media (min-width: $bp-desktop) {
   .leftArrow,
   .rightArrow {

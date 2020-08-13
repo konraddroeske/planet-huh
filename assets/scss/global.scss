@@ -9,7 +9,8 @@ $font-sans: Oswald, sans-serif;
 $font-body: Georgia, sans-serif;
 
 $medium: 400;
-$semibold: 600;
+$semibold: 500;
+$bold: 600;
 $extrabold: 900;
 
 // Color
@@ -23,8 +24,13 @@ $z-above: 10;
 $z-modal: 20;
 $z-fixed: 30;
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
+  overflow-x: hidden;
 }
 
 html {
@@ -55,4 +61,12 @@ ul {
 
 img {
   display: block;
+}
+
+.lockScroll {
+  overflow: hidden;
+}
+
+.blurContent {
+  filter: blur(10px);
 }

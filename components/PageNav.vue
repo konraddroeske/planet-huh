@@ -27,6 +27,7 @@ export default {
 
 <style lang="scss" scoped>
 nav {
+  font-weight: $semibold;
   @media (min-width: $bp-desktop) {
     grid-area: pageNav;
     align-self: center;

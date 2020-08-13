@@ -113,8 +113,8 @@ nav {
 
   @media (min-width: $bp-desktop) {
     margin: 15rem 0;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
+    justify-content: space-around;
 
     li {
       border-top: 0;

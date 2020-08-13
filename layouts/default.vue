@@ -1,11 +1,13 @@
 <template>
   <div class="layout">
     <Header />
-    <Nav />
-    <main class="main">
-      <Nuxt />
-    </main>
-    <Footer />
+    <div id="blurrableContent">
+      <Nav />
+      <main class="main">
+        <Nuxt />
+      </main>
+      <Footer />
+    </div>
   </div>
 </template>
 
