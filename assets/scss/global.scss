@@ -1,4 +1,5 @@
 // Breakpoints
+$bp-mobile: 414px;
 $bp-tablet: 768px;
 $bp-desktop: 1024px;
 $bp-lg-desktop: 1280px;
@@ -23,6 +24,11 @@ $gray: #7e7e7e;
 $z-above: 10;
 $z-modal: 20;
 $z-fixed: 30;
+
+// Font Size
+$font-sm: 1rem;
+$font-md: 1.5rem;
+$font-lg: 2rem;
 
 * {
   box-sizing: border-box;

@@ -1,9 +1,13 @@
 <template>
   <div class="navContainer">
+    <h1 class="welcome">Welcome To Planet Huh</h1>
     <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
       <canvas ref="scene" class="scene" />
     </div>
-    <button id="toggle" class="toggle">Toggle</button>
+    <div class="toggleContainer">
+      <NavToggle />
+    </div>
+    <!-- <button id="toggle" class="toggle">Toggle</button> -->
   </div>
 </template>
 
@@ -11,8 +15,12 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 import globeTexture from '@/assets/images/globe.png'
+import NavToggle from '@/components/NavToggle'
 
 export default {
+  components: {
+    NavToggle,
+  },
   data() {
     return {
       toggle: false,
@@ -559,6 +567,20 @@ export default {
           clearLerpTimer()
 
           if (!clock.running) {
+            if (this.currentNav === pivotGlobe) {
+              gsap.to('#ball', 0.4, {
+                x: '23px',
+                backgroundColor: '#FB95B8',
+              })
+            }
+
+            if (this.currentNav === pivotMood) {
+              gsap.to('#ball', 0.4, {
+                x: '0px',
+                backgroundColor: '#749bff',
+              })
+            }
+
             this.currentNav === pivotGlobe
               ? (this.currentNav = pivotMood)
               : (this.currentNav = pivotGlobe)
@@ -1125,6 +1147,19 @@ export default {
   height: 100vh;
 }
 
+.welcome {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: $medium;
+  font-size: 4vw;
+  z-index: $z-above;
+  position: absolute;
+  left: 50%;
+  top: 5rem;
+  width: 100%;
+  transform: translateX(-50%);
+}
+
 .sceneContainer {
   text-align: center;
   cursor: grab;
@@ -1142,14 +1177,22 @@ export default {
   pointer-events: none;
 }
 
-.toggle {
+.toggleContainer {
   position: absolute;
-  bottom: 0%;
+  bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
-  border: 1px solid var(--tertiary-background-color);
-  padding: 10px 15px;
-  border-radius: 25px;
+}
+
+@media (min-width: $bp-mobile) {
+  .welcome {
+    display: none;
+  }
+
+  .toggleContainer {
+    position: absolute;
+    bottom: 3rem;
+  }
 }
 
 @media (min-width: $bp-tablet) {
@@ -1158,14 +1201,6 @@ export default {
     height: 135vh;
     display: block;
     pointer-events: none;
-  }
-
-  .toggle {
-    position: absolute;
-    top: 50%;
-    bottom: auto;
-    left: 1rem;
-    transform: translate(0, -50%);
   }
 }
 
@@ -1177,7 +1212,15 @@ export default {
     pointer-events: none;
   }
 
-  .toggle {
+  .toggleContainer {
+    position: absolute;
+    top: 50%;
+    bottom: auto;
+    left: 1rem;
+    transform: translate(0, -50%);
+  }
+
+  .toggleContainer {
     left: 2rem;
   }
 }
