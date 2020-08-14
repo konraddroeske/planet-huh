@@ -131,7 +131,12 @@ export default {
   },
   methods: {
     initThree() {
-      // ANIMATE OBJECT CONTROLS
+      // CHECK DEVICE
+
+      const isMobile = window.matchMedia('only screen and (max-width: 414px)')
+        .matches
+
+      console.log(isMobile)
 
       let isDragging = false
       let isThrowing = false
@@ -151,8 +156,8 @@ export default {
         },
       }
 
-      const rotationSpeed = 0.0035
-      const rotationInertia = 0.08
+      const rotationSpeed = isMobile ? 0.0055 : 0.0035
+      const rotationInertia = isMobile ? 0.09 : 0.08
 
       // horizonal rotation
 
@@ -190,7 +195,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = -0.55
+      const maxZoom = isMobile ? -1.6 : -1.2
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -209,12 +214,13 @@ export default {
 
       const navRouter = () => {
         if (currentTarget) {
-          // eslint-disable-next-line no-console
-          console.log(currentTarget.name)
+          this.$router.push({
+            path: `/post/${currentTarget.name}`,
+          })
         }
       }
 
-      document.addEventListener('click', navRouter)
+      document.addEventListener('click', navRouter, false)
 
       // LERP TIMER
 
@@ -319,11 +325,21 @@ export default {
       }
 
       // TOUCH CONTROLS
-      const touchToggle = true
 
       // mouse down
       const onTouchStart = (e) => {
         e.preventDefault()
+        setLerpTimer()
+
+        // Raycaster
+        const rect = renderer.domElement.getBoundingClientRect()
+        rayMouse.x =
+          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
+          1
+        rayMouse.y =
+          -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
+          1
+
         isDragging = true
         isThrowing = true
         lerpTimerBool = false
@@ -391,6 +407,7 @@ export default {
 
       // mouse up
       const onTouchEnd = (e) => {
+        console.log('touch end')
         isDragging = false
         zoomPosition = 0.005
       }
@@ -399,23 +416,27 @@ export default {
 
       const sceneContainer = document.querySelector('#sceneContainer')
 
-      const addHandlers = () => {
-        sceneContainer.addEventListener('mousedown', mouseDown, false)
-        sceneContainer.addEventListener('mousemove', mouseMove, false)
-        sceneContainer.addEventListener('mouseup', mouseUp, false)
+      if (!isMobile) {
+        const addHandlers = () => {
+          sceneContainer.addEventListener('mousedown', mouseDown, false)
+          sceneContainer.addEventListener('mousemove', mouseMove, false)
+          sceneContainer.addEventListener('mouseup', mouseUp, false)
+        }
+
+        const removeHandlers = () => {
+          isDragging = false
+          zoomPosition = 0.005
+
+          sceneContainer.removeEventListener('mousedown', mouseDown, false)
+          sceneContainer.removeEventListener('mousemove', mouseMove, false)
+          sceneContainer.removeEventListener('mouseup', mouseUp, false)
+        }
+
+        addHandlers()
+
+        sceneContainer.addEventListener('mouseover', addHandlers, false)
+        sceneContainer.addEventListener('mouseout', removeHandlers, false)
       }
-
-      const removeHandlers = () => {
-        isDragging = false
-        zoomPosition = 0.005
-
-        sceneContainer.removeEventListener('mousedown', mouseDown, false)
-        sceneContainer.removeEventListener('mousemove', mouseMove, false)
-        sceneContainer.removeEventListener('mouseup', mouseUp, false)
-      }
-
-      sceneContainer.addEventListener('mouseover', addHandlers, false)
-      sceneContainer.addEventListener('mouseout', removeHandlers, false)
 
       // touch event listeners
 
@@ -434,14 +455,14 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, 4.5)
+      pivotCamera.position.set(0, 0, isMobile ? 5.5 : 4.75)
       scene.add(pivotCamera)
 
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, -4.5)
+      camera.lookAt(0, 0, isMobile ? -5.5 : -4.75)
 
       // LIGHTING
 
@@ -859,9 +880,9 @@ export default {
             // Main Object
             moodsArr[color.name].push(new THREE.Object3D())
             moodsArr[color.name][index].position.set(
-              position[0] * 1.015,
-              position[1] * 1.015,
-              position[2] * 1.015
+              position[0] * 1.017,
+              position[1] * 1.017,
+              position[2] * 1.017
             )
             mood.add(moodsArr[color.name][index])
 
@@ -934,16 +955,25 @@ export default {
         }
       }
 
+      const navRouterTitle = (e) => {
+        console.log(e.target.innerHTML)
+
+        // this.$router.push({
+        //   path: `/post/${currentTarget.name}`,
+        // })
+      }
+
       const addTitle = (object) => {
-        // const checkObject = activeTitles.map((obj) => obj[0]).includes(object)
-
         // add new title
-        const title = document.createElement('p')
+        const title = document.createElement('a')
         title.classList.add('title')
-
         const text = document.createTextNode(`${object.name}`)
         title.append(text)
         title.style.position = 'absolute'
+        title.title = object.name
+
+        title.addEventListener('click', navRouterTitle, false)
+
         this.$refs.sceneContainer.append(title)
 
         const tl = gsap.timeline()
@@ -954,7 +984,7 @@ export default {
           top: 0,
           margin: 0,
           transform: 'translateY(-50%)',
-          pointerEvents: 'none',
+          // pointerEvents: 'none',
         }).to(title, 0.3, { alpha: 1 })
 
         const newTitle = [object, title]
@@ -977,6 +1007,11 @@ export default {
 
             const tl = gsap.timeline({
               onComplete: () => {
+                activeTitles[i][1].removeEventListener(
+                  'click',
+                  navRouterTitle,
+                  false
+                )
                 activeTitles[i][1].remove()
 
                 const index = activeTitles.indexOf(ele)
@@ -1121,12 +1156,6 @@ export default {
             obj.material.opacity -= 0.03
           }
         })
-
-        // text sprite
-
-        // if (currentTextTarget) {
-        //   setTextPosition(currentTextTarget)
-        // }
 
         if (pivotMain && mood && globe) {
           pivotMain.rotation.y = timer * speed
@@ -1273,7 +1302,8 @@ export default {
 
 .scene {
   width: 100%;
-  height: 155vw;
+  min-height: 100vh;
+  height: 152vw;
   display: block;
   pointer-events: none;
 }
@@ -1283,6 +1313,16 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
+}
+
+@media (pointer: none) and (max-width: 414px),
+  (pointer: coarse) and (max-width: 414px) {
+  .scene {
+    width: 100%;
+    height: 100vh;
+    display: block;
+    pointer-events: none;
+  }
 }
 
 @media (min-width: $bp-mobile) {
