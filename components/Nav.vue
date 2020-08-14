@@ -213,18 +213,20 @@ export default {
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
 
-        console.log(currentTarget)
-
         if (currentTarget && isMobile) {
-          sceneContainer.addEventListener('touchstart', navRouter, false)
+          sceneContainer.addEventListener('touchstart', navRouterMobile, false)
         }
 
         if (!currentTarget && isMobile) {
-          sceneContainer.removeEventListener('touchstart', navRouter, false)
+          sceneContainer.removeEventListener(
+            'touchstart',
+            navRouterMobile,
+            false
+          )
         }
       }
 
-      const navRouter = (e) => {
+      const navRouterMobile = (e) => {
         // Update Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
         rayMouse.x =
@@ -247,13 +249,17 @@ export default {
         }
       }
 
+      const navRouter = () => {
+        if (currentTarget) {
+          this.$router.push({
+            path: `/post/${currentTarget.name}`,
+          })
+        }
+      }
+
       if (!isMobile) {
         sceneContainer.addEventListener('click', navRouter, false)
       }
-
-      // if (isMobile) {
-      //   document.addEventListener('touchstart', navRouter, false)
-      // }
 
       // LERP TIMER
 
@@ -705,19 +711,15 @@ export default {
 
       // TOGGLE OBJECTS
 
-      let timer = 0
+      let toggleClick = false
       let toggleHover = false
-      const speed = 4
-      const rotateSpeed = Math.PI / speed
-      let delta = 0
-      const clock = new THREE.Clock()
-      clock.autoStart = false
+      let rotatePosition = 0
 
       {
         const toggleAnim = () => {
           clearLerpTimer()
 
-          if (!clock.running) {
+          if (!gsap.isTweening(pivotMain.rotation)) {
             if (this.currentNav === pivotGlobe) {
               gsap.to('#ball', 0.4, {
                 x: '23px',
@@ -732,28 +734,31 @@ export default {
               })
             }
 
+            rotatePosition += Math.PI
+            gsap.to(pivotMain.rotation, 1, { y: rotatePosition })
+
             this.currentNav === pivotGlobe
               ? (this.currentNav = pivotMood)
               : (this.currentNav = pivotGlobe)
-
-            this.toggle = !this.toggle
-
-            this.toggle ? (delta = 0) : (delta = rotateSpeed)
-
-            clock.stop()
-            clock.start()
           }
         }
 
         document.querySelector('#toggle').addEventListener('click', toggleAnim)
 
-        const checkToggleHover = () => {
+        const checkToggleClick = () => {
           if (toggleHover) {
+            toggleClick = true
+          }
+        }
+
+        const checkToggleHover = () => {
+          if (toggleHover && toggleClick) {
             toggleAnim()
           }
         }
 
-        document.addEventListener('click', checkToggleHover)
+        sceneContainer.addEventListener('mousedown', checkToggleClick)
+        sceneContainer.addEventListener('click', checkToggleHover)
       }
 
       // SET ROTATION AXIS
@@ -1086,14 +1091,6 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        // TOGGLE OBJECTS
-
-        if (clock.getElapsedTime() <= rotateSpeed) {
-          timer = clock.getElapsedTime() + delta
-        } else {
-          clock.stop()
-        }
-
         // SPRITE RESIZE ON TOGGLE
 
         // if (clock.running) {
@@ -1122,6 +1119,7 @@ export default {
           if (intersects.length > 0 && intersects[0].object.name === 'mood') {
             toggleHover = true
           } else {
+            toggleClick = false
             toggleHover = false
           }
         }
@@ -1132,6 +1130,7 @@ export default {
           if (intersects.length > 0 && intersects[0].object.name === 'globe') {
             toggleHover = true
           } else {
+            toggleClick = false
             toggleHover = false
           }
         }
@@ -1188,8 +1187,6 @@ export default {
         })
 
         if (pivotMain && mood && globe) {
-          pivotMain.rotation.y = timer * speed
-
           if (this.currentNav === pivotGlobe) {
             // HORIZONAL ROTATION
             deltaX =
