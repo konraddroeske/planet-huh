@@ -29,11 +29,11 @@ export default {
 <style lang="scss" scoped>
 .container {
   text-align: center;
-  margin: 0 0 5rem 0;
+  margin: 5rem 0 5rem 0;
 
   @media (min-width: $bp-desktop) {
     width: 40%;
-    margin: 0 auto 5rem auto;
+    margin: 5rem auto 5rem auto;
   }
 }
 
