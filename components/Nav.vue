@@ -138,8 +138,6 @@ export default {
 
       const sceneContainer = document.querySelector('#sceneContainer')
 
-      console.log(isMobile)
-
       let isDragging = false
       let isThrowing = false
 
