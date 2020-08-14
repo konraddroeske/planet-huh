@@ -1341,13 +1341,13 @@ export default {
   z-index: $z-above;
 }
 
-@media (pointer: none) and (max-width: 414px),
-  (pointer: coarse) and (max-width: 414px) {
+@media (pointer: none), (pointer: coarse) {
   .scene {
-    width: 100%;
-    height: 100vh;
-    display: block;
-    pointer-events: none;
+    height: 100vh !important;
+  }
+
+  .toggleContainer {
+    bottom: 5rem !important;
   }
 }
 
