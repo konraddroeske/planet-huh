@@ -1,6 +1,5 @@
 <template>
   <div>
-    <Nav />
     <CTA />
     <CategoryNav variant="gradient" />
     <FeaturedCollabs />
@@ -9,7 +8,6 @@
 </template>
 
 <script>
-import Nav from '@/components/Nav'
 import CTA from '@/components/CTA'
 import FeaturedCollabs from '@/components/FeaturedCollabs'
 import CategoryNav from '@/components/CategoryNav'
@@ -17,7 +15,6 @@ import PostsFeed from '@/components/PostsFeed'
 
 export default {
   components: {
-    Nav,
     CTA,
     FeaturedCollabs,
     CategoryNav,

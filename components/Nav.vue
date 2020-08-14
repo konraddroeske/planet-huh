@@ -1,7 +1,13 @@
 <template>
-  <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
-    <canvas ref="scene" class="scene" />
-    <button class="toggle">Toggle</button>
+  <div class="navContainer">
+    <h1 class="welcome">Welcome To Planet Huh</h1>
+    <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
+      <canvas ref="scene" class="scene" />
+    </div>
+    <div class="toggleContainer">
+      <NavToggle />
+    </div>
+    <!-- <button id="toggle" class="toggle">Toggle</button> -->
   </div>
 </template>
 
@@ -9,8 +15,12 @@
 import * as THREE from 'three'
 import gsap from 'gsap'
 import globeTexture from '@/assets/images/globe.png'
+import NavToggle from '@/components/NavToggle'
 
 export default {
+  components: {
+    NavToggle,
+  },
   data() {
     return {
       toggle: false,
@@ -121,7 +131,12 @@ export default {
   },
   methods: {
     initThree() {
-      // ANIMATE OBJECT CONTROLS
+      // CHECK DEVICE
+
+      const isMobile = window.matchMedia('only screen and (max-width: 414px)')
+        .matches
+
+      const sceneContainer = document.querySelector('#sceneContainer')
 
       let isDragging = false
       let isThrowing = false
@@ -141,8 +156,8 @@ export default {
         },
       }
 
-      const rotationSpeed = 0.0035
-      const rotationInertia = 0.08
+      const rotationSpeed = isMobile ? 0.0055 : 0.0035
+      const rotationInertia = isMobile ? 0.09 : 0.08
 
       // horizonal rotation
 
@@ -180,7 +195,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = -0.55
+      const maxZoom = isMobile ? -1.6 : -1.2
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -195,16 +210,54 @@ export default {
 
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
+
+        if (currentTarget && isMobile) {
+          sceneContainer.addEventListener('touchstart', navRouterMobile, false)
+        }
+
+        if (!currentTarget && isMobile) {
+          sceneContainer.removeEventListener(
+            'touchstart',
+            navRouterMobile,
+            false
+          )
+        }
+      }
+
+      const navRouterMobile = (e) => {
+        // Update Raycaster
+        const rect = renderer.domElement.getBoundingClientRect()
+        rayMouse.x =
+          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
+          1
+        rayMouse.y =
+          -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
+          1
+
+        raycaster.setFromCamera(rayMouse, camera)
+
+        intersects = raycaster.intersectObjects(
+          this.currentNav === pivotGlobe ? spriteCities : spriteMoodsFlat
+        )
+
+        if (intersects[0].object === currentTarget) {
+          this.$router.push({
+            path: `/post/${currentTarget.name}`,
+          })
+        }
       }
 
       const navRouter = () => {
         if (currentTarget) {
-          // eslint-disable-next-line no-console
-          console.log(currentTarget.name)
+          this.$router.push({
+            path: `/post/${currentTarget.name}`,
+          })
         }
       }
 
-      document.addEventListener('click', navRouter)
+      if (!isMobile) {
+        sceneContainer.addEventListener('click', navRouter, false)
+      }
 
       // LERP TIMER
 
@@ -254,9 +307,6 @@ export default {
 
       const mouseMove = (e) => {
         // Raycaster
-        // rayMouse.x = (event.clientX / window.innerWidth) * 2 - 1
-        // rayMouse.y = -(event.clientY / window.innerHeight) * 2 + 1
-
         const rect = renderer.domElement.getBoundingClientRect()
         rayMouse.x =
           ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1
@@ -311,9 +361,121 @@ export default {
         zoomPosition = 0.005
       }
 
-      document.addEventListener('mousedown', mouseDown, false)
-      document.addEventListener('mousemove', mouseMove, false)
-      document.addEventListener('mouseup', mouseUp, false)
+      // TOUCH CONTROLS
+
+      // mouse down
+      const onTouchStart = (e) => {
+        e.preventDefault()
+        setLerpTimer()
+
+        // Raycaster
+        const rect = renderer.domElement.getBoundingClientRect()
+        rayMouse.x =
+          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
+          1
+        rayMouse.y =
+          -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
+          1
+
+        isDragging = true
+        isThrowing = true
+        lerpTimerBool = false
+
+        mouseXOnMouseDown = e.touches[0].clientX - windowHalfX
+        mouseYOnMouseDown = e.touches[0].clientY - windowHalfY
+
+        if (this.currentNav === pivotGlobe) {
+          targetRotationOnMouseDownX = targetRotationXGlobe
+          targetRotationOnMouseDownY = targetRotationYGlobe
+        }
+
+        if (this.currentNav === pivotMood) {
+          targetRotationOnMouseDownX = targetRotationXMood
+          targetRotationOnMouseDownY = -targetRotationYMood
+        }
+      }
+
+      // on mouse move
+      const onTouchMove = (e) => {
+        e.preventDefault()
+
+        if (isDragging) {
+          mouseX = e.touches[0].clientX - windowHalfX
+          mouseY = e.touches[0].clientY - windowHalfY
+
+          const delta =
+            targetRotationOnMouseDownY +
+            (mouseY - mouseYOnMouseDown) * rotationSpeed
+
+          if (this.currentNav === pivotGlobe) {
+            targetRotationXGlobe =
+              targetRotationOnMouseDownX +
+              (mouseX - mouseXOnMouseDown) * rotationSpeed
+
+            if (delta <= MAX_ANGLES.x.from * -1) {
+              targetRotationYGlobe = MAX_ANGLES.x.from * -1
+            } else if (delta >= MAX_ANGLES.x.from) {
+              targetRotationYGlobe = MAX_ANGLES.x.from
+            } else {
+              targetRotationYGlobe =
+                targetRotationOnMouseDownY +
+                (mouseY - mouseYOnMouseDown) * rotationSpeed
+            }
+          }
+
+          if (this.currentNav === pivotMood) {
+            targetRotationXMood =
+              targetRotationOnMouseDownX +
+              (mouseX - mouseXOnMouseDown) * rotationSpeed
+
+            if (delta <= MAX_ANGLES.x.from * -1) {
+              targetRotationYMood = MAX_ANGLES.x.from
+            } else if (delta >= MAX_ANGLES.x.from) {
+              targetRotationYMood = MAX_ANGLES.x.from * -1
+            } else {
+              targetRotationYMood =
+                (targetRotationOnMouseDownY +
+                  (mouseY - mouseYOnMouseDown) * rotationSpeed) *
+                -1
+            }
+          }
+        }
+      }
+
+      // mouse up
+      const onTouchEnd = (e) => {
+        isDragging = false
+        zoomPosition = 0.005
+      }
+
+      // mouse event listeners
+      if (!isMobile) {
+        const addHandlers = () => {
+          sceneContainer.addEventListener('mousedown', mouseDown, false)
+          sceneContainer.addEventListener('mousemove', mouseMove, false)
+          sceneContainer.addEventListener('mouseup', mouseUp, false)
+        }
+
+        const removeHandlers = () => {
+          isDragging = false
+          zoomPosition = 0.005
+
+          sceneContainer.removeEventListener('mousedown', mouseDown, false)
+          sceneContainer.removeEventListener('mousemove', mouseMove, false)
+          sceneContainer.removeEventListener('mouseup', mouseUp, false)
+        }
+
+        addHandlers()
+
+        sceneContainer.addEventListener('mouseover', addHandlers, false)
+        sceneContainer.addEventListener('mouseout', removeHandlers, false)
+      }
+
+      // touch event listeners
+
+      sceneContainer.addEventListener('touchstart', onTouchStart, false)
+      sceneContainer.addEventListener('touchmove', onTouchMove, false)
+      sceneContainer.addEventListener('touchend', onTouchEnd, false)
 
       // INITIALIZE CANVAS
 
@@ -326,14 +488,14 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, 3.2)
+      pivotCamera.position.set(0, 0, isMobile ? 5.5 : 4.75)
       scene.add(pivotCamera)
 
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, -3.2)
+      camera.lookAt(0, 0, isMobile ? -5.5 : -4.75)
 
       // LIGHTING
 
@@ -547,41 +709,54 @@ export default {
 
       // TOGGLE OBJECTS
 
-      let timer = 0
+      let toggleClick = false
       let toggleHover = false
-      const speed = 4
-      const rotateSpeed = Math.PI / speed
-      let delta = 0
-      const clock = new THREE.Clock()
-      clock.autoStart = false
+      let rotatePosition = 0
 
       {
         const toggleAnim = () => {
           clearLerpTimer()
 
-          if (!clock.running) {
+          if (!gsap.isTweening(pivotMain.rotation)) {
+            if (this.currentNav === pivotGlobe) {
+              gsap.to('#ball', 0.4, {
+                x: '23px',
+                backgroundColor: '#FB95B8',
+              })
+            }
+
+            if (this.currentNav === pivotMood) {
+              gsap.to('#ball', 0.4, {
+                x: '0px',
+                backgroundColor: '#749bff',
+              })
+            }
+
+            rotatePosition += Math.PI
+            gsap.to(pivotMain.rotation, 1, { y: rotatePosition })
+
             this.currentNav === pivotGlobe
               ? (this.currentNav = pivotMood)
               : (this.currentNav = pivotGlobe)
-
-            this.toggle = !this.toggle
-
-            this.toggle ? (delta = 0) : (delta = rotateSpeed)
-
-            clock.stop()
-            clock.start()
           }
         }
 
-        document.querySelector('.toggle').addEventListener('click', toggleAnim)
+        document.querySelector('#toggle').addEventListener('click', toggleAnim)
+
+        const checkToggleClick = () => {
+          if (toggleHover) {
+            toggleClick = true
+          }
+        }
 
         const checkToggleHover = () => {
-          if (toggleHover) {
+          if (toggleHover && toggleClick) {
             toggleAnim()
           }
         }
 
-        document.addEventListener('click', checkToggleHover)
+        sceneContainer.addEventListener('mousedown', checkToggleClick)
+        sceneContainer.addEventListener('click', checkToggleHover)
       }
 
       // SET ROTATION AXIS
@@ -737,9 +912,9 @@ export default {
             // Main Object
             moodsArr[color.name].push(new THREE.Object3D())
             moodsArr[color.name][index].position.set(
-              position[0] * 1.015,
-              position[1] * 1.015,
-              position[2] * 1.015
+              position[0] * 1.017,
+              position[1] * 1.017,
+              position[2] * 1.017
             )
             mood.add(moodsArr[color.name][index])
 
@@ -812,29 +987,37 @@ export default {
         }
       }
 
+      const navRouterTitle = (e) => {
+        console.log(e.target.innerHTML)
+
+        // this.$router.push({
+        //   path: `/post/${currentTarget.name}`,
+        // })
+      }
+
       const addTitle = (object) => {
-        // const checkObject = activeTitles.map((obj) => obj[0]).includes(object)
-
         // add new title
-        const title = document.createElement('p')
+        const title = document.createElement('a')
         title.classList.add('title')
-
         const text = document.createTextNode(`${object.name}`)
         title.append(text)
         title.style.position = 'absolute'
+        title.title = object.name
+
+        title.addEventListener('click', navRouterTitle, false)
+
         this.$refs.sceneContainer.append(title)
 
         const tl = gsap.timeline()
         tl.set(title, {
           fontSize: '0.8rem',
-          // position: 'absolute',
-          // display: 'block',
+          fontWeight: 500,
           opacity: 0,
           left: 0,
           top: 0,
           margin: 0,
           transform: 'translateY(-50%)',
-          pointerEvents: 'none',
+          // pointerEvents: 'none',
         }).to(title, 0.3, { alpha: 1 })
 
         const newTitle = [object, title]
@@ -857,6 +1040,11 @@ export default {
 
             const tl = gsap.timeline({
               onComplete: () => {
+                activeTitles[i][1].removeEventListener(
+                  'click',
+                  navRouterTitle,
+                  false
+                )
                 activeTitles[i][1].remove()
 
                 const index = activeTitles.indexOf(ele)
@@ -901,14 +1089,6 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        // TOGGLE OBJECTS
-
-        if (clock.getElapsedTime() <= rotateSpeed) {
-          timer = clock.getElapsedTime() + delta
-        } else {
-          clock.stop()
-        }
-
         // SPRITE RESIZE ON TOGGLE
 
         // if (clock.running) {
@@ -937,6 +1117,7 @@ export default {
           if (intersects.length > 0 && intersects[0].object.name === 'mood') {
             toggleHover = true
           } else {
+            toggleClick = false
             toggleHover = false
           }
         }
@@ -947,6 +1128,7 @@ export default {
           if (intersects.length > 0 && intersects[0].object.name === 'globe') {
             toggleHover = true
           } else {
+            toggleClick = false
             toggleHover = false
           }
         }
@@ -1002,15 +1184,7 @@ export default {
           }
         })
 
-        // text sprite
-
-        // if (currentTextTarget) {
-        //   setTextPosition(currentTextTarget)
-        // }
-
         if (pivotMain && mood && globe) {
-          pivotMain.rotation.y = timer * speed
-
           if (this.currentNav === pivotGlobe) {
             // HORIZONAL ROTATION
             deltaX =
@@ -1123,28 +1297,98 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.sceneContainer {
-  min-height: 100vh;
-  text-align: center;
+.navContainer {
   position: relative;
-  cursor: grab;
-  overflow: hidden;
+  height: 100vh;
 }
 
-.toggle {
+.welcome {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: $medium;
+  font-size: 4vw;
+  z-index: $z-above;
+  position: absolute;
+  left: 50%;
+  top: 5rem;
+  width: 100%;
+  transform: translateX(-50%);
+}
+
+.sceneContainer {
+  text-align: center;
+  cursor: grab;
   position: absolute;
   top: 50%;
-  left: 2rem;
-  transform: translateY(-50%);
-  border: 1px solid var(--tertiary-background-color);
-  padding: 10px 15px;
-  border-radius: 25px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
 }
 
 .scene {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
+  height: 152vw;
   display: block;
   pointer-events: none;
+}
+
+.toggleContainer {
+  position: absolute;
+  bottom: 5rem;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: $z-above;
+}
+
+@media (pointer: none) and (max-width: 414px),
+  (pointer: coarse) and (max-width: 414px) {
+  .scene {
+    width: 100%;
+    height: 100vh;
+    display: block;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: $bp-mobile) {
+  .welcome {
+    display: none;
+  }
+
+  .toggleContainer {
+    position: absolute;
+    bottom: 3rem;
+  }
+}
+
+@media (min-width: $bp-tablet) {
+  .scene {
+    width: 100%;
+    height: 135vh;
+    display: block;
+    pointer-events: none;
+  }
+}
+
+@media (min-width: $bp-desktop) {
+  .scene {
+    width: 100%;
+    height: 135vh;
+    display: block;
+    pointer-events: none;
+  }
+
+  .toggleContainer {
+    position: absolute;
+    top: 50%;
+    bottom: auto;
+    left: 1rem;
+    transform: translate(0, -50%);
+  }
+
+  .toggleContainer {
+    left: 2rem;
+  }
 }
 </style>
