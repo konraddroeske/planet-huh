@@ -136,6 +136,8 @@ export default {
       const isMobile = window.matchMedia('only screen and (max-width: 414px)')
         .matches
 
+      const sceneContainer = document.querySelector('#sceneContainer')
+
       console.log(isMobile)
 
       let isDragging = false
@@ -210,17 +212,48 @@ export default {
 
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
+
+        console.log(currentTarget)
+
+        if (currentTarget && isMobile) {
+          sceneContainer.addEventListener('touchstart', navRouter, false)
+        }
+
+        if (!currentTarget && isMobile) {
+          sceneContainer.removeEventListener('touchstart', navRouter, false)
+        }
       }
 
-      const navRouter = () => {
-        if (currentTarget) {
+      const navRouter = (e) => {
+        // Update Raycaster
+        const rect = renderer.domElement.getBoundingClientRect()
+        rayMouse.x =
+          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
+          1
+        rayMouse.y =
+          -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
+          1
+
+        raycaster.setFromCamera(rayMouse, camera)
+
+        intersects = raycaster.intersectObjects(
+          this.currentNav === pivotGlobe ? spriteCities : spriteMoodsFlat
+        )
+
+        if (intersects[0].object === currentTarget) {
           this.$router.push({
             path: `/post/${currentTarget.name}`,
           })
         }
       }
 
-      document.addEventListener('click', navRouter, false)
+      if (!isMobile) {
+        sceneContainer.addEventListener('click', navRouter, false)
+      }
+
+      // if (isMobile) {
+      //   document.addEventListener('touchstart', navRouter, false)
+      // }
 
       // LERP TIMER
 
@@ -407,15 +440,11 @@ export default {
 
       // mouse up
       const onTouchEnd = (e) => {
-        console.log('touch end')
         isDragging = false
         zoomPosition = 0.005
       }
 
       // mouse event listeners
-
-      const sceneContainer = document.querySelector('#sceneContainer')
-
       if (!isMobile) {
         const addHandlers = () => {
           sceneContainer.addEventListener('mousedown', mouseDown, false)
@@ -979,6 +1008,7 @@ export default {
         const tl = gsap.timeline()
         tl.set(title, {
           fontSize: '0.8rem',
+          fontWeight: 500,
           opacity: 0,
           left: 0,
           top: 0,
@@ -1313,6 +1343,7 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
+  z-index: $z-above;
 }
 
 @media (pointer: none) and (max-width: 414px),
