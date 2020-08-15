@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <Wrapper>
+    <div class="wrapper">
       <div class="heroRow">
         <img class="bannerImage" :src="imageSrc" alt="" />
         <div class="bannerText">
@@ -30,15 +30,14 @@
           </ul>
         </div>
       </div>
-    </Wrapper>
+    </div>
   </div>
 </template>
 
 <script>
-import Wrapper from '@/components/Wrapper'
 import Date from '@/components/Date'
 export default {
-  components: { Wrapper, Date },
+  components: { Date },
   props: {
     imageSrc: {
       type: String,
@@ -75,12 +74,22 @@ export default {
 <style lang="scss" scoped>
 .container {
   margin-top: 5rem;
-  margin-bottom: 2rem;
   text-align: center;
 
   @media (min-width: $bp-desktop) {
     margin-top: 0;
+    margin-bottom: 0;
     text-align: left;
+  }
+}
+
+.wrapper {
+  width: 85%;
+  margin: 0 auto;
+
+  @media (min-width: $bp-desktop) {
+    width: 100%;
+    margin: 0;
   }
 }
 
@@ -89,9 +98,7 @@ export default {
     display: flex;
     flex-direction: row-reverse;
     align-items: center;
-    width: 118%;
     position: relative;
-    left: calc(-9% + 2rem);
   }
 }
 
@@ -99,13 +106,14 @@ export default {
   display: block;
   width: 100%;
   @media (min-width: $bp-desktop) {
-    width: calc(50% + 1rem);
+    width: 50%;
   }
 }
 
 .bannerText {
   @media (min-width: $bp-desktop) {
-    width: calc(50% - 1rem);
+    width: 50%;
+    padding-left: 2rem;
     padding-right: 5%;
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
@@ -114,6 +122,7 @@ export default {
 
 .title {
   text-transform: uppercase;
+  font-weight: $extrabold;
   font-size: 2.25rem;
   @media (min-width: $bp-desktop) {
     font-size: 3.5rem;
@@ -134,16 +143,14 @@ export default {
 .metaRow {
   @media (min-width: $bp-desktop) {
     display: flex;
-    width: calc(118% - 2rem);
-    position: relative;
-    left: calc(-9% + 2rem);
+    width: calc(100% - 4rem);
+    margin: 2rem 2rem 0 2rem;
   }
 }
 
 .dateContainer {
   @media (min-width: $bp-desktop) {
     width: 50%;
-    margin: 2rem 0;
   }
 }
 
@@ -151,7 +158,6 @@ export default {
   @media (min-width: $bp-desktop) {
     width: 50%;
     display: flex;
-    margin: 2rem 0;
   }
 }
 
@@ -161,8 +167,9 @@ export default {
   color: $accent;
   text-transform: uppercase;
   font-family: $font-sans;
+  font-weight: $semibold;
   font-size: 0.8rem;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
   letter-spacing: 1px;
 
   @media (min-width: $bp-desktop) {

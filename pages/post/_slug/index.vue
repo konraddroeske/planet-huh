@@ -1,17 +1,21 @@
 <template>
-  <HeroBanner v-bind="post" :city="'Toronto'" />
+  <div>
+    <HeroBanner v-if="post" v-bind="post" :city="'Toronto'" />
+    <RichText v-if="post" :content="post.content" />
+  </div>
 </template>
 
 <script>
 import { fetchContent } from '@/utils/api'
 import HeroBanner from '@/components/HeroBanner'
+import RichText from '@/components/RichText'
 export default {
   layout: 'post',
-  components: { HeroBanner },
+  components: { HeroBanner, RichText },
   data() {
     return {
       slug: this.$route.params.slug,
-      post: {},
+      post: null,
     }
   },
   async created() {
@@ -37,6 +41,7 @@ export default {
     this.post = {
       ...data.data.post,
       imageSrc: data.data.post.coverImage.url,
+      content: data.data.post.content.raw.children,
     }
   },
 }
