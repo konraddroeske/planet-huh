@@ -69,6 +69,7 @@ export default {
 <style lang="scss" scoped>
 .container {
   margin-top: 5rem;
+  margin-bottom: 2rem;
   text-align: center;
 }
 
@@ -85,6 +86,11 @@ export default {
 .date,
 .category {
   font-weight: $semibold;
+  font-size: 1.1rem;
+}
+
+.excerpt {
+  margin-bottom: 0;
 }
 
 .dateTitle,
@@ -93,7 +99,8 @@ export default {
   color: $accent;
   text-transform: uppercase;
   font-family: $font-sans;
-  font-size: 0.75rem;
+  font-size: 0.8rem;
+  margin-top: 1.5rem;
 }
 
 .categories {
@@ -101,14 +108,15 @@ export default {
   padding-left: 0;
   margin: 0;
   display: flex;
+  justify-content: center;
+}
 
-  li {
-    text-transform: capitalize;
-    margin-right: 1rem;
-  }
+.category {
+  text-transform: capitalize;
+  margin-right: 1rem;
+}
 
-  li:last-child {
-    margin-right: 0;
-  }
+.category:last-child {
+  margin-right: 0;
 }
 </style>
