@@ -1,12 +1,26 @@
 <template>
-  <div>
-    <h1>This is a content page</h1>
-    <Nuxt />
+  <div class="layout">
+    <Header />
+    <div id="blurrableContent">
+      <main class="main">
+        <Nuxt />
+      </main>
+      <Footer />
+    </div>
   </div>
 </template>
 
 <script>
-export default {}
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
+export default {
+  components: { Header, Footer },
+}
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.main {
+  z-index: $z-above;
+  position: relative;
+}
+</style>

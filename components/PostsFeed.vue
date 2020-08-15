@@ -20,7 +20,7 @@
               :alt="post.title"
             />
           </nuxt-link>
-          <p class="postDate">{{ post.date }}</p>
+          <p class="postDate"><Date :input="post.date" /></p>
           <h3 class="postTitle">
             <nuxt-link :to="`/post/${post.slug}`" class="postLink">
               {{ post.title }}
@@ -44,12 +44,12 @@
 
 <script>
 import { mapState } from 'vuex'
-import moment from 'moment'
 import Wrapper from '@/components/Wrapper'
 import Button from '@/components/Button'
+import Date from '@/components/Date'
 
 export default {
-  components: { Wrapper, Button },
+  components: { Wrapper, Button, Date },
   data() {
     return {
       allPostsFetched: false,
@@ -62,7 +62,6 @@ export default {
     formattedPosts() {
       return this.posts.map((post) => ({
         ...post,
-        date: moment(post.date).format('MMMM D, YYYY'),
         city: 'Toronto',
       }))
     },

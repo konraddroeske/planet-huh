@@ -12,9 +12,5 @@ export default {}
 .wrapper {
   width: 85%;
   margin: 0 auto;
-
-  @media (min-width: $bp-desktop) {
-    width: 85%;
-  }
 }
 </style>
