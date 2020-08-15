@@ -46,5 +46,6 @@ h1 {
 
 p {
   margin-bottom: 2rem;
+  line-height: 1.2;
 }
 </style>

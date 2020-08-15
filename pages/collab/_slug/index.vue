@@ -7,7 +7,7 @@ export default {
   layout: 'post',
   data() {
     return {
-      id: this.$route.params.postId,
+      slug: this.$route.params.slug,
     }
   },
 }
