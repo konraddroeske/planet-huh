@@ -117,10 +117,11 @@ export default {
 <style lang="scss" scoped>
 .wrapper {
   width: 85%;
-  margin: 5rem auto;
+  margin: 2.5rem auto;
 
   @media (min-width: $bp-desktop) {
     width: 70%;
+    margin: 5rem auto;
   }
 }
 
