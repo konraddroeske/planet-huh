@@ -38,8 +38,6 @@ export default {
       }
     }`)
 
-    console.log(data.data.post.content.raw.children)
-
     this.post = {
       ...data.data.post,
       imageSrc: data.data.post.coverImage.url,
