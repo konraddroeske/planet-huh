@@ -80,6 +80,7 @@ export default {
 
   @media (min-width: $bp-desktop) {
     margin-top: 0;
+    margin-bottom: 0;
     text-align: left;
   }
 }
@@ -137,13 +138,13 @@ export default {
     width: calc(118% - 2rem);
     position: relative;
     left: calc(-9% + 2rem);
+    margin-top: 2rem;
   }
 }
 
 .dateContainer {
   @media (min-width: $bp-desktop) {
     width: 50%;
-    margin: 2rem 0;
   }
 }
 
@@ -151,7 +152,6 @@ export default {
   @media (min-width: $bp-desktop) {
     width: 50%;
     display: flex;
-    margin: 2rem 0;
   }
 }
 
@@ -161,6 +161,7 @@ export default {
   color: $accent;
   text-transform: uppercase;
   font-family: $font-sans;
+  font-weight: $semibold;
   font-size: 0.8rem;
   margin-top: 1.5rem;
   letter-spacing: 1px;
