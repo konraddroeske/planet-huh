@@ -115,6 +115,7 @@ export default {
 
 .title {
   text-transform: uppercase;
+  font-weight: $extrabold;
   font-size: 2.25rem;
   @media (min-width: $bp-desktop) {
     font-size: 3.5rem;

@@ -13,6 +13,10 @@
           <img :src="item.src" alt="" />
           <div class="caption">{{ item.caption }}</div>
         </div>
+        <blockquote v-if="item.type === 'block-quote'" :key="index">
+          <q>{{ item.text }}</q>
+          <div class="source">— {{ item.source }}</div>
+        </blockquote>
       </template>
     </div>
   </div>
@@ -29,7 +33,9 @@ export default {
   computed: {
     organizedContent() {
       return this.$props.content
-        .filter((item) => ['paragraph', 'image'].includes(item.type))
+        .filter((item) =>
+          ['paragraph', 'image', 'block-quote'].includes(item.type)
+        )
         .map((item) => {
           if (item.type === 'paragraph') {
             return {
@@ -42,6 +48,14 @@ export default {
               type: item.type,
               src: item.src,
               caption: item.altText,
+            }
+          }
+          if (item.type === 'block-quote') {
+            const [text, source] = item.children[0].text.split('@')
+            return {
+              type: item.type,
+              text: text.trim(),
+              source: source.trim(),
             }
           }
         })
@@ -86,6 +100,36 @@ p {
 
     @media (min-width: $bp-desktop) {
       font-size: 1rem;
+    }
+  }
+}
+
+blockquote {
+  margin: 2rem 0;
+  text-align: center;
+  font-family: $font-display;
+  line-height: 1;
+
+  q {
+    display: block;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    font-weight: $extrabold;
+    font-size: 2.25rem;
+  }
+
+  .source {
+    font-size: 1.25rem;
+    font-weight: $semibold;
+  }
+
+  @media (min-width: $bp-desktop) {
+    margin-top: 3rem;
+    margin-bottom: 2rem;
+
+    q {
+      font-size: 3.5rem;
+      margin-bottom: 2rem;
     }
   }
 }
