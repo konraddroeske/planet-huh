@@ -14,6 +14,7 @@
 <script>
 import * as THREE from 'three'
 import gsap from 'gsap'
+import { Vector2 } from 'three'
 import globeTexture from '@/assets/images/globe.png'
 import NavToggle from '@/components/NavToggle'
 
@@ -195,7 +196,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = isMobile ? -1.6 : -0.5
+      const maxZoom = isMobile ? -2.4 : -0.5
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -204,7 +205,7 @@ export default {
       // RAYCASTER
 
       const raycaster = new THREE.Raycaster()
-      const rayMouse = new THREE.Vector2()
+      let rayMouse = new THREE.Vector2()
       let currentTarget = null
       let intersects = null
 
@@ -446,6 +447,7 @@ export default {
       const onTouchEnd = (e) => {
         isDragging = false
         zoomPosition = 0.005
+        rayMouse = new Vector2()
       }
 
       // mouse event listeners
@@ -967,12 +969,16 @@ export default {
 
       // TITLE TEXT
       const activeTitles = []
+      const posRaycast = new THREE.Vector2()
 
       const setActiveTitles = () => {
         for (let i = 0; i < activeTitles.length; i += 1) {
           let pos = new THREE.Vector3()
           pos = pos.setFromMatrixPosition(activeTitles[i][0].matrixWorld)
           pos.project(camera)
+
+          posRaycast.x = pos.x
+          posRaycast.y = pos.y
 
           const widthHalf = canvas.clientWidth / 2
           const heightHalf = canvas.clientHeight / 2
@@ -990,9 +996,11 @@ export default {
       const navRouterTitle = (e) => {
         console.log(e.target.innerHTML)
 
-        // this.$router.push({
-        //   path: `/post/${currentTarget.name}`,
-        // })
+        if (e.target) {
+          this.$router.push({
+            path: `/post/${e.target.innerHTML}`,
+          })
+        }
       }
 
       const addTitle = (object) => {
@@ -1005,6 +1013,7 @@ export default {
         title.title = object.name
 
         title.addEventListener('click', navRouterTitle, false)
+        title.addEventListener('touchstart', navRouterTitle, false)
 
         this.$refs.sceneContainer.append(title)
 
@@ -1045,6 +1054,11 @@ export default {
                   navRouterTitle,
                   false
                 )
+                activeTitles[i][1].removeEventListener(
+                  'touchstart',
+                  navRouterTitle,
+                  false
+                )
                 activeTitles[i][1].remove()
 
                 const index = activeTitles.indexOf(ele)
@@ -1077,6 +1091,10 @@ export default {
       moodGlow.scale.set(glowX, glowY, 1)
       moodGlow.position.set(0, 0, 0)
       pivotMood.add(moodGlow)
+
+      // Raycaster Title
+
+      const raycasterTitle = new THREE.Raycaster()
 
       // RENDER
 
@@ -1139,18 +1157,45 @@ export default {
           intersects[0].object.name !== 'mood' &&
           currentTarget !== intersects[0].object
         ) {
+          if (isMobile) {
+            setTarget(null)
+            removeTitle()
+          }
+
           setTarget(intersects[0].object)
           addTitle(intersects[0].object)
         }
 
         if (intersects.length < 2 && currentTarget) {
-          setTarget(null)
-          removeTitle()
+          if (!isMobile) {
+            setTarget(null)
+            removeTitle()
+          }
         }
 
         // adds tracking animation to titles
         if (activeTitles.length > 0) {
           setActiveTitles()
+        }
+
+        // detect of title object is out of view
+        if (isMobile && currentTarget) {
+          raycasterTitle.setFromCamera(posRaycast, camera)
+
+          const intersectsTitle =
+            this.currentNav === pivotGlobe
+              ? raycasterTitle.intersectObjects(spriteCities)
+              : raycasterTitle.intersectObjects(spriteMoodsFlat)
+
+          // console.log(intersectsTitle[0].object.name, currentTarget.name)
+
+          if (
+            intersectsTitle[0].object.name === 'globe' ||
+            intersectsTitle[0].object.name === 'mood'
+          ) {
+            setTarget(null)
+            removeTitle()
+          }
         }
 
         // HOVER ANIMATIONS
