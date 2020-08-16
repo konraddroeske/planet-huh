@@ -195,7 +195,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = isMobile ? -1.6 : -1.2
+      const maxZoom = isMobile ? -1.6 : -0.5
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -1374,7 +1374,7 @@ export default {
 @media (min-width: $bp-desktop) {
   .scene {
     width: 100%;
-    height: 135vh;
+    height: 160vh;
     display: block;
     pointer-events: none;
   }
