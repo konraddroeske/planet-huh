@@ -196,7 +196,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = isMobile ? -2.4 : -0.5
+      const maxZoom = isMobile ? -2.2 : -0.5
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
