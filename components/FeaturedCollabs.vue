@@ -49,6 +49,7 @@
 import { mapState } from 'vuex'
 import gsap from 'gsap'
 import { Draggable, InertiaPlugin } from 'gsap/all'
+import { debounce } from 'vue-debounce'
 import Button from '@/components/Button'
 import ButtonArrow from '@/components/ButtonArrow'
 import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
@@ -211,48 +212,52 @@ export default {
       return heights
     },
     resize() {
-      const xVal = parseFloat(
-        this.transform.x.substring(0, this.transform.x.length - 2)
-      )
+      const resizeDebounced = debounce(() => {
+        const xVal = parseFloat(
+          this.transform.x.substring(0, this.transform.x.length - 2)
+        )
 
-      const norm = xVal / this.wrapWidth || 0
+        const norm = xVal / this.wrapWidth || 0
 
-      this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
-      this.wrapWidth = this.slideWidth * this.numSlides
+        this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
+        this.wrapWidth = this.slideWidth * this.numSlides
 
-      // List Height
+        // List Height
 
-      this.slideHeights = this.getMaxHeight(
-        Object.values(this.$refs).map((ele) => ele[0])
-      )
+        this.slideHeights = this.getMaxHeight(
+          Object.values(this.$refs).map((ele) => ele[0])
+        )
 
-      const maxHeight = Math.max(...this.slideHeights)
+        const maxHeight = Math.max(...this.slideHeights)
 
-      gsap.set('.collabsList', {
-        height: maxHeight,
-      })
+        gsap.set('.collabsList', {
+          height: maxHeight,
+        })
 
-      // Content Height
+        // Content Height
 
-      const textElements = Array.from(document.querySelectorAll('.content'))
-      const textHeight = textElements[this.maxCharIndex].offsetHeight
+        const textElements = Array.from(document.querySelectorAll('.content'))
+        const textHeight = textElements[this.maxCharIndex].offsetHeight
 
-      for (let i = 0; i < this.posts.length; i += 1) {
-        if (i !== this.maxCharIndex) {
-          gsap.set(textElements[i], {
-            height: textHeight,
-          })
+        for (let i = 0; i < this.posts.length; i += 1) {
+          if (i !== this.maxCharIndex) {
+            gsap.set(textElements[i], {
+              height: textHeight,
+            })
+          }
         }
-      }
 
-      // Set Position of Posts
+        // Set Position of Posts
 
-      gsap.set(this.proxyRef, {
-        x: norm * this.wrapWidth,
-      })
+        gsap.set(this.proxyRef, {
+          x: norm * this.wrapWidth,
+        })
 
-      this.animateSlides(0)
-      this.slideAnimation.progress(1)
+        this.animateSlides(0)
+        this.slideAnimation.progress(1)
+      }, 400)
+
+      resizeDebounced()
     },
     handleSlide(direction) {
       this.animateSlides(-direction)

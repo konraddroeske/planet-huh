@@ -25,7 +25,8 @@
     "gsap": "file:gsap-bonus.tgz",
     "moment": "^2.27.0",
     "nuxt": "^2.13.0",
-    "three": "^0.118.3"
+    "three": "^0.118.3",
+    "vue-debounce": "^2.5.7"
   },
   "devDependencies": {
     "@nuxtjs/eslint-config": "^3.0.0",
