@@ -1,47 +1,56 @@
 <template>
   <section class="featuredCollabs">
     <h2 class="title">Featured Collabs</h2>
-    <ButtonArrow class="leftArrow" @clicked="handleSlide(-1)"
-      ><LeftArrow
-    /></ButtonArrow>
-    <ButtonArrow class="rightArrow" @clicked="handleSlide(1)"
-      ><RightArrow
-    /></ButtonArrow>
-    <ul class="collabsList">
-      <li
-        v-for="(post, index) of posts"
-        :key="post.id"
-        :ref="'post' + index"
-        class="collab"
-      >
-        <!-- <div class="collabContent"> -->
-        <div class="leftImage">
-          <img class="postImage" :src="post.images[0].url" :alt="post.title" />
-        </div>
-        <div class="rightImage">
-          <img class="postImage" :src="post.images[1].url" :alt="post.title" />
-        </div>
-        <div class="collabsContent">
-          <div class="content">
-            <div class="headline">
-              <p>
-                {{ post.headline }}
-              </p>
-            </div>
-            <div class="collabsTitle">
-              <h3>
-                {{ post.artist[0].name }} + {{ post.artist[1].name }}
-                {{ post.title }}
-              </h3>
-            </div>
-            <div class="buttonContainer">
-              <Button @clicked="onClick(post.slug)">Explore</Button>
+
+    <div class="buttonContainer">
+      <ButtonArrow class="leftArrow" @clicked="handleSlide(-1)"
+        ><LeftArrow
+      /></ButtonArrow>
+      <ButtonArrow class="rightArrow" @clicked="handleSlide(1)"
+        ><RightArrow
+      /></ButtonArrow>
+      <ul class="collabsList">
+        <li
+          v-for="(post, index) of posts"
+          :key="post.id"
+          :ref="'post' + index"
+          class="collab"
+        >
+          <div class="leftImage">
+            <img
+              class="postImage"
+              :src="post.images[0].url"
+              :alt="post.title"
+            />
+          </div>
+          <div class="rightImage">
+            <img
+              class="postImage"
+              :src="post.images[1].url"
+              :alt="post.title"
+            />
+          </div>
+          <div class="collabsContent">
+            <div class="content">
+              <div class="headline">
+                <p>
+                  {{ post.headline }}
+                </p>
+              </div>
+              <div class="collabsTitle">
+                <h3>
+                  {{ post.artist[0].name }} + {{ post.artist[1].name }}
+                  {{ post.title }}
+                </h3>
+              </div>
+              <div class="buttonContainer">
+                <Button @clicked="onClick(post.slug)">Explore</Button>
+              </div>
             </div>
           </div>
-        </div>
-        <!-- </div> -->
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
 
@@ -49,6 +58,7 @@
 import { mapState } from 'vuex'
 import gsap from 'gsap'
 import { Draggable, InertiaPlugin } from 'gsap/all'
+import { debounce } from 'vue-debounce'
 import Button from '@/components/Button'
 import ButtonArrow from '@/components/ButtonArrow'
 import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
@@ -109,10 +119,6 @@ export default {
     this.setPosition()
     this.updateAnimation()
 
-    // this.switchPosition = window.matchMedia('(max-width: 650px)')
-    // this.handleSwitchPosition(this.switchPosition)
-    // this.switchPosition.addListener(this.handleSwitchPosition)
-
     const that = this
 
     this.dragInstance = Draggable.create(this.proxyRef, {
@@ -147,7 +153,6 @@ export default {
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
-    // this.switchPosition.removeListener(this.handleSwitchPosition)
   },
   methods: {
     onClick(slug) {
@@ -211,48 +216,52 @@ export default {
       return heights
     },
     resize() {
-      const xVal = parseFloat(
-        this.transform.x.substring(0, this.transform.x.length - 2)
-      )
+      const resizeDebounced = debounce(() => {
+        const xVal = parseFloat(
+          this.transform.x.substring(0, this.transform.x.length - 2)
+        )
 
-      const norm = xVal / this.wrapWidth || 0
+        const norm = xVal / this.wrapWidth || 0
 
-      this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
-      this.wrapWidth = this.slideWidth * this.numSlides
+        this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
+        this.wrapWidth = this.slideWidth * this.numSlides
 
-      // List Height
+        // List Height
 
-      this.slideHeights = this.getMaxHeight(
-        Object.values(this.$refs).map((ele) => ele[0])
-      )
+        this.slideHeights = this.getMaxHeight(
+          Object.values(this.$refs).map((ele) => ele[0])
+        )
 
-      const maxHeight = Math.max(...this.slideHeights)
+        const maxHeight = Math.max(...this.slideHeights)
 
-      gsap.set('.collabsList', {
-        height: maxHeight,
-      })
+        gsap.set('.collabsList', {
+          height: maxHeight,
+        })
 
-      // Content Height
+        // Content Height
 
-      const textElements = Array.from(document.querySelectorAll('.content'))
-      const textHeight = textElements[this.maxCharIndex].offsetHeight
+        const textElements = Array.from(document.querySelectorAll('.content'))
+        const textHeight = textElements[this.maxCharIndex].offsetHeight
 
-      for (let i = 0; i < this.posts.length; i += 1) {
-        if (i !== this.maxCharIndex) {
-          gsap.set(textElements[i], {
-            height: textHeight,
-          })
+        for (let i = 0; i < this.posts.length; i += 1) {
+          if (i !== this.maxCharIndex) {
+            gsap.set(textElements[i], {
+              height: textHeight,
+            })
+          }
         }
-      }
 
-      // Set Position of Posts
+        // Set Position of Posts
 
-      gsap.set(this.proxyRef, {
-        x: norm * this.wrapWidth,
-      })
+        gsap.set(this.proxyRef, {
+          x: norm * this.wrapWidth,
+        })
 
-      this.animateSlides(0)
-      this.slideAnimation.progress(1)
+        this.animateSlides(0)
+        this.slideAnimation.progress(1)
+      }, 400)
+
+      resizeDebounced()
     },
     handleSlide(direction) {
       this.animateSlides(-direction)
@@ -277,10 +286,15 @@ export default {
   position: relative;
 }
 
+.buttonContainer {
+  position: relative;
+}
+
 .leftArrow,
 .rightArrow {
   position: absolute;
-  top: calc(32px + 22.5vw);
+  top: calc(58vw / 2);
+  transform: translateY(-50%);
   z-index: 10;
 }
 
@@ -296,6 +310,10 @@ h2,
 h3,
 p {
   text-align: center;
+}
+
+h2 {
+  margin: 2rem 0;
 }
 
 h2,
@@ -322,7 +340,6 @@ ul {
   margin: 0;
   padding: 0;
   position: relative;
-  // overflow: hidden;
 }
 
 .collab {
@@ -330,7 +347,6 @@ ul {
   position: absolute;
   top: 0;
   left: 0;
-  // bottom: 0;
 }
 
 .collab {
@@ -342,7 +358,7 @@ ul {
   .rightImage {
     width: 50%;
     position: relative;
-    height: 45vw;
+    height: 58vw;
   }
 
   img {
@@ -375,10 +391,24 @@ ul {
   font-weight: $semibold;
 }
 
+@media (min-width: $bp-tablet) {
+  .leftArrow,
+  .rightArrow {
+    top: calc(58vh / 2);
+  }
+
+  .collab {
+    .leftImage,
+    .rightImage {
+      height: 58vh;
+    }
+  }
+}
+
 @media (min-width: $bp-desktop) {
   .leftArrow,
   .rightArrow {
-    top: calc(48px + 35vh);
+    top: 50%;
   }
 
   h2 {
@@ -396,13 +426,7 @@ ul {
     margin-bottom: 8rem;
   }
 
-  // .collab {
-  //   display: flex;
-  //   bottom: 0;
-  // }
-
   .collab {
-    // min-height: 70vh;
     flex-wrap: nowrap;
 
     .leftImage {
@@ -439,11 +463,6 @@ ul {
 }
 
 @media (min-width: $bp-lg-desktop) {
-  .leftArrow,
-  .rightArrow {
-    top: calc(56px + 36.5vh);
-  }
-
   h2,
   h3 {
     font-size: 3.5rem;
@@ -457,12 +476,6 @@ ul {
     .content {
       min-width: 325px;
     }
-
-    // .leftImage,
-    // .rightImage,
-    // .wrapper {
-    //   height: 75vh;
-    // }
   }
 }
 </style>

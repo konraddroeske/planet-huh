@@ -19,8 +19,31 @@ button {
   padding: 0;
 
   width: 2rem;
+  svg {
+    width: 2rem;
+    height: 2rem;
+  }
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media (min-width: $bp-tablet) {
+    width: 3rem;
+
+    svg {
+      width: 3rem;
+      height: 3rem;
+    }
+  }
+
+  @media (min-width: $bp-desktop) {
+    width: 4rem;
+
+    svg {
+      width: 4rem;
+      height: 4rem;
+    }
+  }
 }
 </style>

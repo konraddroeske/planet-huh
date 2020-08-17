@@ -7,7 +7,6 @@
     <div class="toggleContainer">
       <NavToggle />
     </div>
-    <!-- <button id="toggle" class="toggle">Toggle</button> -->
   </div>
 </template>
 
@@ -133,8 +132,7 @@ export default {
     initThree() {
       // CHECK DEVICE
 
-      const isMobile = window.matchMedia('only screen and (max-width: 414px)')
-        .matches
+      const isMobile = this.$device.isMobile
 
       const sceneContainer = document.querySelector('#sceneContainer')
 
@@ -195,7 +193,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = isMobile ? -1.6 : -1.2
+      const maxZoom = isMobile ? -2.2 : -0.5
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -207,6 +205,8 @@ export default {
       const rayMouse = new THREE.Vector2()
       let currentTarget = null
       let intersects = null
+
+      const raycasterTitle = new THREE.Raycaster()
 
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
@@ -368,7 +368,7 @@ export default {
         e.preventDefault()
         setLerpTimer()
 
-        // Raycaster
+        // Mobile Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
         rayMouse.x =
           ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
@@ -376,6 +376,45 @@ export default {
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
+
+        raycaster.setFromCamera(rayMouse, camera)
+
+        if (this.currentNav === pivotGlobe) {
+          intersects = raycaster.intersectObjects(spriteCities)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+            toggleHover = true
+          } else {
+            toggleClick = false
+            toggleHover = false
+          }
+        }
+
+        if (this.currentNav === pivotMood) {
+          intersects = raycaster.intersectObjects(spriteMoodsFlat)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
+            toggleHover = true
+          } else {
+            toggleClick = false
+            toggleHover = false
+          }
+        }
+
+        if (
+          intersects.length >= 2 &&
+          intersects[0].object.name !== 'globe' &&
+          intersects[0].object.name !== 'mood' &&
+          currentTarget !== intersects[0].object
+        ) {
+          if (currentTarget) {
+            setTarget(null)
+            removeTitle()
+          }
+
+          setTarget(intersects[0].object)
+          addTitle(intersects[0].object)
+        }
 
         isDragging = true
         isThrowing = true
@@ -442,10 +481,23 @@ export default {
         }
       }
 
+      const resetRayMouse = () => {
+        rayMouse.x = null
+        rayMouse.y = null
+        raycaster.setFromCamera(rayMouse, camera)
+
+        intersects = raycaster.intersectObjects(
+          this.currentNav === pivotGlobe ? spriteCities : spriteMoodsFlat
+        )
+
+        console.log(rayMouse.x, rayMouse.y)
+      }
+
       // mouse up
       const onTouchEnd = (e) => {
         isDragging = false
         zoomPosition = 0.005
+        // resetRayMouse()
       }
 
       // mouse event listeners
@@ -481,6 +533,8 @@ export default {
 
       const canvas = this.$refs.scene
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      renderer.setPixelRatio(window.devicePixelRatio)
+      // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
       scene.background = new THREE.Color('white')
@@ -716,6 +770,7 @@ export default {
       {
         const toggleAnim = () => {
           clearLerpTimer()
+          resetRayMouse()
 
           if (!gsap.isTweening(pivotMain.rotation)) {
             if (this.currentNav === pivotGlobe) {
@@ -967,12 +1022,16 @@ export default {
 
       // TITLE TEXT
       const activeTitles = []
+      const posRaycast = new THREE.Vector2()
 
       const setActiveTitles = () => {
         for (let i = 0; i < activeTitles.length; i += 1) {
           let pos = new THREE.Vector3()
           pos = pos.setFromMatrixPosition(activeTitles[i][0].matrixWorld)
           pos.project(camera)
+
+          posRaycast.x = pos.x
+          posRaycast.y = pos.y
 
           const widthHalf = canvas.clientWidth / 2
           const heightHalf = canvas.clientHeight / 2
@@ -988,11 +1047,11 @@ export default {
       }
 
       const navRouterTitle = (e) => {
-        console.log(e.target.innerHTML)
-
-        // this.$router.push({
-        //   path: `/post/${currentTarget.name}`,
-        // })
+        if (e.target) {
+          this.$router.push({
+            path: `/post/${e.target.innerHTML}`,
+          })
+        }
       }
 
       const addTitle = (object) => {
@@ -1005,6 +1064,7 @@ export default {
         title.title = object.name
 
         title.addEventListener('click', navRouterTitle, false)
+        title.addEventListener('touchstart', navRouterTitle, false)
 
         this.$refs.sceneContainer.append(title)
 
@@ -1028,20 +1088,25 @@ export default {
         removeTitle(newTitle)
       }
 
-      const removeTitle = (newTitle) => {
-        if (!newTitle) {
-          newTitle = null
+      const removeTitle = (title) => {
+        if (!title) {
+          title = null
         }
 
         // iterate through all, except object and fade/remove all
         for (let i = 0; i < activeTitles.length; i += 1) {
-          if (activeTitles[i] !== newTitle) {
+          if (activeTitles[i] !== title) {
             const ele = activeTitles[i]
 
             const tl = gsap.timeline({
               onComplete: () => {
                 activeTitles[i][1].removeEventListener(
                   'click',
+                  navRouterTitle,
+                  false
+                )
+                activeTitles[i][1].removeEventListener(
+                  'touchstart',
                   navRouterTitle,
                   false
                 )
@@ -1078,6 +1143,10 @@ export default {
       moodGlow.position.set(0, 0, 0)
       pivotMood.add(moodGlow)
 
+      // Raycaster Title
+
+      // const raycasterTitle = new THREE.Raycaster()
+
       // RENDER
 
       const render = () => {
@@ -1089,63 +1158,57 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        // SPRITE RESIZE ON TOGGLE
+        // RAYCASTER DESKTOP
 
-        // if (clock.running) {
-        //   const rate = 0.05
+        if (!isMobile) {
+          raycaster.setFromCamera(rayMouse, camera)
 
-        //   if (this.currentNav === pivotMood && glowX >= 2.8) {
-        //     glowX += -rate
-        //     glowY += -rate
-        //     earthGlow.scale.set(glowX, glowY, 1)
-        //   }
+          if (this.currentNav === pivotGlobe) {
+            intersects = raycaster.intersectObjects(spriteCities)
 
-        //   if (this.currentNav === pivotGlobe && glowX <= 5) {
-        //     glowX += rate
-        //     glowY += rate
-        //     earthGlow.scale.set(glowX, glowY, 1)
-        //   }
-        // }
-
-        // RAYCASTER
-
-        raycaster.setFromCamera(rayMouse, camera)
-
-        if (this.currentNav === pivotGlobe) {
-          intersects = raycaster.intersectObjects(spriteCities)
-
-          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
-            toggleHover = true
-          } else {
-            toggleClick = false
-            toggleHover = false
+            if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+              toggleHover = true
+            } else {
+              toggleClick = false
+              toggleHover = false
+            }
           }
-        }
 
-        if (this.currentNav === pivotMood) {
-          intersects = raycaster.intersectObjects(spriteMoodsFlat)
+          if (this.currentNav === pivotMood) {
+            intersects = raycaster.intersectObjects(spriteMoodsFlat)
 
-          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
-            toggleHover = true
-          } else {
-            toggleClick = false
-            toggleHover = false
+            if (
+              intersects.length > 0 &&
+              intersects[0].object.name === 'globe'
+            ) {
+              toggleHover = true
+            } else {
+              toggleClick = false
+              toggleHover = false
+            }
           }
-        }
 
-        if (
-          intersects.length >= 2 &&
-          intersects[0].object.name !== 'globe' &&
-          intersects[0].object.name !== 'mood' &&
-          currentTarget !== intersects[0].object
-        ) {
-          setTarget(intersects[0].object)
-          addTitle(intersects[0].object)
-        }
+          if (
+            intersects.length >= 2 &&
+            intersects[0].object.name !== 'globe' &&
+            intersects[0].object.name !== 'mood' &&
+            currentTarget !== intersects[0].object
+          ) {
+            // if (isMobile) {
+            //   setTarget(null)
+            //   removeTitle()
+            // }
 
-        if (intersects.length < 2 && currentTarget) {
-          setTarget(null)
-          removeTitle()
+            setTarget(intersects[0].object)
+            addTitle(intersects[0].object)
+          }
+
+          if (intersects.length < 2 && currentTarget) {
+            // if (!isMobile) {
+            setTarget(null)
+            removeTitle()
+            // }
+          }
         }
 
         // adds tracking animation to titles
@@ -1185,6 +1248,26 @@ export default {
         })
 
         if (pivotMain && mood && globe) {
+          // Title Raycast (disappear when not in view)
+          if (currentTarget) {
+            raycasterTitle.setFromCamera(posRaycast, camera)
+
+            const intersectsTitle =
+              this.currentNav === pivotGlobe
+                ? raycasterTitle.intersectObjects(spriteCities)
+                : raycasterTitle.intersectObjects(spriteMoodsFlat)
+
+            if (intersectsTitle) {
+              if (
+                intersectsTitle[0].object.name === 'globe' ||
+                intersectsTitle[0].object.name === 'mood'
+              ) {
+                setTarget(null)
+                removeTitle()
+              }
+            }
+          }
+
           if (this.currentNav === pivotGlobe) {
             // HORIZONAL ROTATION
             deltaX =
@@ -1215,7 +1298,14 @@ export default {
 
           // CAMERA ZOOM IN
 
-          if (isDragging && !currentTarget) {
+          if (!isMobile && isDragging && !currentTarget) {
+            if (camera.position.z >= maxZoom) {
+              zoomPosition *= zoomInSpeed
+              camera.position.z -= zoomPosition
+            }
+          }
+
+          if (isDragging && isMobile) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
@@ -1374,7 +1464,7 @@ export default {
 @media (min-width: $bp-desktop) {
   .scene {
     width: 100%;
-    height: 135vh;
+    height: 160vh;
     display: block;
     pointer-events: none;
   }
