@@ -202,9 +202,11 @@ export default {
       // RAYCASTER
 
       const raycaster = new THREE.Raycaster()
-      let rayMouse = new THREE.Vector2()
+      const rayMouse = new THREE.Vector2()
       let currentTarget = null
       let intersects = null
+
+      const raycasterTitle = new THREE.Raycaster()
 
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
@@ -366,7 +368,7 @@ export default {
         e.preventDefault()
         setLerpTimer()
 
-        // Raycaster
+        // Mobile Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
         rayMouse.x =
           ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
@@ -374,6 +376,45 @@ export default {
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
+
+        raycaster.setFromCamera(rayMouse, camera)
+
+        if (this.currentNav === pivotGlobe) {
+          intersects = raycaster.intersectObjects(spriteCities)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+            toggleHover = true
+          } else {
+            toggleClick = false
+            toggleHover = false
+          }
+        }
+
+        if (this.currentNav === pivotMood) {
+          intersects = raycaster.intersectObjects(spriteMoodsFlat)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
+            toggleHover = true
+          } else {
+            toggleClick = false
+            toggleHover = false
+          }
+        }
+
+        if (
+          intersects.length >= 2 &&
+          intersects[0].object.name !== 'globe' &&
+          intersects[0].object.name !== 'mood' &&
+          currentTarget !== intersects[0].object
+        ) {
+          if (currentTarget) {
+            setTarget(null)
+            removeTitle()
+          }
+
+          setTarget(intersects[0].object)
+          addTitle(intersects[0].object)
+        }
 
         isDragging = true
         isThrowing = true
@@ -440,11 +481,23 @@ export default {
         }
       }
 
+      const resetRayMouse = () => {
+        rayMouse.x = null
+        rayMouse.y = null
+        raycaster.setFromCamera(rayMouse, camera)
+
+        intersects = raycaster.intersectObjects(
+          this.currentNav === pivotGlobe ? spriteCities : spriteMoodsFlat
+        )
+
+        console.log(rayMouse.x, rayMouse.y)
+      }
+
       // mouse up
       const onTouchEnd = (e) => {
         isDragging = false
         zoomPosition = 0.005
-        rayMouse = new THREE.Vector2()
+        // resetRayMouse()
       }
 
       // mouse event listeners
@@ -717,6 +770,7 @@ export default {
       {
         const toggleAnim = () => {
           clearLerpTimer()
+          resetRayMouse()
 
           if (!gsap.isTweening(pivotMain.rotation)) {
             if (this.currentNav === pivotGlobe) {
@@ -993,8 +1047,6 @@ export default {
       }
 
       const navRouterTitle = (e) => {
-        console.log(e.target.innerHTML)
-
         if (e.target) {
           this.$router.push({
             path: `/post/${e.target.innerHTML}`,
@@ -1036,14 +1088,14 @@ export default {
         removeTitle(newTitle)
       }
 
-      const removeTitle = (newTitle) => {
-        if (!newTitle) {
-          newTitle = null
+      const removeTitle = (title) => {
+        if (!title) {
+          title = null
         }
 
         // iterate through all, except object and fade/remove all
         for (let i = 0; i < activeTitles.length; i += 1) {
-          if (activeTitles[i] !== newTitle) {
+          if (activeTitles[i] !== title) {
             const ele = activeTitles[i]
 
             const tl = gsap.timeline({
@@ -1093,7 +1145,7 @@ export default {
 
       // Raycaster Title
 
-      const raycasterTitle = new THREE.Raycaster()
+      // const raycasterTitle = new THREE.Raycaster()
 
       // RENDER
 
@@ -1106,69 +1158,56 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        // SPRITE RESIZE ON TOGGLE
+        // RAYCASTER DESKTOP
 
-        // if (clock.running) {
-        //   const rate = 0.05
+        if (!isMobile) {
+          raycaster.setFromCamera(rayMouse, camera)
 
-        //   if (this.currentNav === pivotMood && glowX >= 2.8) {
-        //     glowX += -rate
-        //     glowY += -rate
-        //     earthGlow.scale.set(glowX, glowY, 1)
-        //   }
+          if (this.currentNav === pivotGlobe) {
+            intersects = raycaster.intersectObjects(spriteCities)
 
-        //   if (this.currentNav === pivotGlobe && glowX <= 5) {
-        //     glowX += rate
-        //     glowY += rate
-        //     earthGlow.scale.set(glowX, glowY, 1)
-        //   }
-        // }
-
-        // RAYCASTER
-
-        raycaster.setFromCamera(rayMouse, camera)
-
-        if (this.currentNav === pivotGlobe) {
-          intersects = raycaster.intersectObjects(spriteCities)
-
-          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
-            toggleHover = true
-          } else {
-            toggleClick = false
-            toggleHover = false
+            if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+              toggleHover = true
+            } else {
+              toggleClick = false
+              toggleHover = false
+            }
           }
-        }
 
-        if (this.currentNav === pivotMood) {
-          intersects = raycaster.intersectObjects(spriteMoodsFlat)
+          if (this.currentNav === pivotMood) {
+            intersects = raycaster.intersectObjects(spriteMoodsFlat)
 
-          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
-            toggleHover = true
-          } else {
-            toggleClick = false
-            toggleHover = false
+            if (
+              intersects.length > 0 &&
+              intersects[0].object.name === 'globe'
+            ) {
+              toggleHover = true
+            } else {
+              toggleClick = false
+              toggleHover = false
+            }
           }
-        }
 
-        if (
-          intersects.length >= 2 &&
-          intersects[0].object.name !== 'globe' &&
-          intersects[0].object.name !== 'mood' &&
-          currentTarget !== intersects[0].object
-        ) {
-          if (isMobile) {
+          if (
+            intersects.length >= 2 &&
+            intersects[0].object.name !== 'globe' &&
+            intersects[0].object.name !== 'mood' &&
+            currentTarget !== intersects[0].object
+          ) {
+            // if (isMobile) {
+            //   setTarget(null)
+            //   removeTitle()
+            // }
+
+            setTarget(intersects[0].object)
+            addTitle(intersects[0].object)
+          }
+
+          if (intersects.length < 2 && currentTarget) {
+            // if (!isMobile) {
             setTarget(null)
             removeTitle()
-          }
-
-          setTarget(intersects[0].object)
-          addTitle(intersects[0].object)
-        }
-
-        if (intersects.length < 2 && currentTarget) {
-          if (!isMobile) {
-            setTarget(null)
-            removeTitle()
+            // }
           }
         }
 
@@ -1209,8 +1248,8 @@ export default {
         })
 
         if (pivotMain && mood && globe) {
-          // detect of title object is out of view
-          if (isMobile && currentTarget) {
+          // Title Raycast (disappear when not in view)
+          if (currentTarget) {
             raycasterTitle.setFromCamera(posRaycast, camera)
 
             const intersectsTitle =
@@ -1218,12 +1257,14 @@ export default {
                 ? raycasterTitle.intersectObjects(spriteCities)
                 : raycasterTitle.intersectObjects(spriteMoodsFlat)
 
-            if (
-              intersectsTitle[0].object.name === 'globe' ||
-              intersectsTitle[0].object.name === 'mood'
-            ) {
-              setTarget(null)
-              removeTitle()
+            if (intersectsTitle) {
+              if (
+                intersectsTitle[0].object.name === 'globe' ||
+                intersectsTitle[0].object.name === 'mood'
+              ) {
+                setTarget(null)
+                removeTitle()
+              }
             }
           }
 
@@ -1257,7 +1298,14 @@ export default {
 
           // CAMERA ZOOM IN
 
-          if (isDragging && !currentTarget) {
+          if (!isMobile && isDragging && !currentTarget) {
+            if (camera.position.z >= maxZoom) {
+              zoomPosition *= zoomInSpeed
+              camera.position.z -= zoomPosition
+            }
+          }
+
+          if (isDragging && isMobile) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
