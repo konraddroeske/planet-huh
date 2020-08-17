@@ -100,6 +100,10 @@ export default {
   }
 
   @media (min-width: $bp-desktop) {
+    font-size: 5rem;
+  }
+
+  @media (min-width: $bp-lg-desktop) {
     font-size: 6rem;
   }
 }
