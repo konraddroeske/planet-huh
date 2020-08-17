@@ -7,14 +7,12 @@
     <div class="toggleContainer">
       <NavToggle />
     </div>
-    <!-- <button id="toggle" class="toggle">Toggle</button> -->
   </div>
 </template>
 
 <script>
 import * as THREE from 'three'
 import gsap from 'gsap'
-import { Vector2 } from 'three'
 import globeTexture from '@/assets/images/globe.png'
 import NavToggle from '@/components/NavToggle'
 
@@ -446,7 +444,7 @@ export default {
       const onTouchEnd = (e) => {
         isDragging = false
         zoomPosition = 0.005
-        rayMouse = new Vector2()
+        rayMouse = new THREE.Vector2()
       }
 
       // mouse event listeners
@@ -482,6 +480,8 @@ export default {
 
       const canvas = this.$refs.scene
       const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      renderer.setPixelRatio(window.devicePixelRatio)
+      // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
       scene.background = new THREE.Color('white')
