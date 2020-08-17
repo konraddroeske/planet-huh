@@ -134,8 +134,7 @@ export default {
     initThree() {
       // CHECK DEVICE
 
-      const isMobile = window.matchMedia('only screen and (max-width: 414px)')
-        .matches
+      const isMobile = this.$device.isMobile
 
       const sceneContainer = document.querySelector('#sceneContainer')
 
@@ -1178,26 +1177,6 @@ export default {
           setActiveTitles()
         }
 
-        // detect of title object is out of view
-        if (isMobile && currentTarget) {
-          raycasterTitle.setFromCamera(posRaycast, camera)
-
-          const intersectsTitle =
-            this.currentNav === pivotGlobe
-              ? raycasterTitle.intersectObjects(spriteCities)
-              : raycasterTitle.intersectObjects(spriteMoodsFlat)
-
-          // console.log(intersectsTitle[0].object.name, currentTarget.name)
-
-          if (
-            intersectsTitle[0].object.name === 'globe' ||
-            intersectsTitle[0].object.name === 'mood'
-          ) {
-            setTarget(null)
-            removeTitle()
-          }
-        }
-
         // HOVER ANIMATIONS
 
         // globe main sprite
@@ -1230,6 +1209,24 @@ export default {
         })
 
         if (pivotMain && mood && globe) {
+          // detect of title object is out of view
+          if (isMobile && currentTarget) {
+            raycasterTitle.setFromCamera(posRaycast, camera)
+
+            const intersectsTitle =
+              this.currentNav === pivotGlobe
+                ? raycasterTitle.intersectObjects(spriteCities)
+                : raycasterTitle.intersectObjects(spriteMoodsFlat)
+
+            if (
+              intersectsTitle[0].object.name === 'globe' ||
+              intersectsTitle[0].object.name === 'mood'
+            ) {
+              setTarget(null)
+              removeTitle()
+            }
+          }
+
           if (this.currentNav === pivotGlobe) {
             // HORIZONAL ROTATION
             deltaX =

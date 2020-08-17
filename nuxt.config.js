@@ -66,6 +66,7 @@ export default {
     '@nuxtjs/pwa',
     '@nuxtjs/style-resources',
     '@nuxtjs/svg',
+    '@nuxtjs/device',
   ],
   /*
    ** Axios module configuration
