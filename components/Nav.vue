@@ -489,8 +489,6 @@ export default {
         intersects = raycaster.intersectObjects(
           this.currentNav === pivotGlobe ? spriteCities : spriteMoodsFlat
         )
-
-        console.log(rayMouse.x, rayMouse.y)
       }
 
       // mouse up
@@ -1257,7 +1255,7 @@ export default {
                 ? raycasterTitle.intersectObjects(spriteCities)
                 : raycasterTitle.intersectObjects(spriteMoodsFlat)
 
-            if (intersectsTitle) {
+            if (intersectsTitle.length > 0) {
               if (
                 intersectsTitle[0].object.name === 'globe' ||
                 intersectsTitle[0].object.name === 'mood'
