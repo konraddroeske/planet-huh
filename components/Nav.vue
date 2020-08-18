@@ -690,15 +690,6 @@ export default {
         const radius = 1
         const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
 
-        // const material = new THREE.MeshPhongMaterial({
-        //   color: 0xffffff,
-        //   flatShading: true,
-        //   vertexColors: true,
-        //   transparent: true,
-        //   opacity: 0.5,
-        //   shininess: 0,
-        // })
-
         const vertexShader = `
           precision mediump float;
           precision mediump int;
@@ -730,6 +721,12 @@ export default {
         `
 
         const material = new THREE.ShaderMaterial({
+          uniforms: {
+            viewVector: {
+              type: 'v3',
+              value: camera.position,
+            },
+          },
           vertexShader,
           fragmentShader,
           transparent: true,
@@ -1178,13 +1175,11 @@ export default {
       moodGlow.position.set(0, 0, 0)
       pivotMood.add(moodGlow)
 
-      // Raycaster Title
-
-      // const raycasterTitle = new THREE.Raycaster()
-
       // RENDER
 
       const render = () => {
+        // GLOW SHADER
+
         // RESIZE
 
         if (resizeRendererToDisplaySize(renderer)) {
@@ -1227,7 +1222,8 @@ export default {
             intersects.length >= 2 &&
             intersects[0].object.name !== 'globe' &&
             intersects[0].object.name !== 'mood' &&
-            currentTarget !== intersects[0].object
+            currentTarget !== intersects[0].object &&
+            !gsap.isTweening(pivotMain.rotation)
           ) {
             // if (isMobile) {
             //   setTarget(null)
