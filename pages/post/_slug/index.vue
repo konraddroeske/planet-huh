@@ -10,7 +10,7 @@ import { fetchContent } from '@/utils/api'
 import HeroBanner from '@/components/HeroBanner'
 import RichText from '@/components/RichText'
 export default {
-  layout: 'post',
+  layout: 'default',
   components: { HeroBanner, RichText },
   data() {
     return {
