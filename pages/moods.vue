@@ -4,7 +4,7 @@
 
 <script>
 export default {
-  layout: 'category',
+  layout: 'default',
 }
 </script>
 

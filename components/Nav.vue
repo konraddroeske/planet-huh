@@ -126,6 +126,7 @@ export default {
     }
   },
   mounted() {
+    console.log('mounted')
     this.initThree()
   },
   methods: {
@@ -578,7 +579,7 @@ export default {
 
       {
         const texture = loader.load(globeTexture)
-        texture.anisotropy = renderer.getMaxAnisotropy()
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
         const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
@@ -689,10 +690,55 @@ export default {
         const radius = 1
         const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
 
+        // const material = new THREE.MeshPhongMaterial({
+        //   color: 0xffffff,
+        //   flatShading: true,
+        //   vertexColors: true,
+        //   transparent: true,
+        //   opacity: 0.5,
+        //   shininess: 0,
+        // })
+
+        const vertexShader = `
+          precision mediump float;
+          precision mediump int;
+
+          attribute vec4 color;
+          varying vec4 vColor;
+
+          void main()    {
+
+            vColor = color;
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+          }
+        `
+
+        const fragmentShader = `
+          precision mediump float;
+          precision mediump int;
+
+          varying vec4 vColor;
+
+          void main()    {
+
+            vec4 color = vec4( vColor );
+            gl_FragColor = color;
+
+          }
+        `
+
+        const material = new THREE.ShaderMaterial({
+          vertexShader,
+          fragmentShader,
+          transparent: true,
+        })
+
         const { count } = geometry.attributes.position
         geometry.setAttribute(
           'color',
-          new THREE.BufferAttribute(new Float32Array(count * 3), 3)
+          new THREE.BufferAttribute(new Float32Array(count * 4), 4)
         )
 
         const positions = geometry.attributes.position
@@ -706,23 +752,14 @@ export default {
             positions.getZ(i)
           )
 
-          positionColor.setXYZ(
+          positionColor.setXYZW(
             i,
             calculatedColor.r / 255,
             calculatedColor.g / 255,
-            calculatedColor.b / 255
+            calculatedColor.b / 255,
+            0.8
           )
         }
-
-        const material = new THREE.MeshPhongMaterial({
-          color: 0xffffff,
-          flatShading: true,
-          vertexColors: true,
-          shininess: 0,
-        })
-
-        material.transparent = true
-        material.opacity = 0.8
 
         mood = new THREE.Mesh(geometry, material)
         mood.name = 'mood'
@@ -814,7 +851,7 @@ export default {
 
       // SET ROTATION AXIS
 
-      globe.geometry.applyMatrix(
+      globe.geometry.applyMatrix4(
         new THREE.Matrix4().makeRotationZ(-globeRadians)
       )
 
@@ -965,9 +1002,9 @@ export default {
             // Main Object
             moodsArr[color.name].push(new THREE.Object3D())
             moodsArr[color.name][index].position.set(
-              position[0] * 1.017,
-              position[1] * 1.017,
-              position[2] * 1.017
+              position[0] * 1.022,
+              position[1] * 1.022,
+              position[2] * 1.022
             )
             mood.add(moodsArr[color.name][index])
 

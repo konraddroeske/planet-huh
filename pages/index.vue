@@ -14,6 +14,7 @@ import CategoryNav from '@/components/CategoryNav'
 import PostsFeed from '@/components/PostsFeed'
 
 export default {
+  layout: 'default',
   components: {
     CTA,
     FeaturedCollabs,
