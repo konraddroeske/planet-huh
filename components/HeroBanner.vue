@@ -11,12 +11,12 @@
 
       <div class="metaRow">
         <div class="dateContainer">
-          <span class="dateTitle">Posted:</span>
+          <span class="accentText dateTitle">Posted:</span>
           <span class="date"><Date :input="date" /></span>
         </div>
 
         <div class="categoriesContainer">
-          <span class="categoriesTitle">Filed Under:</span>
+          <span class="accentText categoriesTitle">Filed Under:</span>
           <ul class="categories">
             <li class="category">
               <span class="visuallyHidden">City: </span>{{ city }}
@@ -164,17 +164,10 @@ export default {
 .dateTitle,
 .categoriesTitle {
   display: block;
-  color: $accent;
-  text-transform: uppercase;
-  font-family: $font-sans;
-  font-weight: $semibold;
-  font-size: 0.8rem;
   margin-top: 2rem;
-  letter-spacing: 1px;
 
   @media (min-width: $bp-desktop) {
     display: inline-block;
-    font-size: 1rem;
     margin-top: 0;
   }
 }
