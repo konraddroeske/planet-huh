@@ -14,63 +14,86 @@
 
 <script>
 import gsap from 'gsap'
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import CTA from '@/components/CTA'
 import FeaturedCollabs from '@/components/FeaturedCollabs'
 import CategoryNav from '@/components/CategoryNav'
 import PostsFeed from '@/components/PostsFeed'
 
+gsap.registerPlugin(ScrollToPlugin)
+
+const entering = () => {
+  const navContainer = document.querySelector('#navContainer')
+  const body = document.body
+  const navContainerTl = gsap.timeline()
+  const scrollTime = 0.3
+  const navTime = 1
+  const delay = 0.2
+  navContainerTl
+    .to(window, scrollTime, {
+      scrollTo: 0,
+    })
+    .set('#layout', {
+      height: 'calc(100vh + 1px)',
+      overflow: 'hidden',
+    })
+    .to(navContainer, navTime, {
+      delay,
+      y: '0',
+      scale: 1,
+      ease: 'power4.out',
+    })
+    .set(navContainer, {
+      position: 'absolute',
+    })
+    .set('#layout', {
+      height: 'auto',
+      overflow: 'visible',
+    })
+
+  const toggle = document.querySelector('#toggleContainer')
+  const toggleTl = gsap.timeline()
+  toggleTl.to(toggle, navTime, { autoAlpha: 1, delay })
+}
+
+const leaving = () => {
+  const navContainer = document.querySelector('#navContainer')
+  const navContainerTl = gsap.timeline()
+  const scrollTime = 0.3
+  const navTime = 1
+  navContainerTl
+    .to(window, scrollTime, {
+      scrollTo: 0,
+    })
+    .set('#layout', {
+      height: 'calc(100vh + 1px)',
+      overflow: 'hidden',
+    })
+    .set(navContainer, {
+      position: 'fixed',
+    })
+    .to(navContainer, navTime, {
+      y: '-2rem',
+      scale: 0.15,
+      ease: 'power4.out',
+    })
+    .set('#layout', {
+      height: 'auto',
+      overflow: 'visible',
+    })
+
+  const toggle = document.querySelector('#toggleContainer')
+  const toggleTl = gsap.timeline()
+  toggleTl.to(toggle, navTime, { autoAlpha: 0 })
+}
+
 export default {
   layout: 'default',
-  transition: {
-    css: false,
-    mode: 'out-in',
-    leave(el, done) {
-      console.log('leave')
-
-      const sceneContainer = document.querySelector('#sceneContainer')
-      const sceneContainerTl = gsap.timeline()
-      const navTime = 2.5
-
-      sceneContainerTl
-        .set(sceneContainer, {
-          position: 'fixed',
-          transform: 'translate(0, 0)',
-          top: 'auto',
-          left: 'auto',
-          right: 0,
-          bottom: '-30vh',
-          zIndex: 100,
-        })
-        .to(sceneContainer, navTime, {
-          width: '150px',
-          bottom: 0,
-          right: 0,
-          ease: 'power4.out',
-        })
-
-      const scene = document.querySelector('#scene')
-      const sceneTl = gsap.timeline()
-
-      sceneTl.set(scene, { minHeight: 0 }).to(scene, navTime, {
-        height: '175px',
-        ease: 'power4.out',
-      })
-
-      const toggle = document.querySelector('#toggleContainer')
-      const toggleTl = gsap.timeline()
-      const fadeTime = 0.5
-
-      toggleTl.to(toggle, fadeTime, { autoAlpha: 0 })
-
-      gsap.to(el, fadeTime, {
-        opacity: 0,
-        onComplete: done,
-      })
-
-      gsap.set('#footer', {
-        autoAlpha: 0,
-      })
-    },
+  transition(to, from) {
+    if (!from) {
+      return
+    }
+    return to.path < from.path ? entering() : leaving()
   },
   components: {
     CTA,
@@ -89,7 +112,7 @@ export default {
 .testLink {
   width: 150px;
   position: fixed;
-  bottom: 4rem;
+  bottom: 5rem;
   right: 4rem;
   z-index: 10000;
 }

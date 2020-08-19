@@ -12,37 +12,10 @@ import HeroBanner from '@/components/HeroBanner'
 import RichText from '@/components/RichText'
 export default {
   layout: 'default',
-  transition: {
-    css: false,
-    mode: 'out-in',
-    beforeEnter(el) {
-      gsap.set(el, {
-        opacity: 0,
-      })
-
-      // gsap.set('#footer', { autoAlpha: 0 })
-    },
-    enter(el, done) {
-      const time = 4
-      const delay = 0
-
-      const navContainer = document.querySelector('#navContainer')
-      const navContainerTl = gsap.timeline()
-      navContainerTl.to(navContainer, time, {
-        height: 0,
-        ease: 'power4.out',
-        delay,
-      })
-
-      gsap.to(el, time, {
-        opacity: 1,
-        delay,
-        onComplete: done,
-      })
-
-      gsap.to('#footer', time, { delay: 2, autoAlpha: 1 })
-    },
-  },
+  // transition: {
+  //   css: false,
+  //   mode: 'out-in',
+  // },
   components: { HeroBanner, RichText },
   data() {
     return {

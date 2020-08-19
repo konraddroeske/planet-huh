@@ -1,8 +1,10 @@
 <template>
-  <div id="navContainer" class="navContainer">
-    <h1 class="welcome">Welcome To Planet Huh</h1>
-    <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
-      <canvas id="scene" ref="scene" class="scene" />
+  <div id="nav3d" class="nav3d">
+    <div id="navContainer" class="navContainer">
+      <h1 class="welcome">Welcome To Planet Huh</h1>
+      <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
+        <canvas id="scene" ref="scene" class="scene" />
+      </div>
     </div>
     <div id="toggleContainer" class="toggleContainer">
       <NavToggle />
@@ -1423,9 +1425,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.navContainer {
+.nav3d {
   position: relative;
   height: 100vh;
+}
+
+.navContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform-origin: bottom right;
 }
 
 .welcome {
@@ -1457,6 +1468,7 @@ export default {
   height: 152vw;
   display: block;
   pointer-events: none;
+  transition: height 2s;
 }
 
 .toggleContainer {

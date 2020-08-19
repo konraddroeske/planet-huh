@@ -1,5 +1,5 @@
 <template>
-  <div class="layout">
+  <div id="layout" class="layout">
     <Header />
     <div id="blurrableContent">
       <Nav />
@@ -24,5 +24,6 @@ export default {
 .main {
   z-index: $z-above;
   position: relative;
+  transform-origin: center top;
 }
 </style>
