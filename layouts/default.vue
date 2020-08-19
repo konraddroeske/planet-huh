@@ -3,10 +3,10 @@
     <Header />
     <div id="blurrableContent">
       <Nav />
-      <main class="main">
+      <main id="main" class="main">
         <Nuxt />
+        <Footer />
       </main>
-      <Footer />
     </div>
   </div>
 </template>

@@ -1,10 +1,10 @@
 <template>
-  <div class="navContainer">
+  <div id="navContainer" class="navContainer">
     <h1 class="welcome">Welcome To Planet Huh</h1>
     <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
-      <canvas ref="scene" class="scene" />
+      <canvas id="scene" ref="scene" class="scene" />
     </div>
-    <div class="toggleContainer">
+    <div id="toggleContainer" class="toggleContainer">
       <NavToggle />
     </div>
   </div>
@@ -531,12 +531,17 @@ export default {
       // INITIALIZE CANVAS
 
       const canvas = this.$refs.scene
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+      })
       renderer.setPixelRatio(window.devicePixelRatio)
+      renderer.setClearColor(0x000000, 0)
       // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
-      scene.background = new THREE.Color('white')
+      // scene.background = new THREE.Color('white')
 
       // CAMERA PIVOT
 
