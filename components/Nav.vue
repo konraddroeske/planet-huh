@@ -137,7 +137,7 @@ export default {
 
       const isMobile = this.$device.isMobile
 
-      const sceneContainer = document.querySelector('#sceneContainer')
+      const sceneContainer = document.querySelector('#navContainer')
 
       let isDragging = false
       let isThrowing = false
@@ -1428,6 +1428,7 @@ export default {
 .nav3d {
   position: relative;
   height: 100vh;
+  // z-index: $z-modal;
 }
 
 .navContainer {
@@ -1437,6 +1438,8 @@ export default {
   bottom: 0;
   left: 0;
   transform-origin: bottom right;
+  z-index: $z-modal;
+  cursor: grab;
 }
 
 .welcome {
@@ -1453,8 +1456,9 @@ export default {
 }
 
 .sceneContainer {
+  pointer-events: none;
   text-align: center;
-  cursor: grab;
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1476,7 +1480,7 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
-  z-index: $z-above;
+  z-index: $z-modal;
 }
 
 @media (pointer: none), (pointer: coarse) {

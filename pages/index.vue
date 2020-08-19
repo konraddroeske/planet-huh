@@ -24,7 +24,6 @@ gsap.registerPlugin(ScrollToPlugin)
 
 const entering = () => {
   const navContainer = document.querySelector('#navContainer')
-  const body = document.body
   const navContainerTl = gsap.timeline()
   const scrollTime = 0.3
   const navTime = 1

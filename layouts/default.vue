@@ -5,8 +5,8 @@
       <Nav />
       <main id="main" class="main">
         <Nuxt />
-        <Footer />
       </main>
+      <Footer />
     </div>
   </div>
 </template>
@@ -22,8 +22,9 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  z-index: $z-above;
+  // z-index: $z-above;
   position: relative;
   transform-origin: center top;
+  min-height: 50px;
 }
 </style>

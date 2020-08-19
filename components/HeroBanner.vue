@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <img class="bannerImage" :src="imageSrc" alt="" />
+        <img class="bannerImage" :src="imageSrc" alt="" @load="onImgLoad" />
         <div class="bannerText">
           <h1 class="title">{{ title }}</h1>
           <p class="excerpt">{{ excerpt }}</p>
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import gsap from 'gsap'
 import Date from '@/components/Date'
 export default {
   components: { Date },
@@ -66,6 +67,13 @@ export default {
     mood: {
       type: String,
       required: true,
+    },
+  },
+  methods: {
+    onImgLoad() {
+      gsap.to('#nav3d', 0.8, {
+        height: 0,
+      })
     },
   },
 }
