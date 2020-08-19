@@ -22,9 +22,7 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  // z-index: $z-above;
+  min-height: 100px;
   position: relative;
-  transform-origin: center top;
-  min-height: 50px;
 }
 </style>

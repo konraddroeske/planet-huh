@@ -71,8 +71,11 @@ export default {
   },
   methods: {
     onImgLoad() {
-      gsap.to('#nav3d', 0.8, {
+      console.log('image loaded')
+
+      gsap.to('#nav3d', 0.6, {
         height: 0,
+        ease: 'power4.out',
       })
     },
   },
