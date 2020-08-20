@@ -19,6 +19,16 @@ gsap.registerPlugin(ScrollToPlugin)
 
 export default {
   layout: 'default',
+  components: {
+    CTA,
+    FeaturedCollabs,
+    CategoryNav,
+    PostsFeed,
+  },
+  async fetch({ store }) {
+    await store.dispatch('homepage/getHomepage')
+    await store.dispatch('homepage/getSomePosts', 4)
+  },
   transition: {
     afterEnter(el, done) {
       console.log('enter index')
@@ -30,6 +40,7 @@ export default {
       const navContainerTl = gsap.timeline()
       const scrollTime = 0.3
       const navTime = 1
+      const isMobile = this.$device.isMobile
 
       navContainerTl
         .to(window, scrollTime, {
@@ -45,9 +56,12 @@ export default {
         .set(navContainer, {
           position: 'fixed',
         })
+        .set('#sceneContainer', {
+          width: '250%',
+        })
         .to(navContainer, navTime, {
           y: '-2rem',
-          scale: 0.15,
+          scale: isMobile ? 0.2 : 0.15,
           ease: 'power4.out',
         })
         .set('#layout', {
@@ -55,20 +69,9 @@ export default {
           overflow: 'visible',
         })
 
-      const toggle = document.querySelector('#toggleContainer')
-      const toggleTl = gsap.timeline()
-      toggleTl.to(toggle, navTime, { autoAlpha: 0 })
+      gsap.to('#toggleContainer', navTime, { autoAlpha: 0 })
+      gsap.to('#welcome', navTime, { autoAlpha: 0 })
     },
-  },
-  components: {
-    CTA,
-    FeaturedCollabs,
-    CategoryNav,
-    PostsFeed,
-  },
-  async fetch({ store }) {
-    await store.dispatch('homepage/getHomepage')
-    await store.dispatch('homepage/getSomePosts', 4)
   },
 }
 </script>

@@ -17,7 +17,7 @@
           class="fullImageContainer"
         >
           <img :src="item.src" alt="" />
-          <div class="caption">{{ item.caption }}</div>
+          <div class="accentText caption">{{ item.caption }}</div>
         </div>
 
         <div v-if="item.type === 'flex-images'" :key="index" class="flexImages">
@@ -27,7 +27,7 @@
             class="flexImageContainer"
           >
             <img :src="image.src" alt="" />
-            <div class="caption">{{ image.caption }}</div>
+            <div class="accentText caption">{{ image.caption }}</div>
           </div>
         </div>
 
@@ -185,17 +185,7 @@ blockquote {
 }
 
 .caption {
-  color: $accent;
-  text-transform: uppercase;
-  font-family: $font-sans;
-  font-size: 0.8rem;
-  font-weight: $semibold;
-  letter-spacing: 1px;
   margin: 0.5rem 0;
-
-  @media (min-width: $bp-desktop) {
-    font-size: 1rem;
-  }
 }
 
 .video {

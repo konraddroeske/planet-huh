@@ -18,7 +18,7 @@
       <CategoryNav variant="light" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
-        <Social variant="light" />
+        <SocialLinks variant="light" />
         <SearchBar variant="light" />
       </div>
     </section>
@@ -28,10 +28,10 @@
 <script>
 import CategoryNav from './CategoryNav'
 import PageNav from './PageNav'
-import Social from './Social'
+import SocialLinks from './SocialLinks'
 import SearchBar from './SearchBar'
 export default {
-  components: { CategoryNav, PageNav, Social, SearchBar },
+  components: { CategoryNav, PageNav, SocialLinks, SearchBar },
   data() {
     return {
       isOpen: false,

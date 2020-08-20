@@ -15,7 +15,7 @@
       </div>
 
       <div class="thirdRow">
-        <Social variant="dark" />
+        <SocialLinks variant="dark" />
         <div class="credit">
           A Project by <span class="visuallyHidden">Somewherelse</span>
           <svg
@@ -106,9 +106,9 @@ import Logo from './Logo'
 import CategoryNav from './CategoryNav'
 import PageNav from './PageNav'
 import SearchBar from './SearchBar'
-import Social from './Social'
+import SocialLinks from './SocialLinks'
 export default {
-  components: { Logo, CategoryNav, PageNav, SearchBar, Social },
+  components: { Logo, CategoryNav, PageNav, SearchBar, SocialLinks },
 }
 </script>
 

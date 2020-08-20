@@ -1,7 +1,9 @@
 <template>
-  <div>
-    <HeroBanner v-if="post" v-bind="post" :city="'Toronto'" />
-    <RichText v-if="post" :content="post.content" />
+  <div v-if="post">
+    <HeroBanner v-bind="post" :city="'Toronto'" />
+    <RichText :content="post.content" />
+    <ArtistCredits :artists="[post.artist]" />
+    <SocialShare :title="post.title" :link="link" />
   </div>
 </template>
 
@@ -11,26 +13,30 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { fetchContent } from '@/utils/api'
 import HeroBanner from '@/components/HeroBanner'
 import RichText from '@/components/RichText'
+import ArtistCredits from '@/components/ArtistCredits'
+import SocialShare from '@/components/SocialShare'
 
 gsap.registerPlugin(ScrollToPlugin)
 
 const setNav = () => {
   console.log('set Nav')
+  const isMobile = window.$nuxt.$device.isMobile
 
-  const navContainer = document.querySelector('#navContainer')
-  const toggle = document.querySelector('#toggleContainer')
-
-  gsap.set(navContainer, {
+  gsap.set('#navContainer', {
     position: 'fixed',
     y: '-2rem',
-    scale: 0.15,
+    scale: isMobile ? 0.2 : 0.15,
   })
 
   gsap.set('#nav3d', {
     height: 0,
   })
 
-  gsap.set(toggle, { autoAlpha: 0 })
+  gsap.set('#toggleContainer', { autoAlpha: 0 })
+  gsap.set('#welcome', { autoAlpha: 0 })
+  gsap.set('#sceneContainer', {
+    width: '250%',
+  })
 }
 
 const entering = () => {
@@ -47,6 +53,7 @@ const leavingToIndex = () => {
     ease: 'power4.out',
   })
 
+  const isMobile = window.$nuxt.$device.isMobile
   const navContainer = document.querySelector('#navContainer')
   const navContainerTl = gsap.timeline()
   const scrollTime = 0.3
@@ -68,21 +75,26 @@ const leavingToIndex = () => {
       ease: 'power4.out',
     })
     .set(navContainer, {
-      position: 'absolute',
+      position: isMobile ? 'fixed' : 'absolute',
     })
     .set('#layout', {
       height: 'auto',
       overflow: 'visible',
     })
+    .set('#sceneContainer', {
+      width: '100%',
+    })
 
-  const toggle = document.querySelector('#toggleContainer')
-  const toggleTl = gsap.timeline()
-  toggleTl.to(toggle, navTime, { autoAlpha: 1 })
+  gsap.to('#toggleContainer', navTime, { autoAlpha: 1 })
+  gsap.to('#welcome', navTime, { autoAlpha: 1 })
 }
 
 export default {
   layout: 'default',
+  components: { HeroBanner, RichText, ArtistCredits, SocialShare },
   transition(to, from) {
+    // http://localhost:3000/post/bambii-lorem-ipsum
+
     if (!from) {
       // set nav to small
       return setNav()
@@ -94,16 +106,24 @@ export default {
 
     to.path === '/' ? leavingToIndex() : leaving()
   },
-  components: { HeroBanner, RichText },
   data() {
     return {
       slug: this.$route.params.slug,
       post: null,
     }
   },
+  computed: {
+    link() {
+      const host = this.req ? this.req.headers.host : window.location.origin
+      return `${host}${this.$route.path}`
+    },
+  },
   async created() {
     const { data } = await fetchContent(`{
       post(where: {slug: "${this.slug}"}) {
+        title
+        excerpt
+        date
         content {
           html
           markdown
@@ -113,11 +133,15 @@ export default {
         coverImage {
           url
         }
-        date
-        excerpt
-        mood
         sense
-        title
+        mood
+        artist {
+          name
+          about
+          website
+          social
+          socialUrl
+        }
       }
     }`)
 
@@ -130,13 +154,17 @@ export default {
   mounted() {
     const nav = document.querySelector('#navContainer')
     nav.addEventListener('click', this.route, false)
+    nav.addEventListener('touchstart', this.route, false)
   },
   beforeDestroy() {
     const nav = document.querySelector('#navContainer')
     nav.removeEventListener('click', this.route, false)
+    nav.removeEventListener('touchstart', this.route, false)
   },
   methods: {
     route() {
+      console.log('touch')
+
       this.$router.push({
         path: `/`,
       })

@@ -1,7 +1,7 @@
 <template>
   <div id="nav3d" class="nav3d">
+    <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1>
     <div id="navContainer" class="navContainer">
-      <h1 class="welcome">Welcome To Planet Huh</h1>
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
@@ -127,8 +127,12 @@ export default {
       currentNav: null,
     }
   },
+  computed: {
+    isIndex() {
+      return this.$route.fullPath === '/'
+    },
+  },
   mounted() {
-    console.log('mounted')
     this.initThree()
   },
   methods: {
@@ -196,7 +200,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = isMobile ? -2.2 : -0.5
+      const maxZoom = isMobile ? -1.8 : -0.5
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -548,14 +552,14 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, isMobile ? 5.5 : 4.75)
+      pivotCamera.position.set(0, 0, isMobile ? 6 : 4.75)
       scene.add(pivotCamera)
 
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, isMobile ? -5.5 : -4.75)
+      camera.lookAt(0, 0, isMobile ? -6 : -4.75)
 
       // LIGHTING
 
@@ -1116,7 +1120,7 @@ export default {
           top: 0,
           margin: 0,
           transform: 'translateY(-50%)',
-          // pointerEvents: 'none',
+          pointerEvents: 'auto',
         }).to(title, 0.3, { alpha: 1 })
 
         const newTitle = [object, title]
@@ -1232,20 +1236,13 @@ export default {
             currentTarget !== intersects[0].object &&
             !gsap.isTweening(pivotMain.rotation)
           ) {
-            // if (isMobile) {
-            //   setTarget(null)
-            //   removeTitle()
-            // }
-
             setTarget(intersects[0].object)
             addTitle(intersects[0].object)
           }
 
           if (intersects.length < 2 && currentTarget) {
-            // if (!isMobile) {
             setTarget(null)
             removeTitle()
-            // }
           }
         }
 
@@ -1336,14 +1333,14 @@ export default {
 
           // CAMERA ZOOM IN
 
-          if (!isMobile && isDragging && !currentTarget) {
+          if (!isMobile && isDragging && !currentTarget && this.isIndex) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
             }
           }
 
-          if (isDragging && isMobile) {
+          if (isDragging && isMobile && this.isIndex) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
@@ -1352,7 +1349,7 @@ export default {
 
           // CAMERA ZOOM OUT
 
-          if (!isDragging && lerpTimerBool) {
+          if ((!isDragging && lerpTimerBool) || !this.isIndex) {
             if (camera.position.z <= minZoom) {
               camera.position.z += zoomOutSpeed
             }
@@ -1438,7 +1435,7 @@ export default {
   bottom: 0;
   left: 0;
   transform-origin: bottom right;
-  z-index: $z-modal;
+  z-index: $z-above;
   cursor: grab;
 }
 
@@ -1447,7 +1444,7 @@ export default {
   text-transform: uppercase;
   font-weight: $medium;
   font-size: 4vw;
-  z-index: $z-above;
+  z-index: $z-modal;
   position: absolute;
   left: 50%;
   top: 5rem;
@@ -1484,12 +1481,16 @@ export default {
 }
 
 @media (pointer: none), (pointer: coarse) {
+  .navContainer {
+    position: fixed;
+  }
+
   .scene {
-    height: 100vh !important;
+    height: 110vh !important;
   }
 
   .toggleContainer {
-    bottom: 5rem !important;
+    bottom: 6rem !important;
   }
 }
 
