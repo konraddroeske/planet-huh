@@ -27,7 +27,7 @@
               target="_blank"
               rel="canonical noopener noreferrer"
             >
-              {{ artist.website }}
+              {{ artist.website.replace(/(^\w+:|^)\/\//, '') }}
             </a>
           </div>
 
