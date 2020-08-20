@@ -1,8 +1,9 @@
 <template>
   <div v-if="post">
-    <HeroBanner v-if="post" v-bind="post" :city="'Toronto'" />
-    <RichText v-if="post" :content="post.content" />
-    <SocialShare v-if="post" :title="post.title" :link="link" />
+    <HeroBanner v-bind="post" :city="'Toronto'" />
+    <RichText :content="post.content" />
+    <ArtistCredits :artists="[post.artist]" />
+    <SocialShare :title="post.title" :link="link" />
   </div>
 </template>
 
@@ -12,6 +13,7 @@ import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { fetchContent } from '@/utils/api'
 import HeroBanner from '@/components/HeroBanner'
 import RichText from '@/components/RichText'
+import ArtistCredits from '@/components/ArtistCredits'
 import SocialShare from '@/components/SocialShare'
 
 gsap.registerPlugin(ScrollToPlugin)
@@ -84,7 +86,7 @@ const leavingToIndex = () => {
 
 export default {
   layout: 'default',
-  components: { HeroBanner, RichText, SocialShare },
+  components: { HeroBanner, RichText, ArtistCredits, SocialShare },
   transition(to, from) {
     if (!from) {
       // set nav to small
@@ -112,6 +114,9 @@ export default {
   async created() {
     const { data } = await fetchContent(`{
       post(where: {slug: "${this.slug}"}) {
+        title
+        excerpt
+        date
         content {
           html
           markdown
@@ -121,11 +126,15 @@ export default {
         coverImage {
           url
         }
-        date
-        excerpt
-        mood
         sense
-        title
+        mood
+        artist {
+          name
+          about
+          website
+          social
+          socialUrl
+        }
       }
     }`)
 
