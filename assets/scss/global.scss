@@ -43,20 +43,6 @@ html {
   font-family: $font-display;
 }
 
-.visuallyHidden:not(:focus):not(:active) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  border: 0;
-  padding: 0;
-  white-space: nowrap;
-  -webkit-clip-path: inset(100%);
-  clip-path: inset(100%);
-  clip: rect(0 0 0);
-  overflow: hidden;
-}
-
 h1,
 h2,
 h3,
@@ -79,10 +65,38 @@ img {
   display: block;
 }
 
+// USEFUL CLASSES
+.visuallyHidden:not(:focus):not(:active) {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  white-space: nowrap;
+  -webkit-clip-path: inset(100%);
+  clip-path: inset(100%);
+  clip: rect(0 0 0);
+  overflow: hidden;
+}
+
 .lockScroll {
   overflow: hidden;
 }
 
 .blurContent {
   filter: blur(10px);
+}
+
+.accentText {
+  color: $accent;
+  text-transform: uppercase;
+  font-family: $font-sans;
+  font-weight: $semibold;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+
+  @media (min-width: $bp-desktop) {
+    font-size: 1rem;
+  }
 }

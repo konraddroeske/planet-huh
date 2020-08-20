@@ -1,19 +1,31 @@
 <template>
   <ul :class="`socialList-${variant}`">
     <li>
-      <a href="https://facebook.com">
+      <a
+        href="https://facebook.com"
+        target="_blank"
+        rel="canonical noopener noreferrer"
+      >
         <FontAwesomeIcon :icon="['fab', 'facebook-f']" />
         <span class="visuallyHidden">Facebook</span>
       </a>
     </li>
     <li>
-      <a href="https://twitter.com">
+      <a
+        href="https://twitter.com"
+        target="_blank"
+        rel="canonical noopener noreferrer"
+      >
         <FontAwesomeIcon :icon="['fab', 'twitter']" />
         <span class="visuallyHidden">Twitter</span>
       </a>
     </li>
     <li>
-      <a href="https://instagram.com">
+      <a
+        href="https://instagram.com"
+        target="_blank"
+        rel="canonical noopener noreferrer"
+      >
         <FontAwesomeIcon :icon="['fab', 'instagram']" />
         <span class="visuallyHidden">Instagram</span>
       </a>
