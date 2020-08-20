@@ -1,10 +1,12 @@
 <template>
-  <div class="navContainer">
-    <h1 class="welcome">Welcome To Planet Huh</h1>
-    <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
-      <canvas ref="scene" class="scene" />
+  <div id="nav3d" class="nav3d">
+    <div id="navContainer" class="navContainer">
+      <h1 class="welcome">Welcome To Planet Huh</h1>
+      <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
+        <canvas id="scene" ref="scene" class="scene" />
+      </div>
     </div>
-    <div class="toggleContainer">
+    <div id="toggleContainer" class="toggleContainer">
       <NavToggle />
     </div>
   </div>
@@ -135,7 +137,7 @@ export default {
 
       const isMobile = this.$device.isMobile
 
-      const sceneContainer = document.querySelector('#sceneContainer')
+      const sceneContainer = document.querySelector('#navContainer')
 
       let isDragging = false
       let isThrowing = false
@@ -531,12 +533,17 @@ export default {
       // INITIALIZE CANVAS
 
       const canvas = this.$refs.scene
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+      })
       renderer.setPixelRatio(window.devicePixelRatio)
+      renderer.setClearColor(0x000000, 0)
       // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
-      scene.background = new THREE.Color('white')
+      // scene.background = new THREE.Color('white')
 
       // CAMERA PIVOT
 
@@ -1418,9 +1425,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.navContainer {
+.nav3d {
   position: relative;
   height: 100vh;
+  // z-index: $z-modal;
+}
+
+.navContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform-origin: bottom right;
+  z-index: $z-modal;
+  cursor: grab;
 }
 
 .welcome {
@@ -1437,8 +1456,9 @@ export default {
 }
 
 .sceneContainer {
+  pointer-events: none;
   text-align: center;
-  cursor: grab;
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1452,6 +1472,7 @@ export default {
   height: 152vw;
   display: block;
   pointer-events: none;
+  transition: height 2s;
 }
 
 .toggleContainer {
@@ -1459,7 +1480,7 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
-  z-index: $z-above;
+  z-index: $z-modal;
 }
 
 @media (pointer: none), (pointer: coarse) {
