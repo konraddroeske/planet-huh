@@ -1,10 +1,5 @@
 <template>
   <div>
-    <!-- <div class="testLink">
-      <nuxt-link :to="`/post/bambii-lorem-ipsum/`" class="postLink">
-        Bambi
-      </nuxt-link>
-    </div> -->
     <CTA />
     <CategoryNav variant="gradient" />
     <FeaturedCollabs />
@@ -25,6 +20,9 @@ gsap.registerPlugin(ScrollToPlugin)
 export default {
   layout: 'default',
   transition: {
+    afterEnter(el, done) {
+      console.log('enter index')
+    },
     leave(el, done) {
       console.log('leaving index')
 

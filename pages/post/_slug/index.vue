@@ -34,11 +34,11 @@ const setNav = () => {
 }
 
 const entering = () => {
-  console.log('entering')
+  console.log('entering post')
 }
 
 const leaving = () => {
-  console.log('leaving')
+  console.log('leaving post')
 }
 
 const leavingToIndex = () => {
@@ -74,24 +74,25 @@ const leavingToIndex = () => {
       height: 'auto',
       overflow: 'visible',
     })
+
+  const toggle = document.querySelector('#toggleContainer')
+  const toggleTl = gsap.timeline()
+  toggleTl.to(toggle, navTime, { autoAlpha: 1 })
 }
 
 export default {
   layout: 'default',
   transition(to, from) {
     if (!from) {
-      // set 3D nav to small
-
+      // set nav to small
       return setNav()
-    }
-
-    if (to.path === '/') {
-      leavingToIndex()
     }
 
     if (from.path === '/') {
       entering()
     }
+
+    to.path === '/' ? leavingToIndex() : leaving()
   },
   components: { HeroBanner, RichText },
   data() {
@@ -125,6 +126,21 @@ export default {
       imageSrc: data.data.post.coverImage.url,
       content: data.data.post.content.raw.children,
     }
+  },
+  mounted() {
+    const nav = document.querySelector('#navContainer')
+    nav.addEventListener('click', this.route, false)
+  },
+  beforeDestroy() {
+    const nav = document.querySelector('#navContainer')
+    nav.removeEventListener('click', this.route, false)
+  },
+  methods: {
+    route() {
+      this.$router.push({
+        path: `/`,
+      })
+    },
   },
 }
 </script>
