@@ -1,10 +1,12 @@
 <template>
-  <div class="navContainer">
-    <h1 class="welcome">Welcome To Planet Huh</h1>
-    <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
-      <canvas ref="scene" class="scene" />
+  <div id="nav3d" class="nav3d">
+    <div id="navContainer" class="navContainer">
+      <h1 class="welcome">Welcome To Planet Huh</h1>
+      <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
+        <canvas id="scene" ref="scene" class="scene" />
+      </div>
     </div>
-    <div class="toggleContainer">
+    <div id="toggleContainer" class="toggleContainer">
       <NavToggle />
     </div>
   </div>
@@ -126,6 +128,7 @@ export default {
     }
   },
   mounted() {
+    console.log('mounted')
     this.initThree()
   },
   methods: {
@@ -134,7 +137,7 @@ export default {
 
       const isMobile = this.$device.isMobile
 
-      const sceneContainer = document.querySelector('#sceneContainer')
+      const sceneContainer = document.querySelector('#navContainer')
 
       let isDragging = false
       let isThrowing = false
@@ -530,12 +533,17 @@ export default {
       // INITIALIZE CANVAS
 
       const canvas = this.$refs.scene
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true })
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+      })
       renderer.setPixelRatio(window.devicePixelRatio)
+      renderer.setClearColor(0x000000, 0)
       // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
-      scene.background = new THREE.Color('white')
+      // scene.background = new THREE.Color('white')
 
       // CAMERA PIVOT
 
@@ -578,7 +586,7 @@ export default {
 
       {
         const texture = loader.load(globeTexture)
-        texture.anisotropy = renderer.getMaxAnisotropy()
+        texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
         const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
@@ -689,10 +697,52 @@ export default {
         const radius = 1
         const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
 
+        const vertexShader = `
+          precision mediump float;
+          precision mediump int;
+
+          attribute vec4 color;
+          varying vec4 vColor;
+
+          void main()    {
+
+            vColor = color;
+
+            gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+          }
+        `
+
+        const fragmentShader = `
+          precision mediump float;
+          precision mediump int;
+
+          varying vec4 vColor;
+
+          void main()    {
+
+            vec4 color = vec4( vColor );
+            gl_FragColor = color;
+
+          }
+        `
+
+        const material = new THREE.ShaderMaterial({
+          uniforms: {
+            viewVector: {
+              type: 'v3',
+              value: camera.position,
+            },
+          },
+          vertexShader,
+          fragmentShader,
+          transparent: true,
+        })
+
         const { count } = geometry.attributes.position
         geometry.setAttribute(
           'color',
-          new THREE.BufferAttribute(new Float32Array(count * 3), 3)
+          new THREE.BufferAttribute(new Float32Array(count * 4), 4)
         )
 
         const positions = geometry.attributes.position
@@ -706,23 +756,14 @@ export default {
             positions.getZ(i)
           )
 
-          positionColor.setXYZ(
+          positionColor.setXYZW(
             i,
             calculatedColor.r / 255,
             calculatedColor.g / 255,
-            calculatedColor.b / 255
+            calculatedColor.b / 255,
+            0.8
           )
         }
-
-        const material = new THREE.MeshPhongMaterial({
-          color: 0xffffff,
-          flatShading: true,
-          vertexColors: true,
-          shininess: 0,
-        })
-
-        material.transparent = true
-        material.opacity = 0.8
 
         mood = new THREE.Mesh(geometry, material)
         mood.name = 'mood'
@@ -814,7 +855,7 @@ export default {
 
       // SET ROTATION AXIS
 
-      globe.geometry.applyMatrix(
+      globe.geometry.applyMatrix4(
         new THREE.Matrix4().makeRotationZ(-globeRadians)
       )
 
@@ -965,9 +1006,9 @@ export default {
             // Main Object
             moodsArr[color.name].push(new THREE.Object3D())
             moodsArr[color.name][index].position.set(
-              position[0] * 1.017,
-              position[1] * 1.017,
-              position[2] * 1.017
+              position[0] * 1.022,
+              position[1] * 1.022,
+              position[2] * 1.022
             )
             mood.add(moodsArr[color.name][index])
 
@@ -1141,13 +1182,11 @@ export default {
       moodGlow.position.set(0, 0, 0)
       pivotMood.add(moodGlow)
 
-      // Raycaster Title
-
-      // const raycasterTitle = new THREE.Raycaster()
-
       // RENDER
 
       const render = () => {
+        // GLOW SHADER
+
         // RESIZE
 
         if (resizeRendererToDisplaySize(renderer)) {
@@ -1190,7 +1229,8 @@ export default {
             intersects.length >= 2 &&
             intersects[0].object.name !== 'globe' &&
             intersects[0].object.name !== 'mood' &&
-            currentTarget !== intersects[0].object
+            currentTarget !== intersects[0].object &&
+            !gsap.isTweening(pivotMain.rotation)
           ) {
             // if (isMobile) {
             //   setTarget(null)
@@ -1385,9 +1425,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.navContainer {
+.nav3d {
   position: relative;
   height: 100vh;
+  // z-index: $z-modal;
+}
+
+.navContainer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform-origin: bottom right;
+  z-index: $z-modal;
+  cursor: grab;
 }
 
 .welcome {
@@ -1404,8 +1456,9 @@ export default {
 }
 
 .sceneContainer {
+  pointer-events: none;
   text-align: center;
-  cursor: grab;
+
   position: absolute;
   top: 50%;
   left: 50%;
@@ -1419,6 +1472,7 @@ export default {
   height: 152vw;
   display: block;
   pointer-events: none;
+  transition: height 2s;
 }
 
 .toggleContainer {
@@ -1426,7 +1480,7 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
-  z-index: $z-above;
+  z-index: $z-modal;
 }
 
 @media (pointer: none), (pointer: coarse) {

@@ -1,9 +1,9 @@
 <template>
-  <div class="layout">
+  <div id="layout" class="layout">
     <Header />
     <div id="blurrableContent">
       <Nav />
-      <main class="main">
+      <main id="main" class="main">
         <Nuxt />
       </main>
       <Footer />
@@ -22,7 +22,7 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  z-index: $z-above;
+  min-height: 100px;
   position: relative;
 }
 </style>
