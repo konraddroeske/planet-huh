@@ -2,6 +2,7 @@
   <div id="nav3d" class="nav3d">
     <!-- <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1> -->
     <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
+
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
