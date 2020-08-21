@@ -177,8 +177,6 @@ export default {
     initThree() {
       // CHECK DEVICE
 
-      console.log(this.isMobile, 'nav check')
-
       const sceneContainer = document.querySelector('#navContainer')
 
       let isDragging = false

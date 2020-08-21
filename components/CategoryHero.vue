@@ -1,6 +1,6 @@
 <template>
   <div class="categoryHero">
-    <Category
+    <CategoryTitle
       :name="title"
       :disabled="disabled"
       :to="{ name: '' }"
@@ -10,11 +10,11 @@
 </template>
 
 <script>
-import Category from '@/components/Category.vue'
+import CategoryTitle from '@/components/CategoryTitle.vue'
 
 export default {
   components: {
-    Category,
+    CategoryTitle,
   },
   props: {
     // variant: {
