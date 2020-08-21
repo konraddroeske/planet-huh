@@ -1,5 +1,6 @@
 <template>
   <button class="downArrow" @click="onClick">
+    <div class="explore">Explore</div>
     <slot />
     <!-- <DownArrow /> -->
   </button>
@@ -25,16 +26,21 @@ export default {
   border: none;
   background-color: transparent;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: $medium;
-  text-decoration: underline;
 
-  //   svg {
-  //     width: 2.5rem;
-  //     height: 2.5rem;
-  //   }
+  font-family: $font-display;
+  text-transform: uppercase;
+  font-weight: $extrabold;
+  font-size: 3rem;
+  line-height: 1;
+  position: relative;
+
+  .explore {
+    color: $accent;
+    text-transform: uppercase;
+    text-align: center;
+    font-weight: $medium;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
 }
 </style>

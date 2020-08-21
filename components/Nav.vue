@@ -1,6 +1,6 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1>
+    <!-- <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1> -->
     <div id="navContainer" class="navContainer">
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
@@ -10,7 +10,7 @@
       <NavToggle />
     </div>
     <div id="navFeedContainer" class="navFeedContainer">
-      <NavFeed @clicked="handleNav()">View Feed</NavFeed>
+      <NavFeed @clicked="handleNav()">Planet Huh</NavFeed>
     </div>
   </div>
 </template>
@@ -174,6 +174,8 @@ export default {
     initThree() {
       // CHECK DEVICE
 
+      console.log(this.isMobile, 'nav check')
+
       const sceneContainer = document.querySelector('#navContainer')
 
       let isDragging = false
@@ -309,7 +311,7 @@ export default {
 
       const setLerpTimer = () => {
         clearInterval(lerpTimer)
-        lerpTimer = setInterval(lerpTimerFn, 6000)
+        lerpTimer = setInterval(lerpTimerFn, this.isMobile ? 1500 : 6000)
       }
 
       const clearLerpTimer = () => {
@@ -1509,19 +1511,19 @@ export default {
 }
 
 @media (pointer: none), (pointer: coarse) {
-  .welcome {
-    display: block;
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: $medium;
-    font-size: 4vw;
-    z-index: $z-modal;
-    position: absolute;
-    left: 50%;
-    top: 5rem;
-    width: 100%;
-    transform: translateX(-50%);
-  }
+  // .welcome {
+  //   display: block;
+  //   text-align: center;
+  //   text-transform: uppercase;
+  //   font-weight: $medium;
+  //   font-size: 4vw;
+  //   z-index: $z-modal;
+  //   position: absolute;
+  //   left: 50%;
+  //   top: 5rem;
+  //   width: 100%;
+  //   transform: translateX(-50%);
+  // }
 
   .navContainer {
     position: fixed;
@@ -1534,16 +1536,18 @@ export default {
   }
 
   .toggleContainer {
-    bottom: 11rem !important;
+    top: 5rem !important;
+    bottom: auto !important;
   }
 
   .navFeedContainer {
-    bottom: 6rem;
+    bottom: 5rem;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
     z-index: $z-modal;
     display: block;
+    width: 80%;
   }
 }
 
