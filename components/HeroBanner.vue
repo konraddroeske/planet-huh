@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import gsap from 'gsap'
 import Date from '@/components/Date'
 export default {
   components: { Date },
@@ -71,10 +70,7 @@ export default {
   },
   methods: {
     onImgLoad() {
-      gsap.to('#nav3d', 0.6, {
-        height: 0,
-        ease: 'power4.out',
-      })
+      this.$store.dispatch('setNavContainerSmall')
     },
   },
 }

@@ -100,7 +100,6 @@ export const mutations = {
     state.featuredPosts = featuredPosts
     state.featuredCollabPosts = featuredCollabPosts
   },
-
   setSomePosts(state, newPosts) {
     state.postsFeed = state.postsFeed.concat(newPosts)
   },

@@ -19,47 +19,6 @@ gsap.registerPlugin(ScrollToPlugin)
 
 export default {
   layout: 'default',
-  transition: {
-    afterEnter(el, done) {
-      console.log('enter index')
-    },
-    leave(el, done) {
-      console.log('leaving index')
-
-      const navContainer = document.querySelector('#navContainer')
-      const navContainerTl = gsap.timeline()
-      const scrollTime = 0.3
-      const navTime = 1
-
-      navContainerTl
-        .to(window, scrollTime, {
-          scrollTo: 0,
-          onComplete: () => {
-            done()
-          },
-        })
-        .set('#layout', {
-          height: 'calc(100vh + 1px)',
-          overflow: 'hidden',
-        })
-        .set(navContainer, {
-          position: 'fixed',
-        })
-        .to(navContainer, navTime, {
-          y: '-2rem',
-          scale: 0.15,
-          ease: 'power4.out',
-        })
-        .set('#layout', {
-          height: 'auto',
-          overflow: 'visible',
-        })
-
-      const toggle = document.querySelector('#toggleContainer')
-      const toggleTl = gsap.timeline()
-      toggleTl.to(toggle, navTime, { autoAlpha: 0 })
-    },
-  },
   components: {
     CTA,
     FeaturedCollabs,
@@ -69,6 +28,24 @@ export default {
   async fetch({ store }) {
     await store.dispatch('homepage/getHomepage')
     await store.dispatch('homepage/getSomePosts', 4)
+  },
+  transition: {
+    leave(el, done) {
+      console.log('leaving index')
+
+      const isNavLarge = window.$nuxt.$store.state.isNavLarge
+
+      if (isNavLarge) {
+        const setNavIndex = window.$nuxt.$store._actions.setNavIndex[0]
+        setNavIndex(done)
+      }
+
+      if (!isNavLarge) {
+        const setNavIndexSmall =
+          window.$nuxt.$store._actions.setNavIndexSmall[0]
+        setNavIndexSmall([done, el])
+      }
+    },
   },
 }
 </script>

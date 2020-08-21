@@ -19,22 +19,10 @@ import SocialShare from '@/components/SocialShare'
 gsap.registerPlugin(ScrollToPlugin)
 
 const setNav = () => {
-  console.log('set Nav')
+  const isMobile = window.$nuxt.$device.isMobile
 
-  const navContainer = document.querySelector('#navContainer')
-  const toggle = document.querySelector('#toggleContainer')
-
-  gsap.set(navContainer, {
-    position: 'fixed',
-    y: '-2rem',
-    scale: 0.15,
-  })
-
-  gsap.set('#nav3d', {
-    height: 0,
-  })
-
-  gsap.set(toggle, { autoAlpha: 0 })
+  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
+  setNavStyle(isMobile)
 }
 
 const entering = () => {
@@ -46,50 +34,23 @@ const leaving = () => {
 }
 
 const leavingToIndex = () => {
-  gsap.to('#nav3d', 0.6, {
-    height: '100vh',
-    ease: 'power4.out',
-  })
+  const setNavContainerLarge =
+    window.$nuxt.$store._actions.setNavContainerLarge[0]
+  setNavContainerLarge()
 
-  const navContainer = document.querySelector('#navContainer')
-  const navContainerTl = gsap.timeline()
-  const scrollTime = 0.3
-  const navTime = 1
-  const delay = 0.2
+  // const isMobile = window.$nuxt.$device.isMobile
 
-  navContainerTl
-    .to(window, scrollTime, {
-      scrollTo: 0,
-    })
-    .set('#layout', {
-      height: 'calc(100vh + 1px)',
-      overflow: 'hidden',
-    })
-    .to(navContainer, navTime, {
-      delay,
-      y: '0',
-      scale: 1,
-      ease: 'power4.out',
-    })
-    .set(navContainer, {
-      position: 'absolute',
-    })
-    .set('#layout', {
-      height: 'auto',
-      overflow: 'visible',
-    })
-
-  const toggle = document.querySelector('#toggleContainer')
-  const toggleTl = gsap.timeline()
-  toggleTl.to(toggle, navTime, { autoAlpha: 1 })
+  const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
+  setNavLarge()
 }
 
 export default {
   layout: 'default',
   components: { HeroBanner, RichText, ArtistCredits, SocialShare },
   transition(to, from) {
+    // http://localhost:3000/post/bambii-lorem-ipsum
+
     if (!from) {
-      // set nav to small
       return setNav()
     }
 
@@ -147,10 +108,12 @@ export default {
   mounted() {
     const nav = document.querySelector('#navContainer')
     nav.addEventListener('click', this.route, false)
+    nav.addEventListener('touchstart', this.route, false)
   },
   beforeDestroy() {
     const nav = document.querySelector('#navContainer')
     nav.removeEventListener('click', this.route, false)
+    nav.removeEventListener('touchstart', this.route, false)
   },
   methods: {
     route() {

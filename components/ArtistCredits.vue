@@ -7,7 +7,7 @@
       :class="{
         singleArtistContainer: isSingleArtist,
         lastArtistContainer:
-          !singleArtist && index + 1 === artists.length && index % 2 === 0,
+          !isSingleArtist && index + 1 === artists.length && index % 2 === 0,
       }"
       class="artistContainer"
     >
