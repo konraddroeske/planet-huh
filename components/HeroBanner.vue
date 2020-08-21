@@ -35,7 +35,6 @@
 </template>
 
 <script>
-import gsap from 'gsap'
 import Date from '@/components/Date'
 export default {
   components: { Date },

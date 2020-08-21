@@ -26,11 +26,11 @@ const setNav = () => {
 }
 
 const entering = () => {
-  // console.log('entering post')
+  console.log('entering post')
 }
 
 const leaving = () => {
-  // console.log('leaving post')
+  console.log('leaving post')
 }
 
 const leavingToIndex = () => {

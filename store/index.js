@@ -31,6 +31,61 @@ export const actions = {
     gsap.to('#welcome', navTime, { autoAlpha: 0 })
     gsap.to('#navFeedContainer', navTime, { autoAlpha: 0 })
   },
+  setNavIndex({ state }, startRouting) {
+    const navContainerTl = gsap.timeline()
+    const scrollTime = 0.3
+    const navTime = 1
+
+    navContainerTl
+      .to(window, scrollTime, {
+        scrollTo: 0,
+        onComplete: () => {
+          startRouting()
+        },
+      })
+      .set('#layout', {
+        height: 'calc(100vh + 1px)',
+        overflow: 'hidden',
+      })
+      .set('#navContainer', {
+        position: 'fixed',
+      })
+      .set('#sceneContainer', {
+        width: '250%',
+      })
+      .to('#navContainer', navTime, {
+        y: '-2rem',
+        scale: state.isMobile ? 0.2 : 0.15,
+        ease: 'power4.out',
+      })
+      .set('#layout', {
+        height: 'auto',
+        overflow: 'visible',
+      })
+
+    gsap.to('#toggleContainer', navTime, { autoAlpha: 0 })
+    gsap.to('#welcome', navTime, { autoAlpha: 0 })
+    gsap.to('#navFeedContainer', navTime, { autoAlpha: 0 })
+  },
+  setNavIndexSmall({ state }, payload) {
+    const navContainerTl = gsap.timeline({
+      onComplete: () => {
+        payload[0]()
+      },
+    })
+    const scrollTime = 0.3
+
+    navContainerTl
+      .set('#footer', {
+        display: 'none',
+      })
+      .to(payload[1], scrollTime, {
+        opacity: 0,
+      })
+      .set('#nav3d', {
+        height: '100vh',
+      })
+  },
   setNavLarge({ state, commit }) {
     // console.log(state.isMobile)
     commit('setNavSize', true)
@@ -74,6 +129,10 @@ export const actions = {
     gsap.to('#nav3d', 0.6, {
       height: 0,
       ease: 'power4.out',
+    })
+
+    gsap.set('#footer', {
+      display: 'block',
     })
   },
   setNavContainerLarge() {
