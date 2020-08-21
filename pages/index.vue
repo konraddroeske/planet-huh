@@ -71,6 +71,7 @@ export default {
 
       gsap.to('#toggleContainer', navTime, { autoAlpha: 0 })
       gsap.to('#welcome', navTime, { autoAlpha: 0 })
+      gsap.to('#navFeedContainer', navTime, { autoAlpha: 0 })
     },
   },
 }
