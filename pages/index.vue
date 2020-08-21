@@ -47,6 +47,25 @@ export default {
       }
     },
   },
+  computed: {
+    isMobile() {
+      return this.$device.isMobile
+    },
+    isOpen() {
+      return this.$store.state.isOpen
+    },
+  },
+  mounted() {
+    if (this.isMobile) {
+      this.$store.commit('setNavOpen', true)
+    }
+  },
+  beforeDestroy() {
+    if (this.isMobile && this.isOpen) {
+      // and scroll is locked
+      this.$store.commit('setNavOpen', false)
+    }
+  },
 }
 </script>
 

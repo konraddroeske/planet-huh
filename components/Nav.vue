@@ -1,7 +1,7 @@
 <template>
   <div id="nav3d" class="nav3d">
     <!-- <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1> -->
-    <div id="navContainer" class="navContainer">
+    <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
@@ -137,10 +137,13 @@ export default {
       return this.$route.fullPath === '/'
     },
     isMobile() {
-      return this.$store.state.isMobile
+      return this.$device.isMobile
     },
     isNavLarge() {
       return this.$store.state.isNavLarge
+    },
+    isOpen() {
+      return this.$store.state.isOpen
     },
   },
   mounted() {
