@@ -1,7 +1,9 @@
 <template>
   <div ref="container" :class="`category-${variant}`">
     <div v-if="variant === 'gradient'" class="explore">Explore</div>
-    <nuxt-link ref="link" :to="to">{{ name }}</nuxt-link>
+    <nuxt-link ref="link" :event="disabled ? '' : 'click'" :to="to">{{
+      name
+    }}</nuxt-link>
   </div>
 </template>
 
@@ -22,6 +24,11 @@ export default {
     name: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      required: false,
+      default: false,
     },
   },
   mounted() {

@@ -38,8 +38,6 @@ const leavingToIndex = () => {
     window.$nuxt.$store._actions.setNavContainerLarge[0]
   setNavContainerLarge()
 
-  // const isMobile = window.$nuxt.$device.isMobile
-
   const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
   setNavLarge()
 }
@@ -48,8 +46,6 @@ export default {
   layout: 'default',
   components: { HeroBanner, RichText, ArtistCredits, SocialShare },
   transition(to, from) {
-    // http://localhost:3000/post/bambii-lorem-ipsum
-
     if (!from) {
       return setNav()
     }
