@@ -63,6 +63,11 @@ export default {
       },
     },
   },
+  computed: {
+    isSingleArtist() {
+      return this.$props.artists.length === 1
+    },
+  },
 }
 </script>
 
