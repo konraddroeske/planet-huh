@@ -3,11 +3,13 @@ import gsap from 'gsap'
 export const state = () => ({
   isMobile: null,
   isNavLarge: true,
+  isOpen: false,
 })
 
 export const actions = {
   setNavSmall({ state, commit }) {
     commit('setNavSize', false)
+    commit('setNavOpen', false)
 
     const navContainerTl = gsap.timeline()
     const navTime = 1
@@ -90,6 +92,10 @@ export const actions = {
     // console.log(state.isMobile)
     commit('setNavSize', true)
 
+    if (state.isMobile) {
+      commit('setNavOpen', true)
+    }
+
     const navContainerTl = gsap.timeline()
     const scrollTime = 0.3
     const navTime = 1
@@ -168,5 +174,9 @@ export const mutations = {
   },
   setNavSize(state, navStatus) {
     state.isNavLarge = navStatus
+  },
+  setNavOpen(state, openStatus) {
+    console.log('setting nav to:', openStatus)
+    state.isOpen = openStatus
   },
 }
