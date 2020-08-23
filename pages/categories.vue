@@ -57,7 +57,12 @@ export default {
     },
   },
   mounted() {
-    this.$store.commit('categories/setTitle', this.$route.query.name)
+    this.$store.dispatch(
+      'categories/handleFilters',
+      Object.values(this.$route.query)[0]
+    )
+
+    // get posts
 
     this.onHeroLoad()
 

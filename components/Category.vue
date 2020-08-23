@@ -3,7 +3,10 @@
     <div v-if="variant === 'gradient'" class="explore">Explore</div>
     <nuxt-link
       ref="link"
-      :to="{ path: 'categories', query: { name: name.toLowerCase() } }"
+      :to="{
+        path: 'categories',
+        query: { filters: [name.toLowerCase()] },
+      }"
       replace
       >{{ name }}</nuxt-link
     >

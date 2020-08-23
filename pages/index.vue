@@ -3,7 +3,7 @@
     <CTA />
     <CategoryNav variant="gradient" />
     <FeaturedCollabs />
-    <PostsFeed />
+    <PostsFeed :posts="posts" get-some-posts-path="homepage/getSomePosts" />
   </div>
 </template>
 
@@ -53,6 +53,9 @@ export default {
     },
     isOpen() {
       return this.$store.state.isOpen
+    },
+    posts() {
+      return this.$store.state.homepage.postsFeed
     },
   },
   mounted() {
