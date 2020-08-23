@@ -30,7 +30,6 @@ export const actions = {
       })
 
     gsap.to('#toggleContainer', navTime, { autoAlpha: 0 })
-    // gsap.to('#welcome', navTime, { autoAlpha: 0 })
     gsap.to('#navFeedContainer', navTime, { autoAlpha: 0 })
   },
   setNavIndex({ state }, startRouting) {
@@ -89,7 +88,6 @@ export const actions = {
       })
   },
   setNavLarge({ state, commit }) {
-    // console.log(state.isMobile)
     commit('setNavSize', true)
 
     if (state.isMobile) {
@@ -128,7 +126,6 @@ export const actions = {
       })
 
     gsap.to('#toggleContainer', navTime, { autoAlpha: 1 })
-    // gsap.to('#welcome', navTime, { autoAlpha: 1 })
     gsap.to('#navFeedContainer', navTime, { autoAlpha: 1 })
   },
   setNavContainerSmall() {
@@ -160,7 +157,6 @@ export const actions = {
     })
 
     gsap.set('#toggleContainer', { autoAlpha: 0 })
-    // gsap.set('#welcome', { autoAlpha: 0 })
     gsap.to('#navFeedContainer', { autoAlpha: 0 })
     gsap.set('#sceneContainer', {
       width: '250%',
@@ -176,7 +172,6 @@ export const mutations = {
     state.isNavLarge = navStatus
   },
   setNavOpen(state, openStatus) {
-    console.log('setting nav to:', openStatus)
     state.isOpen = openStatus
   },
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="senses">
+  <div class="categories">
     <CategoryHero :title="title" />
   </div>
 </template>
@@ -19,11 +19,11 @@ const setNav = () => {
 }
 
 const entering = () => {
-  console.log('entering senses')
+  console.log('entering categories')
 }
 
 const leaving = () => {
-  console.log('leaving senses')
+  console.log('leaving categories')
 }
 
 const leavingToIndex = () => {
@@ -53,7 +53,7 @@ export default {
   },
   data() {
     return {
-      title: 'senses',
+      title: 'categories',
     }
   },
   mounted() {
