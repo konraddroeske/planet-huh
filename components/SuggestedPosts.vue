@@ -1,104 +1,84 @@
 <template>
-  <section class="featuredCollabs">
-    <h2 class="title">Featured Collabs</h2>
+  <Wrapper>
+    <section class="suggestedPosts">
+      <h2 class="title">You Might Like</h2>
 
-    <div class="buttonContainer">
-      <ButtonArrow class="leftArrow" @clicked="handleSlide(-1)"
-        ><LeftArrow
-      /></ButtonArrow>
-      <ButtonArrow class="rightArrow" @clicked="handleSlide(1)"
-        ><RightArrow
-      /></ButtonArrow>
-      <ul class="collabsList">
-        <li
-          v-for="(post, index) of posts"
-          :key="post.title"
-          :ref="'post' + index"
-          class="collab"
-        >
-          <div class="leftImage">
-            <img
-              class="postImage"
-              :src="post.coverImage.url"
-              :alt="post.title"
-            />
-          </div>
-          <div class="rightImage">
-            <img
-              class="postImage"
-              :src="post.coverImage.url"
-              :alt="post.title"
-            />
-          </div>
-          <div class="collabsContent">
-            <div class="content">
-              <div class="headline">
-                <p>
-                  Something something
-                </p>
-              </div>
-              <div class="collabsTitle">
-                <h3>
-                  John + Kim
-                  {{ post.title }}
-                </h3>
-              </div>
-              <div class="buttonContainer">
-                <Button @clicked="onClick(post.slug)">Explore</Button>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </section>
+      <ButtonArrow
+        v-if="activeSlide > 0"
+        class="leftArrow"
+        @clicked="handleSlide('left')"
+      >
+        <span class="visuallyHidden">View more posts to the left</span>
+        <LeftArrow />
+      </ButtonArrow>
+      <ButtonArrow
+        v-if="activeSlide < offsets.length - 1"
+        class="rightArrow"
+        @clicked="handleSlide('right')"
+      >
+        <span class="visuallyHidden">View more posts to the right</span>
+        <RightArrow />
+      </ButtonArrow>
+
+      <div id="suggestedSlider">
+        <ul :ref="'postList'" class="postList">
+          <li
+            v-for="(post, index) of posts"
+            :key="post.slug"
+            :ref="'post' + index"
+            class="post"
+          >
+            <nuxt-link :to="`/post/${post.slug}`">
+              <img
+                class="postImage"
+                :src="post.coverImage.url"
+                :alt="post.title"
+              />
+            </nuxt-link>
+            <p class="postDate"><Date :input="post.date" /></p>
+            <h3 class="postTitle">
+              <nuxt-link :to="`/post/${post.slug}`" class="postLink">
+                {{ post.title }}
+              </nuxt-link>
+            </h3>
+            <p class="postTags">
+              <!-- {{ post.cityName }}, {{ post.senseName }}, {{ post.moodName }} -->
+              Toronto, Touch, Happy
+            </p>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </Wrapper>
 </template>
 
 <script>
 import gsap from 'gsap'
-import { Draggable, InertiaPlugin } from 'gsap/all'
-import { debounce } from 'vue-debounce'
 import { fetchContent } from '@/utils/api'
 import ButtonArrow from '@/components/ButtonArrow'
 import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
 import RightArrow from '~/assets/icons/rightArrow.svg?inline'
+import Wrapper from '@/components/Wrapper'
 
 export default {
   components: {
     ButtonArrow,
     LeftArrow,
     RightArrow,
+    Wrapper,
   },
   data() {
     return {
       posts: [],
-      slideDuration: 1,
+      duration: 0.5,
+      activeSlide: 0,
+      offsets: [],
       dragInstance: null,
-      proxyRef: null,
-      transform: null,
-      slideWidth: null,
-      slideHeight: null,
-      imageHeight: null,
-      wrapWidth: null,
-      slideAnimation: gsap.to({}, 0.1, {}),
-      switchPosition: null,
     }
   },
   computed: {
-    wrap() {
-      return this.wrapPartial(-100, (this.posts.length - 1) * 100)
-    },
     numSlides() {
       return this.posts.length
-    },
-    numChars() {
-      return this.posts.map((post) => {
-        const string = `${post.artist[0].name} + ${post.artist[1].name} ${post.title}`
-        return string.length
-      })
-    },
-    maxCharIndex() {
-      return this.numChars.indexOf(Math.max(...this.numChars))
     },
   },
   async created() {
@@ -111,12 +91,6 @@ export default {
         }
         date
         excerpt
-        city {
-          latitude
-          longitude
-        }
-        sense
-        mood
       }
       collabPosts(orderBy: date_DESC, first: 6) {
         title
@@ -126,12 +100,6 @@ export default {
         }
         date
         excerpt
-        city {
-          latitude
-          longitude
-        }
-        sense
-        mood
       }
     }`)
 
@@ -139,177 +107,53 @@ export default {
 
     // Sorted in random order
     this.posts = posts.concat(collabPosts).sort((a, b) => 0.5 - Math.random())
+
+    // This runs the callback AFTER this.posts re-renders the DOM
+    this.$nextTick(function () {
+      this.setSnapPoints()
+    })
   },
   mounted() {
-    gsap.registerPlugin(Draggable, InertiaPlugin)
-
-    this.proxyRef = document.createElement('div')
-    gsap.set(this.proxyRef, {
-      x: '+=0',
-    })
-    this.transform = this.proxyRef._gsap
-
-    // SET POSITION
-
-    this.setPosition()
-    this.updateAnimation()
-
-    const that = this
-
-    this.dragInstance = Draggable.create(this.proxyRef, {
-      trigger: '.collabsList',
-      type: 'x',
-      // edgeResistance: 0.65,
-      inertia: true,
-      onPress() {
-        that.slideAnimation.kill()
-        this.update()
-      },
-      onDrag: this.updateProgress,
-      onThrowUpdate: this.updateProgress,
-      snap: {
-        x: this.snapX,
-      },
-    })
-
-    this.animation = gsap.to('.collab', 0.8, {
-      xPercent: '+=' + this.numSlides * 100,
-      ease: 'none',
-      paused: true,
-      repeat: -1,
-      modifiers: {
-        xPercent: this.wrap,
-      },
-    })
-
-    this.resize()
-
-    window.addEventListener('resize', this.resize)
+    window.addEventListener('resize', this.setSnapPoints)
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.resize)
+    window.removeEventListener('resize', this.setSnapPoints)
   },
   methods: {
-    onClick(slug) {
-      this.$router.push(`/post/${slug}`)
+    resetSlider() {
+      this.activeSlide = 0
+      gsap.to(this.$refs.postList, { x: 0 })
     },
-    wrapPartial(min, max) {
-      const r = max - min
+    setSnapPoints() {
+      this.resetSlider()
 
-      return function (value) {
-        const v = value - min
+      const newOffsets = []
 
-        return ((r + (v % r)) % r) + min
-      }
-    },
-    setPosition() {
-      for (let i = 0; i < this.numSlides; i++) {
-        gsap.set(this.$refs[`post${i}`][0], {
-          xPercent: i * 100,
-          modifiers: {
-            xPercent: this.wrap,
-          },
-        })
-      }
-    },
-    animateSlides(direction) {
-      this.slideAnimation.kill()
+      if (window.innerWidth >= 1024) {
+        for (let i = 0; i < this.numSlides; i += 3) {
+          const lastSlide = this.$refs[`post${this.numSlides - 1}`][0]
 
-      const xVal = parseFloat(
-        this.transform.x.substring(0, this.transform.x.length - 2)
-      )
+          const slide = this.$refs[`post${i}`]
+            ? this.$refs[`post${i}`][0]
+            : lastSlide
 
-      const x = this.snapX(xVal + direction * this.slideWidth)
-
-      this.slideAnimation = gsap.to(this.proxyRef, this.slideDuration, {
-        x,
-        onUpdate: this.updateProgress,
-      })
-    },
-    snapX(x) {
-      return Math.round(x / this.slideWidth) * this.slideWidth
-    },
-    updateProgress() {
-      const xVal = parseFloat(
-        this.transform.x.substring(0, this.transform.x.length - 2)
-      )
-
-      const xPercentage = xVal / this.wrapWidth
-
-      const trans =
-        xPercentage < 0
-          ? Math.ceil(xPercentage * -1) + xPercentage
-          : xPercentage
-
-      this.animation.progress(trans)
-    },
-    getMaxHeight(eleArr) {
-      const heights = eleArr.map((post) => {
-        return post.clientHeight
-      })
-
-      return heights
-    },
-    resize() {
-      const resizeDebounced = debounce(() => {
-        const xVal = parseFloat(
-          this.transform.x.substring(0, this.transform.x.length - 2)
-        )
-
-        const norm = xVal / this.wrapWidth || 0
-
-        this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
-        this.wrapWidth = this.slideWidth * this.numSlides
-
-        // List Height
-
-        this.slideHeights = this.getMaxHeight(
-          Object.values(this.$refs).map((ele) => ele[0])
-        )
-
-        const maxHeight = Math.max(...this.slideHeights)
-
-        gsap.set('.collabsList', {
-          height: maxHeight,
-        })
-
-        // Content Height
-
-        const textElements = Array.from(document.querySelectorAll('.content'))
-        const textHeight = textElements[this.maxCharIndex].offsetHeight
-
-        for (let i = 0; i < this.posts.length; i += 1) {
-          if (i !== this.maxCharIndex) {
-            gsap.set(textElements[i], {
-              height: textHeight,
-            })
-          }
+          newOffsets.push(-slide.offsetLeft)
         }
+      } else {
+        for (let i = 0; i < this.numSlides; i++) {
+          const slide = this.$refs[`post${i}`][0]
+          newOffsets.push(-slide.offsetLeft)
+        }
+      }
 
-        // Set Position of Posts
-
-        gsap.set(this.proxyRef, {
-          x: norm * this.wrapWidth,
-        })
-
-        this.animateSlides(0)
-        this.slideAnimation.progress(1)
-      }, 400)
-
-      resizeDebounced()
+      this.offsets = newOffsets
     },
     handleSlide(direction) {
-      this.animateSlides(-direction)
-    },
-    updateAnimation() {
-      this.animation = gsap.to('.collab', 0.8, {
-        xPercent: '+=' + this.numSlides * 100,
-        ease: 'none',
-        paused: true,
-        repeat: -1,
-        modifiers: {
-          xPercent: this.wrap,
-        },
+      if (direction === 'left') this.activeSlide -= 1
+      else if (direction === 'right') this.activeSlide += 1
+
+      gsap.to(this.$refs.postList, this.duration, {
+        x: this.offsets[this.activeSlide],
       })
     },
   },
@@ -317,200 +161,133 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.featuredCollabs {
+.suggestedPosts {
   position: relative;
 }
 
-.buttonContainer {
-  position: relative;
+.title {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2rem;
+  margin: 4rem 0 2rem;
+
+  @media (min-width: $bp-desktop) {
+    font-size: 3.35rem;
+    margin-top: 6rem;
+  }
 }
 
 .leftArrow,
 .rightArrow {
   position: absolute;
-  top: calc(58vw / 2);
-  transform: translateY(-50%);
-  z-index: 10;
+  top: calc(13.5rem - 1rem);
+  z-index: 1;
+
+  @media (min-width: $bp-desktop) {
+    top: calc(50% - 2rem);
+  }
 }
 
 .leftArrow {
-  left: 1rem;
+  left: -1rem;
+  @media (min-width: $bp-desktop) {
+    left: -4.5rem;
+  }
+  @media (min-width: $bp-lg-desktop) {
+    left: -6rem;
+  }
 }
 
 .rightArrow {
-  right: 1rem;
+  right: -1rem;
+  @media (min-width: $bp-desktop) {
+    right: -4.5rem;
+  }
+  @media (min-width: $bp-lg-desktop) {
+    right: -6rem;
+  }
 }
 
-h2,
-h3,
-p {
-  text-align: center;
+#suggestedSlider {
+  overflow-x: hidden;
 }
 
-h2 {
-  margin: 2rem 0;
-}
-
-h2,
-h3 {
-  text-transform: uppercase;
-}
-
-h3,
-p {
-  margin: 0;
-}
-
-p {
-  font-size: 1.15rem;
-}
-
-h2,
-h3 {
-  font-size: 2rem;
-  line-height: 1;
-}
-
-ul {
+.postList {
+  list-style: none;
   margin: 0;
   padding: 0;
   position: relative;
-}
-
-.collab {
-  width: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.collab {
   display: flex;
-  flex-wrap: wrap;
+}
+
+.post {
+  flex: 0 0 100%;
+  text-align: center;
+  margin-bottom: 2rem;
+
+  &:not(:last-child) {
+    margin-right: 1rem;
+  }
+
+  @media (min-width: $bp-desktop) {
+    flex: 0 0 calc(33.3% - 1.3rem);
+    text-align: left;
+    margin-bottom: 4rem;
+
+    &:not(:last-child) {
+      margin-right: 2rem;
+    }
+  }
+}
+
+.postImage {
   width: 100%;
+  margin-bottom: 1rem;
+  height: 20rem;
+  object-fit: cover;
 
-  .leftImage,
-  .rightImage {
-    width: 50%;
-    position: relative;
-    height: 58vw;
-  }
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .collabsContent {
-    margin: 0 auto;
-    display: flex;
-  }
-
-  .content {
-    width: 85%;
-    margin: 2rem auto 0 auto;
-  }
-
-  .collabsTitle {
-    margin: 0.5rem 0 1.5rem 0;
-  }
-
-  .buttonContainer {
-    display: flex;
-    justify-content: center;
+  @media (min-width: $bp-desktop) {
+    height: auto;
+    object-fit: fill;
   }
 }
 
-.headline {
-  font-weight: $semibold;
-}
+.postDate {
+  color: $accent;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  margin: 0;
 
-@media (min-width: $bp-tablet) {
-  .leftArrow,
-  .rightArrow {
-    top: calc(58vh / 2);
-  }
-
-  .collab {
-    .leftImage,
-    .rightImage {
-      height: 58vh;
-    }
+  @media (min-width: $bp-desktop) {
+    color: $gray;
   }
 }
 
-@media (min-width: $bp-desktop) {
-  .leftArrow,
-  .rightArrow {
-    top: 50%;
-  }
+.postTitle {
+  font-weight: $bold;
+  font-size: 1.75rem;
+  margin: 1rem 0;
 
-  h2 {
-    margin: 1.5rem 0;
-  }
-
-  h2,
-  h3 {
-    font-size: 3rem;
-  }
-
-  .collabsList {
-    border-top: 1px solid $black;
-    border-bottom: 1px solid $black;
-    margin-bottom: 8rem;
-  }
-
-  .collab {
-    flex-wrap: nowrap;
-
-    .leftImage {
-      order: 1;
-      width: 35%;
-    }
-
-    .collabsContent {
-      order: 2;
-      width: 30%;
-    }
-
-    .rightImage {
-      order: 3;
-      width: 35%;
-    }
-
-    .leftImage,
-    .rightImage {
-      height: auto;
-    }
-
-    .content {
-      min-width: 280px;
-      width: 70%;
-      padding: 4rem 0;
-      margin: 0 auto;
-    }
-
-    .collabsTitle {
-      margin: 2.5rem 0 3rem 0;
-    }
+  @media (min-width: $bp-desktop) {
+    font-size: 2rem;
   }
 }
 
-@media (min-width: $bp-lg-desktop) {
-  h2,
-  h3 {
-    font-size: 3.5rem;
-  }
+.postLink,
+.postLink:visited {
+  text-decoration: none;
+  color: $black;
 
-  p {
-    font-size: 1.25rem;
+  :hover,
+  :focus {
+    color: $accent;
   }
+}
 
-  .collab {
-    .content {
-      min-width: 325px;
-    }
-  }
+.postTags {
+  text-transform: uppercase;
+  font-size: 1rem;
+  font-weight: $bold;
+  margin: 0;
 }
 </style>
