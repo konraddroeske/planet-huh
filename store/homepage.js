@@ -69,14 +69,21 @@ export const actions = {
           slug
           date
           city {
-            latitude
+            name
+            coordinates {
+              latitude
+              longitude
+            }
           }
           sense
-          mood
+          mood {
+            mood
+            moodCategory
+          }
           coverImage {
             url
-            height
             width
+            height
           }
         }
       }`)
@@ -89,6 +96,8 @@ export const actions = {
     }
   },
 }
+
+export const getters = {}
 
 export const mutations = {
   setHomepage(

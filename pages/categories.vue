@@ -51,12 +51,19 @@ export default {
   components: {
     CategoryHero,
   },
-  data() {
-    return {
-      title: 'categories',
-    }
+  computed: {
+    title() {
+      return this.$store.state.categories.title
+    },
   },
   mounted() {
+    this.$store.dispatch(
+      'categories/handleFilters',
+      Object.values(this.$route.query)[0]
+    )
+
+    // get posts
+
     this.onHeroLoad()
 
     const nav = document.querySelector('#navContainer')

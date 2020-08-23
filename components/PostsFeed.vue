@@ -43,22 +43,28 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import Wrapper from '@/components/Wrapper'
 import Button from '@/components/Button'
 import Date from '@/components/Date'
 
 export default {
   components: { Wrapper, Button, Date },
+  props: {
+    posts: {
+      type: Array,
+      required: true,
+    },
+    getSomePostsPath: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       allPostsFetched: false,
     }
   },
   computed: {
-    ...mapState({
-      posts: (state) => state.homepage.postsFeed,
-    }),
     formattedPosts() {
       return this.posts.map((post) => ({
         ...post,
@@ -75,7 +81,7 @@ export default {
   },
   methods: {
     getSomePosts() {
-      this.$store.dispatch('homepage/getSomePosts', 4)
+      this.$store.dispatch(this.getSomePostsPath, 4)
     },
     getSomePostsAndUnfocus() {
       this.$refs.load.$el.blur()
