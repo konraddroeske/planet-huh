@@ -92,7 +92,10 @@ export default {
           url
         }
         sense
-        mood
+        mood {
+          moodCategory
+          mood
+        }
         artist {
           name
           about

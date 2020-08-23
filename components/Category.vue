@@ -1,9 +1,15 @@
 <template>
   <div ref="container" :class="`category-${variant}`">
     <div v-if="variant === 'gradient'" class="explore">Explore</div>
-    <nuxt-link ref="link" :event="disabled ? '' : 'click'" :to="to">{{
-      name
-    }}</nuxt-link>
+    <nuxt-link
+      ref="link"
+      :to="{
+        path: 'categories',
+        query: { filters: [name.toLowerCase()] },
+      }"
+      replace
+      >{{ name }}</nuxt-link
+    >
   </div>
 </template>
 
@@ -25,11 +31,6 @@ export default {
       type: String,
       required: true,
     },
-    disabled: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
   },
   mounted() {
     this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
@@ -49,6 +50,9 @@ export default {
     },
     endGradient() {
       this.$refs.container.classList.remove('largeGradient')
+    },
+    navigate() {
+      console.log('navigating programmatically')
     },
   },
 }
