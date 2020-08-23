@@ -22,10 +22,10 @@
               <span class="visuallyHidden">City: </span>{{ city }}
             </li>
             <li class="category">
-              <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
+              <span class="visuallyHidden">Sense: </span>{{ formattedSense }}
             </li>
             <li class="category">
-              <span class="visuallyHidden">Mood: </span>{{ moodFormatted }}
+              <span class="visuallyHidden">Mood: </span>{{ formattedMood }}
             </li>
           </ul>
         </div>
@@ -69,10 +69,10 @@ export default {
     },
   },
   computed: {
-    senseFormatted() {
+    formattedSense() {
       return Array.isArray(this.sense) ? this.sense.toString(',') : this.sense
     },
-    moodFormatted() {
+    formattedMood() {
       return `${this.mood.mood}`
     },
   },
