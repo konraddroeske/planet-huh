@@ -19,12 +19,16 @@
       <li>
         <Category
           :name="'Senses'"
-          :to="{ name: 'senses' }"
+          :to="{ name: 'categories' }"
           :variant="variant"
         />
       </li>
       <li>
-        <Category :name="'Moods'" :to="{ name: 'moods' }" :variant="variant" />
+        <Category
+          :name="'Moods'"
+          :to="{ name: 'categories' }"
+          :variant="variant"
+        />
       </li>
     </ul>
   </nav>

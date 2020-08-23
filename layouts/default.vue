@@ -17,6 +17,9 @@ import Footer from '@/components/Footer'
 import Nav from '@/components/Nav'
 export default {
   components: { Header, Nav, Footer },
+  mounted() {
+    this.$store.commit('setMobile', this.$device.isMobile)
+  },
 }
 </script>
 

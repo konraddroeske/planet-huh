@@ -1,13 +1,16 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <div id="navContainer" class="navContainer">
-      <h1 class="welcome">Welcome To Planet Huh</h1>
+    <!-- <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1> -->
+    <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
     </div>
     <div id="toggleContainer" class="toggleContainer">
       <NavToggle />
+    </div>
+    <div id="navFeedContainer" class="navFeedContainer">
+      <NavFeed @clicked="handleNav()">Planet Huh</NavFeed>
     </div>
   </div>
 </template>
@@ -17,10 +20,12 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 import globeTexture from '@/assets/images/globe.png'
 import NavToggle from '@/components/NavToggle'
+import NavFeed from '@/components/NavFeed'
 
 export default {
   components: {
     NavToggle,
+    NavFeed,
   },
   data() {
     return {
@@ -127,15 +132,50 @@ export default {
       currentNav: null,
     }
   },
+  computed: {
+    isIndex() {
+      return this.$route.fullPath === '/'
+    },
+    isMobile() {
+      return this.$device.isMobile
+    },
+    isNavLarge() {
+      return this.$store.state.isNavLarge
+    },
+    isOpen() {
+      return this.$store.state.isOpen
+    },
+  },
   mounted() {
-    console.log('mounted')
     this.initThree()
   },
+  beforeDestroy() {
+    if (!this.isNavLarge) {
+      const nav = document.querySelector('#navContainer')
+      nav.removeEventListener('click', this.route, false)
+      nav.removeEventListener('touchstart', this.route, false)
+    }
+  },
   methods: {
+    setNavSmall() {
+      this.$store.dispatch('setNavSmall')
+      this.$store.dispatch('setNavContainerSmall')
+      const nav = document.querySelector('#navContainer')
+      nav.addEventListener('click', this.handleNav, false)
+      nav.addEventListener('touchstart', this.handleNav, false)
+    },
+    setNavLarge() {
+      this.$store.dispatch('setNavLarge')
+      this.$store.dispatch('setNavContainerLarge')
+      const nav = document.querySelector('#navContainer')
+      nav.removeEventListener('click', this.handleNav, false)
+      nav.removeEventListener('touchstart', this.handleNav, false)
+    },
+    handleNav() {
+      this.isNavLarge ? this.setNavSmall() : this.setNavLarge()
+    },
     initThree() {
       // CHECK DEVICE
-
-      const isMobile = this.$device.isMobile
 
       const sceneContainer = document.querySelector('#navContainer')
 
@@ -157,8 +197,8 @@ export default {
         },
       }
 
-      const rotationSpeed = isMobile ? 0.0055 : 0.0035
-      const rotationInertia = isMobile ? 0.09 : 0.08
+      const rotationSpeed = this.isMobile ? 0.0055 : 0.0035
+      const rotationInertia = this.isMobile ? 0.09 : 0.08
 
       // horizonal rotation
 
@@ -196,7 +236,7 @@ export default {
 
       // camera zoom
 
-      const maxZoom = isMobile ? -2.2 : -0.5
+      const maxZoom = this.isMobile ? -1.8 : -0.5
       const minZoom = 0
       const zoomInSpeed = 1.05
       let zoomPosition = 0.005
@@ -214,11 +254,11 @@ export default {
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
 
-        if (currentTarget && isMobile) {
+        if (currentTarget && this.isMobile) {
           sceneContainer.addEventListener('touchstart', navRouterMobile, false)
         }
 
-        if (!currentTarget && isMobile) {
+        if (!currentTarget && this.isMobile) {
           sceneContainer.removeEventListener(
             'touchstart',
             navRouterMobile,
@@ -258,7 +298,7 @@ export default {
         }
       }
 
-      if (!isMobile) {
+      if (!this.isMobile) {
         sceneContainer.addEventListener('click', navRouter, false)
       }
 
@@ -272,7 +312,7 @@ export default {
 
       const setLerpTimer = () => {
         clearInterval(lerpTimer)
-        lerpTimer = setInterval(lerpTimerFn, 6000)
+        lerpTimer = setInterval(lerpTimerFn, this.isMobile ? 1500 : 6000)
       }
 
       const clearLerpTimer = () => {
@@ -502,7 +542,7 @@ export default {
       }
 
       // mouse event listeners
-      if (!isMobile) {
+      if (!this.isMobile) {
         const addHandlers = () => {
           sceneContainer.addEventListener('mousedown', mouseDown, false)
           sceneContainer.addEventListener('mousemove', mouseMove, false)
@@ -548,14 +588,14 @@ export default {
       // CAMERA PIVOT
 
       const pivotCamera = new THREE.Object3D()
-      pivotCamera.position.set(0, 0, isMobile ? 5.5 : 4.75)
+      pivotCamera.position.set(0, 0, this.isMobile ? 6.5 : 4.75)
       scene.add(pivotCamera)
 
       // CAMERA
 
       const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
       pivotCamera.add(camera)
-      camera.lookAt(0, 0, isMobile ? -5.5 : -4.75)
+      camera.lookAt(0, 0, this.isMobile ? -6.5 : -4.75)
 
       // LIGHTING
 
@@ -1116,7 +1156,7 @@ export default {
           top: 0,
           margin: 0,
           transform: 'translateY(-50%)',
-          // pointerEvents: 'none',
+          pointerEvents: 'auto',
         }).to(title, 0.3, { alpha: 1 })
 
         const newTitle = [object, title]
@@ -1197,7 +1237,7 @@ export default {
 
         // RAYCASTER DESKTOP
 
-        if (!isMobile) {
+        if (!this.isMobile) {
           raycaster.setFromCamera(rayMouse, camera)
 
           if (this.currentNav === pivotGlobe) {
@@ -1232,20 +1272,13 @@ export default {
             currentTarget !== intersects[0].object &&
             !gsap.isTweening(pivotMain.rotation)
           ) {
-            // if (isMobile) {
-            //   setTarget(null)
-            //   removeTitle()
-            // }
-
             setTarget(intersects[0].object)
             addTitle(intersects[0].object)
           }
 
           if (intersects.length < 2 && currentTarget) {
-            // if (!isMobile) {
             setTarget(null)
             removeTitle()
-            // }
           }
         }
 
@@ -1336,14 +1369,14 @@ export default {
 
           // CAMERA ZOOM IN
 
-          if (!isMobile && isDragging && !currentTarget) {
+          if (!this.isMobile && isDragging && !currentTarget && this.isIndex) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
             }
           }
 
-          if (isDragging && isMobile) {
+          if (isDragging && this.isMobile && this.isIndex) {
             if (camera.position.z >= maxZoom) {
               zoomPosition *= zoomInSpeed
               camera.position.z -= zoomPosition
@@ -1352,7 +1385,7 @@ export default {
 
           // CAMERA ZOOM OUT
 
-          if (!isDragging && lerpTimerBool) {
+          if ((!isDragging && lerpTimerBool) || !this.isIndex) {
             if (camera.position.z <= minZoom) {
               camera.position.z += zoomOutSpeed
             }
@@ -1438,21 +1471,12 @@ export default {
   bottom: 0;
   left: 0;
   transform-origin: bottom right;
-  z-index: $z-modal;
+  z-index: $z-above;
   cursor: grab;
 }
 
 .welcome {
-  text-align: center;
-  text-transform: uppercase;
-  font-weight: $medium;
-  font-size: 4vw;
-  z-index: $z-above;
-  position: absolute;
-  left: 50%;
-  top: 5rem;
-  width: 100%;
-  transform: translateX(-50%);
+  display: none;
 }
 
 .sceneContainer {
@@ -1483,21 +1507,52 @@ export default {
   z-index: $z-modal;
 }
 
+.navFeedContainer {
+  display: none;
+}
+
 @media (pointer: none), (pointer: coarse) {
+  // .welcome {
+  //   display: block;
+  //   text-align: center;
+  //   text-transform: uppercase;
+  //   font-weight: $medium;
+  //   font-size: 4vw;
+  //   z-index: $z-modal;
+  //   position: absolute;
+  //   left: 50%;
+  //   top: 5rem;
+  //   width: 100%;
+  //   transform: translateX(-50%);
+  // }
+
+  .navContainer {
+    position: fixed;
+    top: 5rem;
+    bottom: 5rem;
+  }
+
   .scene {
-    height: 100vh !important;
+    height: 110vh !important;
   }
 
   .toggleContainer {
-    bottom: 5rem !important;
+    top: 5rem !important;
+    bottom: auto !important;
+  }
+
+  .navFeedContainer {
+    bottom: 5rem;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    z-index: $z-modal;
+    display: block;
+    width: 80%;
   }
 }
 
 @media (min-width: $bp-mobile) {
-  .welcome {
-    display: none;
-  }
-
   .toggleContainer {
     position: absolute;
     bottom: 3rem;

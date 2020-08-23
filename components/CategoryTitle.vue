@@ -31,18 +31,6 @@ export default {
       default: false,
     },
   },
-  mounted() {
-    this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
-    this.$refs.link.$el.addEventListener('mouseout', this.endGradient)
-    this.$refs.link.$el.addEventListener('focus', this.startGradient)
-    this.$refs.link.$el.addEventListener('blur', this.endGradient)
-  },
-  beforeDestroy() {
-    this.$refs.link.$el.removeEventListener('mouseover', this.startGradient)
-    this.$refs.link.$el.removeEventListener('mouseout', this.endGradient)
-    this.$refs.link.$el.removeEventListener('focus', this.startGradient)
-    this.$refs.link.$el.removeEventListener('blur', this.endGradient)
-  },
   methods: {
     startGradient() {
       this.$refs.container.classList.add('largeGradient')
@@ -133,43 +121,50 @@ export default {
     top: calc(50% - 1.25rem);
     border-radius: 180px;
     background: $accent;
-    box-shadow: 0 0 5rem 2rem $accent;
-    opacity: 0.2;
+    box-shadow: 0 0 6rem 6rem $accent;
+    transition: all 0.6s;
+    opacity: 0.3;
     filter: blur(10px);
+  }
+
+  &:hover {
+    ::before {
+      box-shadow: 0 0 9rem 9rem $accent;
+      opacity: 0.4;
+    }
   }
 
   a,
   a:visited {
     color: $black;
     text-decoration: none;
+  }
 
-    &:hover,
-    &:focus {
-      color: $white;
+  @media (min-width: $bp-tablet) {
+    font-size: 7rem;
+    ::before {
+      box-shadow: 0 0 10.5rem 10.5rem $accent;
+    }
+
+    &:hover {
+      ::before {
+        box-shadow: 0 0 15.5rem 15.5rem $accent;
+        opacity: 0.4;
+      }
     }
   }
 
   @media (min-width: $bp-desktop) {
-    font-size: 5rem;
+    font-size: 8rem;
     ::before {
-      box-shadow: 0 0 5rem 5rem $accent;
+      box-shadow: 0 0 12rem 12rem $accent;
     }
-  }
-}
 
-.largeGradient {
-  .explore {
-    color: $white;
-  }
-
-  ::before {
-    opacity: 0.5;
-    box-shadow: 0 0 5rem 6rem $accent;
-  }
-
-  @media (min-width: $bp-desktop) {
-    ::before {
-      box-shadow: 0 0 5rem 8rem $accent;
+    &:hover {
+      ::before {
+        box-shadow: 0 0 18rem 18rem $accent;
+        opacity: 0.4;
+      }
     }
   }
 }
