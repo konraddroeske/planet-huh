@@ -27,7 +27,8 @@
             </nuxt-link>
           </h3>
           <p class="postTags">
-            {{ post.city }}, {{ post.sense }}, {{ post.mood }}
+            {{ post.city }}, {{ formattedSense(post.sense) }},
+            {{ formattedMood(post.mood) }}
           </p>
         </li>
       </ul>
@@ -86,6 +87,12 @@ export default {
     getSomePostsAndUnfocus() {
       this.$refs.load.$el.blur()
       this.getSomePosts()
+    },
+    formattedSense(sense) {
+      return Array.isArray(sense) ? sense.toString(',') : sense
+    },
+    formattedMood(mood) {
+      return `${mood.mood}`
     },
   },
 }
