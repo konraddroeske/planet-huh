@@ -103,7 +103,7 @@ export default {
   },
   async created() {
     const { data } = await fetchContent(`{
-      posts(orderBy: date_DESC, first: 5) {
+      posts(orderBy: date_DESC, first: 6) {
         title
         slug
         coverImage {
@@ -118,7 +118,7 @@ export default {
         sense
         mood
       }
-      collabPosts(orderBy: date_DESC, first: 5) {
+      collabPosts(orderBy: date_DESC, first: 6) {
         title
         slug
         coverImage {
