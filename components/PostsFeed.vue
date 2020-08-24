@@ -7,18 +7,17 @@
           v-for="(post, index) of formattedPosts"
           :key="post.id"
           class="postContainer"
-          :class="{
-            portraitMode: post.coverImage.height >= post.coverImage.width,
-            isOddLastPost:
-              index % 2 === 0 && index === formattedPosts.length - 1,
-          }"
+          :class="`postContainer${index}`"
         >
           <nuxt-link :to="`/post/${post.slug}`">
-            <img
-              class="postImage"
-              :src="post.coverImage.url"
-              :alt="post.title"
-            />
+            <div class="postImageContainer">
+              <img
+                class="postImage"
+                :src="post.coverImage.url"
+                :alt="post.title"
+                @load="onLoad"
+              />
+            </div>
           </nuxt-link>
           <p class="postDate"><Date :input="post.date" /></p>
           <h3 class="postTitle">
@@ -27,7 +26,8 @@
             </nuxt-link>
           </h3>
           <p class="postTags">
-            {{ post.city }}, {{ post.sense }}, {{ post.mood }}
+            {{ post.city }}, {{ formattedSense(post.sense) }},
+            {{ formattedMood(post.mood) }}
           </p>
         </li>
       </ul>
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+import gsap from 'gsap'
 import Wrapper from '@/components/Wrapper'
 import Button from '@/components/Button'
 import Date from '@/components/Date'
@@ -62,6 +63,7 @@ export default {
   data() {
     return {
       allPostsFetched: false,
+      width: null,
     }
   },
   computed: {
@@ -79,13 +81,60 @@ export default {
       }
     },
   },
+  mounted() {
+    this.width = window.matchMedia('(min-width: 1024px)')
+    this.setPadding(this.width)
+    this.width.addListener(this.setPadding)
+  },
   methods: {
+    onLoad() {
+      if (this.width.matches) {
+        this.onResize()
+      }
+    },
+    onResize() {
+      const images = document.querySelectorAll('.postImageContainer')
+
+      for (let i = 1; i < images.length; i++) {
+        if (i % 2 === 1) {
+          gsap.set(`.postContainer${i}`, {
+            paddingTop: images[i - 1].offsetHeight / 2,
+          })
+        }
+      }
+    },
+    setPadding(width) {
+      if (width.matches) {
+        this.onResize()
+        // add resize event listener
+        window.addEventListener('resize', this.onResize)
+      } else {
+        // remove resize event listener
+        window.removeEventListener('resize', this.onResize)
+
+        const images = document.querySelectorAll('.postImageContainer')
+
+        for (let i = 1; i < images.length; i++) {
+          if (i % 2 === 1) {
+            gsap.set(`.postContainer${i}`, {
+              paddingTop: 0,
+            })
+          }
+        }
+      }
+    },
     getSomePosts() {
       this.$store.dispatch(this.getSomePostsPath, 4)
     },
     getSomePostsAndUnfocus() {
       this.$refs.load.$el.blur()
       this.getSomePosts()
+    },
+    formattedSense(sense) {
+      return Array.isArray(sense) ? sense.toString(',') : sense
+    },
+    formattedMood(mood) {
+      return `${mood.mood}`
     },
   },
 }
@@ -108,58 +157,73 @@ section {
 }
 
 .postContainer {
-  margin-bottom: 4rem;
+  margin-bottom: 5rem;
+}
+
+@media (min-width: $bp-desktop) {
+  .postContainer {
+    margin-bottom: 3rem;
+  }
+
+  .postContainer:nth-child(8n + 1) {
+    width: calc(27.5% / 0.85);
+  }
+
+  .postContainer:nth-child(8n + 2) {
+    width: calc(57.5% / 0.85);
+    padding-left: 3%;
+  }
+
+  .postContainer:nth-child(8n + 3) {
+    width: 50%;
+    padding-right: 1.5%;
+  }
+
+  .postContainer:nth-child(8n + 4) {
+    width: 50%;
+    padding-left: 3%;
+  }
+
+  .postContainer:nth-child(8n + 5) {
+    width: calc(57.5% / 0.85);
+    padding-right: 3%;
+  }
+
+  .postContainer:nth-child(8n + 6) {
+    width: calc(27.5% / 0.85);
+  }
+
+  .postContainer:nth-child(8n + 3) {
+    width: 50%;
+    padding-right: 1.5%;
+  }
+
+  .postContainer:nth-child(8n + 4) {
+    width: 50%;
+    padding-left: 1.5%;
+  }
+}
+
+.postImageContainer {
+  margin-bottom: 1rem;
 
   @media (min-width: $bp-desktop) {
-    margin-bottom: 15rem;
+    max-height: 450px;
+    display: flex;
   }
 
   @media (min-width: $bp-lg-desktop) {
-    margin-bottom: 17.5rem;
-  }
-}
-
-.postContainer:nth-child(odd) {
-  @media (min-width: $bp-desktop) {
-    flex: 1 0 calc(50% - 1.25rem);
-    margin-right: 2.5rem;
-  }
-}
-
-.postContainer:nth-child(even) {
-  @media (min-width: $bp-desktop) {
-    flex: 1 0 calc(50% - 1.25rem);
-    position: relative;
-    top: 12.5rem;
-  }
-
-  @media (min-width: $bp-lg-desktop) {
-    top: 20rem;
-  }
-}
-
-.portraitMode:nth-child(odd),
-.portraitMode:nth-child(even) {
-  @media (min-width: $bp-desktop) {
-    flex: 1 0 10%;
-  }
-}
-
-.isOddLastPost {
-  margin-bottom: 0;
-
-  @media (min-width: $bp-desktop) {
-    max-width: 50%;
-    margin-bottom: 2.5rem;
-  }
-
-  @media (min-width: $bp-lg-desktop) {
+    max-height: 550px;
+    display: flex;
   }
 }
 
 .postImage {
   width: 100%;
-  margin-bottom: 1rem;
+
+  @media (min-width: $bp-desktop) {
+    object-fit: cover;
+  }
 }
 
 .postDate {

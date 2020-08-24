@@ -1,7 +1,7 @@
 import { fetchContent } from '@/utils/api'
 
 export const state = () => ({
-  title: null,
+  title: '',
   titles: {
     cities: true,
     moods: true,
@@ -44,18 +44,25 @@ export const actions = {
     let counter = 0
     let title = ''
 
-    for (let i = 0; i < filters.length; i++) {
-      if (state.titles[filters[i]] === true) {
-        counter += 1
-        title = filters[i]
+    // check if array
+    if (Array.isArray(filters)) {
+      for (let i = 0; i < filters.length; i++) {
+        if (state.titles[filters[i]] === true) {
+          counter += 1
+          title = filters[i]
+        }
+
+        if (counter >= 2) {
+          break
+        }
       }
 
-      if (counter >= 2) {
-        break
-      }
+      counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
+    } else {
+      state.titles[filters] === true
+        ? commit('setTitle', filters)
+        : commit('setTitle', 'all')
     }
-
-    counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
   },
   handleFilters({ dispatch, commit, state }, payload) {
     dispatch('checkTitle', payload)
