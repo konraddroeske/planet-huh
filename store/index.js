@@ -7,6 +7,10 @@ export const state = () => ({
 })
 
 export const actions = {
+  async nuxtServerInit({ dispatch }) {
+    await dispatch('nav/getMoods')
+    await dispatch('nav/getCities')
+  },
   setNavSmall({ state, commit }) {
     commit('setNavSize', false)
     commit('setNavOpen', false)
