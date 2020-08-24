@@ -65,13 +65,14 @@ export default {
       return this.$store.state.categories.postsFeed
     },
   },
-  mounted() {
-    // get posts
-    this.$store.dispatch(
-      'categories/handlePosts',
-      Object.values(this.$route.query)[0]
-    )
+  async created() {
+    const routeParams = Object.values(this.$route.query)[0]
 
+    if (this.$store.state.categories.filters[0] !== routeParams[0]) {
+      await this.$store.dispatch('categories/handlePosts', routeParams)
+    }
+  },
+  mounted() {
     this.onHeroLoad()
 
     const nav = document.querySelector('#navContainer')

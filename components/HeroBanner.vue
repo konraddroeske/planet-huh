@@ -18,9 +18,8 @@
         <div class="categoriesContainer">
           <span class="accentText categoriesTitle">Filed Under:</span>
           <ul class="categories">
-            <li class="category">
-              <span v-if="city.length > 0" class="visuallyHidden">City: </span
-              >{{ city[0].name }}
+            <li v-if="city.length > 0" class="category">
+              <span class="visuallyHidden">City: </span>{{ nameFormatted }}
             </li>
             <li v-if="sense.length > 0" class="category">
               <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
@@ -58,17 +57,14 @@ export default {
     },
     city: {
       type: Array,
-      // required: true,
       default: () => [],
     },
     sense: {
       type: [Array, String],
-      // required: true,
       default: () => null,
     },
     mood: {
       type: Object,
-      // required: true,
       default: () => null,
     },
   },
@@ -78,6 +74,9 @@ export default {
     },
     moodFormatted() {
       return `${this.mood.mood}`
+    },
+    nameFormatted() {
+      return this.city.length > 0 ? `${this.city[0].name}` : null
     },
   },
   methods: {

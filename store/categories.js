@@ -102,9 +102,9 @@ export const actions = {
   },
   handlePosts({ dispatch, commit, state }, payload) {
     commit('resetFeed')
+    commit('setFilters', payload)
     dispatch('checkTitle', payload)
     dispatch('formatFilters', payload)
-    commit('setFilters', payload)
   },
 }
 
@@ -116,6 +116,7 @@ export const mutations = {
     state.filters = []
   },
   setFilters(state, payload) {
+    console.log('set filters')
     state.filters = payload
   },
   resetFeed(state) {

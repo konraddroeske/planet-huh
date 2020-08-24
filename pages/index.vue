@@ -26,13 +26,13 @@ export default {
     PostsFeed,
   },
   async fetch({ store }) {
-    await store.dispatch('homepage/getHomepage')
-    await store.dispatch('homepage/getSomePosts', 4)
+    if (store.state.homepage.postsFeed.length === 0) {
+      await store.dispatch('homepage/getHomepage')
+      await store.dispatch('homepage/getSomePosts', 4)
+    }
   },
   transition: {
     leave(el, done) {
-      console.log('leaving index')
-
       const isNavLarge = window.$nuxt.$store.state.isNavLarge
 
       if (isNavLarge) {
