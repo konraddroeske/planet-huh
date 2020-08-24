@@ -1,13 +1,18 @@
 <template>
   <div class="categories">
     <CategoryHero :title="title" />
+    <PostsFeed
+      :posts="posts"
+      get-some-posts-path="categories/getCategoryPosts"
+    />
   </div>
 </template>
 
 <script>
 import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import CategoryHero from '@/components/CategoryHero.vue'
+import CategoryHero from '@/components/CategoryHero'
+import PostsFeed from '@/components/PostsFeed'
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -50,19 +55,22 @@ export default {
   },
   components: {
     CategoryHero,
+    PostsFeed,
   },
   computed: {
     title() {
       return this.$store.state.categories.title
     },
+    posts() {
+      return this.$store.state.categories.postsFeed
+    },
   },
   mounted() {
+    // get posts
     this.$store.dispatch(
-      'categories/handleFilters',
+      'categories/handlePosts',
       Object.values(this.$route.query)[0]
     )
-
-    // get posts
 
     this.onHeroLoad()
 

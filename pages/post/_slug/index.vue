@@ -1,6 +1,6 @@
 <template>
   <div v-if="post">
-    <HeroBanner v-bind="post" :city="'Toronto'" />
+    <HeroBanner v-bind="post" />
     <RichText :content="post.content" />
     <ArtistCredits :artists="[post.artist]" />
     <SocialShare :title="post.title" :link="link" />
@@ -96,6 +96,9 @@ export default {
           website
           social
           socialUrl
+        }
+        city {
+          name
         }
       }
     }`)

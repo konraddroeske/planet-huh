@@ -19,9 +19,10 @@
           <span class="accentText categoriesTitle">Filed Under:</span>
           <ul class="categories">
             <li class="category">
-              <span class="visuallyHidden">City: </span>{{ city }}
+              <span v-if="city.length > 0" class="visuallyHidden">City: </span
+              >{{ city[0].name }}
             </li>
-            <li v-if="sense" class="category">
+            <li v-if="sense.length > 0" class="category">
               <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
             </li>
             <li v-if="mood" class="category">
@@ -56,9 +57,9 @@ export default {
       required: true,
     },
     city: {
-      type: String,
+      type: Array,
       // required: true,
-      default: '',
+      default: () => [],
     },
     sense: {
       type: [Array, String],
@@ -73,7 +74,7 @@ export default {
   },
   computed: {
     senseFormatted() {
-      return `${this.sense[0].name}`
+      return this.sense.length > 0 ? `${this.sense[0].name}` : null
     },
     moodFormatted() {
       return `${this.mood.mood}`
@@ -219,7 +220,7 @@ export default {
   &::before {
     content: '•';
     position: absolute;
-    right: -0.75rem;
+    left: -0.75rem;
     top: 0;
   }
 
@@ -229,16 +230,19 @@ export default {
     &::before {
       content: '•';
       position: absolute;
-      right: -1rem;
+      left: -1rem;
       top: 0;
     }
   }
 }
 
-.category:last-child {
-  margin-right: 0;
+.category:first-child {
   &::before {
     content: '';
   }
+}
+
+.category:last-child {
+  margin-right: 0;
 }
 </style>
