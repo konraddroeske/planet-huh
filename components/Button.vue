@@ -35,7 +35,7 @@ a:visited {
   padding: 1rem 2.5rem;
   background: transparent;
   text-transform: uppercase;
-  font-weight: $bold;
+  font-weight: $semibold;
   font-size: 1.25rem;
 
   &:hover,
