@@ -83,7 +83,9 @@ export default {
         coverImage {
           url
         }
-        sense
+        sense {
+          name
+        }
         mood {
           moodCategory
           mood

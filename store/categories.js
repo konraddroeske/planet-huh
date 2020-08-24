@@ -8,6 +8,7 @@ export const state = () => ({
     senses: true,
   },
   filters: [],
+  formattedFilters: null,
   postsFeed: [],
 })
 
@@ -15,20 +16,25 @@ export const actions = {
   async getSomePosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
-        posts(orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
+        posts(where:${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
           id
-          title
           slug
+          title
+          mood {
+            id
+            mood
+            moodCategory
+          }
           date
           city {
-            latitude
+            name
+            coordinates {
+              latitude
+              longitude
+            }
           }
-          sense
-          mood
-          coverImage {
-            url
-            height
-            width
+          sense {
+            name
           }
         }
       }`)
@@ -67,6 +73,7 @@ export const actions = {
   handleFilters({ dispatch, commit, state }, payload) {
     dispatch('checkTitle', payload)
     commit('setFilters', payload)
+    commit('formatFilters', payload)
   },
 }
 
@@ -79,6 +86,13 @@ export const mutations = {
   },
   setFilters(state, payload) {
     state.filters = payload
+  },
+  formatFilters(state, payload) {
+    // take filters array, turn it into a string for graph cms
+
+    // only one major category at a
+
+    state.formattedFilters = { mood: { id_not: 'null' } }
   },
   addFilter(state, filter) {
     state.fitlers.push(filter)

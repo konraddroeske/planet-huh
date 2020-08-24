@@ -21,10 +21,10 @@
             <li class="category">
               <span class="visuallyHidden">City: </span>{{ city }}
             </li>
-            <li class="category">
+            <li v-if="sense" class="category">
               <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
             </li>
-            <li class="category">
+            <li v-if="mood" class="category">
               <span class="visuallyHidden">Mood: </span>{{ moodFormatted }}
             </li>
           </ul>
@@ -57,20 +57,23 @@ export default {
     },
     city: {
       type: String,
-      required: true,
+      // required: true,
+      default: '',
     },
     sense: {
-      type: [String, Array],
-      required: true,
+      type: [Array, String],
+      // required: true,
+      default: () => null,
     },
     mood: {
       type: Object,
-      required: true,
+      // required: true,
+      default: () => null,
     },
   },
   computed: {
     senseFormatted() {
-      return Array.isArray(this.sense) ? this.sense.toString(',') : this.sense
+      return `${this.sense[0].name}`
     },
     moodFormatted() {
       return `${this.mood.mood}`
