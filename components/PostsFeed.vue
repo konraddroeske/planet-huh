@@ -254,8 +254,8 @@ section {
   text-decoration: none;
   color: $black;
 
-  :hover,
-  :focus {
+  &:hover,
+  &:focus {
     color: $accent;
   }
 }
