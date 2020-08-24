@@ -8,23 +8,23 @@ export const state = () => ({
     senses: true,
   },
   filters: [],
+  filtersList: {
+    moods: `{mood: {id_not: "null"}}`,
+    senses: `{sense_every: {id_not: "null"}}`,
+    cities: `{city_every: {id_not: "null"}}`,
+  },
   formattedFilters: null,
   postsFeed: [],
 })
 
 export const actions = {
-  async getSomePosts({ commit, state }, numPosts = 4) {
+  async getCategoryPosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
-        posts(where:${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
+        posts(where: ${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
           id
-          slug
           title
-          mood {
-            id
-            mood
-            moodCategory
-          }
+          slug
           date
           city {
             name
@@ -36,11 +36,20 @@ export const actions = {
           sense {
             name
           }
+          mood {
+            mood
+            moodCategory
+          }
+          coverImage {
+            url
+            width
+            height
+          }
         }
       }`)
 
       const { posts } = data.data
-      commit('setSomePosts', posts)
+      commit('setCategoryPosts', posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -70,10 +79,32 @@ export const actions = {
         : commit('setTitle', 'all')
     }
   },
-  handleFilters({ dispatch, commit, state }, payload) {
+  formatFilters({ state, dispatch, commit }, payload) {
+    // set categories
+    let filters = ''
+
+    if (Array.isArray(payload)) {
+      payload.forEach((item) => {
+        if (state.titles[item] && filters === '') {
+          filters += state.filtersList[item]
+        } else if (state.titles[item] && filters.length > 0) {
+          filters += `AND: ${state.filtersList[item]}`
+        }
+      })
+    } else {
+      filters += state.filtersList[payload]
+    }
+    // where: {mood: {id_not: "null"}, AND: {sense_every: {id_not: "null"}, AND: {city_every: {id_not: "null"}}}}
+    // set sub categories
+
+    commit('setFormattedFilters', filters)
+    dispatch('getCategoryPosts')
+  },
+  handlePosts({ dispatch, commit, state }, payload) {
+    commit('resetFeed')
     dispatch('checkTitle', payload)
+    dispatch('formatFilters', payload)
     commit('setFilters', payload)
-    commit('formatFilters', payload)
   },
 }
 
@@ -87,14 +118,16 @@ export const mutations = {
   setFilters(state, payload) {
     state.filters = payload
   },
-  formatFilters(state, payload) {
-    // take filters array, turn it into a string for graph cms
-
-    // only one major category at a
-
-    state.formattedFilters = { mood: { id_not: 'null' } }
+  resetFeed(state) {
+    state.postsFeed = []
+  },
+  setFormattedFilters(state, filters) {
+    state.formattedFilters = filters
   },
   addFilter(state, filter) {
     state.fitlers.push(filter)
+  },
+  setCategoryPosts(state, newPosts) {
+    state.postsFeed = state.postsFeed.concat(newPosts)
   },
 }
