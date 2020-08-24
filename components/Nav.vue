@@ -580,6 +580,7 @@ export default {
       })
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setClearColor(0x000000, 0)
+
       // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
@@ -1452,6 +1453,18 @@ export default {
       }
 
       requestAnimationFrame(render)
+
+      // Cancel Animation when WebGL Context Lost
+
+      const cancelAnimation = () => {
+        event.preventDefault()
+        console.log('context lost')
+        cancelAnimationFrame(render)
+      }
+
+      renderer
+        .getContext()
+        .canvas.addEventListener('webglcontextlost', cancelAnimation, false)
     },
   },
 }
