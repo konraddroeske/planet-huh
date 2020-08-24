@@ -7,7 +7,6 @@
         path: 'categories',
         query: { filters: [name.toLowerCase()] },
       }"
-      replace
       >{{ name }}</nuxt-link
     >
   </div>
