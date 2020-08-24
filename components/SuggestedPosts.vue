@@ -12,7 +12,9 @@
         <LeftArrow />
       </ButtonArrow>
       <ButtonArrow
-        v-if="activeSlide < offsets.length - 1"
+        v-if="
+          isDesktop ? activeSlide < numSlides - 3 : activeSlide < numSlides - 1
+        "
         class="rightArrow"
         @clicked="handleSlide('right')"
       >
@@ -20,7 +22,7 @@
         <RightArrow />
       </ButtonArrow>
 
-      <div id="suggestedSlider">
+      <div id="suggestedSlider" :ref="'slider'">
         <ul :ref="'postList'" class="postList">
           <li
             v-for="(post, index) of posts"
@@ -54,6 +56,7 @@
 
 <script>
 import gsap from 'gsap'
+import { Draggable, InertiaPlugin } from 'gsap/all'
 import { fetchContent } from '@/utils/api'
 import ButtonArrow from '@/components/ButtonArrow'
 import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
@@ -73,7 +76,7 @@ export default {
       duration: 0.5,
       activeSlide: 0,
       offsets: [],
-      dragInstance: null,
+      isDesktop: false,
     }
   },
   computed: {
@@ -82,6 +85,8 @@ export default {
     },
   },
   async created() {
+    gsap.registerPlugin(Draggable, InertiaPlugin)
+
     const { data } = await fetchContent(`{
       posts(orderBy: date_DESC, first: 6) {
         title
@@ -126,31 +131,40 @@ export default {
     },
     setSnapPoints() {
       this.resetSlider()
+      this.isDesktop = window.innerWidth >= 1024
 
       const newOffsets = []
-
-      if (window.innerWidth >= 1024) {
-        for (let i = 0; i < this.numSlides; i += 3) {
-          const lastSlide = this.$refs[`post${this.numSlides - 1}`][0]
-
-          const slide = this.$refs[`post${i}`]
-            ? this.$refs[`post${i}`][0]
-            : lastSlide
-
-          newOffsets.push(-slide.offsetLeft)
-        }
-      } else {
-        for (let i = 0; i < this.numSlides; i++) {
-          const slide = this.$refs[`post${i}`][0]
-          newOffsets.push(-slide.offsetLeft)
-        }
+      for (let i = 0; i < this.numSlides; i++) {
+        const slide = this.$refs[`post${i}`][0]
+        newOffsets.push(-slide.offsetLeft)
       }
-
       this.offsets = newOffsets
+
+      const that = this
+
+      this.$nextTick(function () {
+        Draggable.create('.postList', {
+          type: 'x',
+          bounds: '#suggestedSlider',
+          inertia: true,
+          snap: that.offsets,
+          onDragEnd() {
+            that.activeSlide = that.offsets.indexOf(this.endX)
+          },
+        })
+      })
     },
     handleSlide(direction) {
-      if (direction === 'left') this.activeSlide -= 1
-      else if (direction === 'right') this.activeSlide += 1
+      const increment = this.isDesktop ? 3 : 1
+      if (direction === 'left') {
+        const isBeforeFirstPost = this.activeSlide - increment < 0
+        this.activeSlide = isBeforeFirstPost ? 0 : this.activeSlide - increment
+      } else if (direction === 'right') {
+        const isAfterLastPost = this.activeSlide + increment >= this.numSlides
+        this.activeSlide = isAfterLastPost
+          ? this.numSlides - 1
+          : this.activeSlide + increment
+      }
 
       gsap.to(this.$refs.postList, this.duration, {
         x: this.offsets[this.activeSlide],
@@ -209,19 +223,22 @@ export default {
 }
 
 #suggestedSlider {
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .postList {
   list-style: none;
   margin: 0;
   padding: 0;
-  position: relative;
-  display: flex;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 .post {
-  flex: 0 0 100%;
+  display: inline-block;
+  vertical-align: top;
+  white-space: normal;
+  width: 85vw;
   text-align: center;
   margin-bottom: 2rem;
 
@@ -230,7 +247,7 @@ export default {
   }
 
   @media (min-width: $bp-desktop) {
-    flex: 0 0 calc(33.3% - 1.3rem);
+    width: calc(28.3vw - 1.3rem);
     text-align: left;
     margin-bottom: 4rem;
 
