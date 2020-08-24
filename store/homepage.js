@@ -75,7 +75,9 @@ export const actions = {
               longitude
             }
           }
-          sense
+          sense {
+            name
+          }
           mood {
             mood
             moodCategory
