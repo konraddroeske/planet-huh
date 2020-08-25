@@ -82,11 +82,26 @@ export default {
     },
   },
   mounted() {
-    this.width = window.matchMedia('(min-width: 1024px)')
-    this.setPadding(this.width)
-    this.width.addListener(this.setPadding)
+    this.onMount()
+  },
+  beforeDestroy() {
+    this.onDestroy()
+  },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
+    onMount() {
+      this.width = window.matchMedia('(min-width: 1024px)')
+      this.setPadding(this.width)
+      this.width.addListener(this.setPadding)
+    },
+    onDestroy() {
+      this.width.removeListener(this.setPadding)
+    },
     onLoad() {
       if (this.width.matches) {
         this.onResize()

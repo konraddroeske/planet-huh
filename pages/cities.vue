@@ -57,18 +57,24 @@ export default {
     }
   },
   mounted() {
-    this.onHeroLoad()
-
-    const nav = document.querySelector('#navContainer')
-    nav.addEventListener('click', this.route, false)
-    nav.addEventListener('touchstart', this.route, false)
+    this.onMount()
   },
   beforeDestroy() {
-    const nav = document.querySelector('#navContainer')
-    nav.removeEventListener('click', this.route, false)
-    nav.removeEventListener('touchstart', this.route, false)
+    this.onDestroy()
   },
   methods: {
+    onMount() {
+      this.onHeroLoad()
+
+      const nav = document.querySelector('#navContainer')
+      nav.addEventListener('click', this.route, false)
+      nav.addEventListener('touchstart', this.route, false)
+    },
+    onDestroy() {
+      const nav = document.querySelector('#navContainer')
+      nav.removeEventListener('click', this.route, false)
+      nav.removeEventListener('touchstart', this.route, false)
+    },
     onHeroLoad() {
       this.$store.dispatch('setNavContainerSmall')
     },

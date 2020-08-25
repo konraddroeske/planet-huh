@@ -56,13 +56,23 @@ export default {
     this.initThree()
   },
   beforeDestroy() {
-    if (!this.isNavLarge) {
-      const nav = document.querySelector('#navContainer')
-      nav.removeEventListener('click', this.route, false)
-      nav.removeEventListener('touchstart', this.route, false)
-    }
+    this.onDestroy()
+  },
+  activated() {
+    this.initThree()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
+    onMount() {},
+    onDestroy() {
+      if (!this.isNavLarge) {
+        const nav = document.querySelector('#navContainer')
+        nav.removeEventListener('click', this.route, false)
+        nav.removeEventListener('touchstart', this.route, false)
+      }
+    },
     setNavSmall() {
       this.$store.dispatch('setNavSmall')
       this.$store.dispatch('setNavContainerSmall')
