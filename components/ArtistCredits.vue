@@ -5,9 +5,7 @@
       v-for="(artist, index) of artists"
       :key="artist.name"
       :class="{
-        singleArtistContainer: isSingleArtist,
-        lastArtistContainer:
-          !isSingleArtist && index + 1 === artists.length && index % 2 === 0,
+        oddLastArtist: index + 1 === artists.length && index % 2 === 0,
       }"
       class="artistContainer"
     >
@@ -68,9 +66,6 @@ export default {
   computed: {
     isSingleArtist() {
       return this.$props.artists.length === 1
-    },
-    lastArtistName() {
-      return this.$props.artists[this.$props.artists.length - 1].name
     },
   },
 }
@@ -161,8 +156,7 @@ section {
   }
 }
 
-.singleArtistContainer,
-.lastArtistContainer {
+.oddLastArtist {
   @media (min-width: $bp-desktop) {
     padding-left: 12.5%;
     padding-right: 12.5%;

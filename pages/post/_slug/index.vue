@@ -4,6 +4,7 @@
     <RichText :content="post.content" />
     <ArtistCredits :artists="[post.artist]" />
     <SocialShare :title="post.title" :link="link" />
+    <SuggestedPosts />
   </div>
 </template>
 
@@ -15,6 +16,7 @@ import HeroBanner from '@/components/HeroBanner'
 import RichText from '@/components/RichText'
 import ArtistCredits from '@/components/ArtistCredits'
 import SocialShare from '@/components/SocialShare'
+import SuggestedPosts from '@/components/SuggestedPosts'
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -44,7 +46,13 @@ const leavingToIndex = () => {
 
 export default {
   layout: 'default',
-  components: { HeroBanner, RichText, ArtistCredits, SocialShare },
+  components: {
+    HeroBanner,
+    RichText,
+    ArtistCredits,
+    SocialShare,
+    SuggestedPosts,
+  },
   transition(to, from) {
     if (!from) {
       return setNav()
