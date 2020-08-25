@@ -18,13 +18,13 @@
         <div class="categoriesContainer">
           <span class="accentText categoriesTitle">Filed Under:</span>
           <ul class="categories">
-            <li class="category">
-              <span class="visuallyHidden">City: </span>{{ city }}
+            <li v-if="city.length > 0" class="category">
+              <span class="visuallyHidden">City: </span>{{ nameFormatted }}
             </li>
-            <li class="category">
+            <li v-if="sense.length > 0" class="category">
               <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
             </li>
-            <li class="category">
+            <li v-if="mood" class="category">
               <span class="visuallyHidden">Mood: </span>{{ moodFormatted }}
             </li>
           </ul>
@@ -56,25 +56,33 @@ export default {
       required: true,
     },
     city: {
-      type: String,
-      required: true,
+      type: Array,
+      default: () => [],
     },
     sense: {
-      type: [String, Array],
-      required: true,
+      type: [Array, String],
+      default: () => null,
     },
     mood: {
       type: Object,
-      required: true,
+      default: () => null,
     },
   },
   computed: {
     senseFormatted() {
-      return Array.isArray(this.sense) ? this.sense.toString(',') : this.sense
+      return this.sense.length > 0 ? `${this.sense[0].name}` : null
     },
     moodFormatted() {
       return `${this.mood.mood}`
     },
+    nameFormatted() {
+      return this.city.length > 0 ? `${this.city[0].name}` : null
+    },
+  },
+  activated() {
+    setTimeout(() => {
+      this.$store.dispatch('setNavContainerSmall')
+    }, 300)
   },
   methods: {
     onImgLoad() {
@@ -216,7 +224,7 @@ export default {
   &::before {
     content: '•';
     position: absolute;
-    right: -0.75rem;
+    left: -0.75rem;
     top: 0;
   }
 
@@ -226,16 +234,19 @@ export default {
     &::before {
       content: '•';
       position: absolute;
-      right: -1rem;
+      left: -1rem;
       top: 0;
     }
   }
 }
 
-.category:last-child {
-  margin-right: 0;
+.category:first-child {
   &::before {
     content: '';
   }
+}
+
+.category:last-child {
+  margin-right: 0;
 }
 </style>

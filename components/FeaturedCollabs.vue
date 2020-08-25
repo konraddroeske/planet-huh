@@ -106,55 +106,64 @@ export default {
     },
   },
   mounted() {
-    gsap.registerPlugin(Draggable, InertiaPlugin)
-
-    this.proxyRef = document.createElement('div')
-    gsap.set(this.proxyRef, {
-      x: '+=0',
-    })
-    this.transform = this.proxyRef._gsap
-
-    // SET POSITION
-
-    this.setPosition()
-    this.updateAnimation()
-
-    const that = this
-
-    this.dragInstance = Draggable.create(this.proxyRef, {
-      trigger: '.collabsList',
-      type: 'x',
-      // edgeResistance: 0.65,
-      inertia: true,
-      onPress() {
-        that.slideAnimation.kill()
-        this.update()
-      },
-      onDrag: this.updateProgress,
-      onThrowUpdate: this.updateProgress,
-      snap: {
-        x: this.snapX,
-      },
-    })
-
-    this.animation = gsap.to('.collab', 0.8, {
-      xPercent: '+=' + this.numSlides * 100,
-      ease: 'none',
-      paused: true,
-      repeat: -1,
-      modifiers: {
-        xPercent: this.wrap,
-      },
-    })
-
-    this.resize()
-
-    window.addEventListener('resize', this.resize)
+    this.onMount()
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.resize)
   },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    window.removeEventListener('resize', this.resize)
+  },
   methods: {
+    onMount() {
+      gsap.registerPlugin(Draggable, InertiaPlugin)
+
+      this.proxyRef = document.createElement('div')
+      gsap.set(this.proxyRef, {
+        x: '+=0',
+      })
+      this.transform = this.proxyRef._gsap
+
+      // SET POSITION
+
+      this.setPosition()
+      this.updateAnimation()
+
+      const that = this
+
+      this.dragInstance = Draggable.create(this.proxyRef, {
+        trigger: '.collabsList',
+        type: 'x',
+        // edgeResistance: 0.65,
+        inertia: true,
+        onPress() {
+          that.slideAnimation.kill()
+          this.update()
+        },
+        onDrag: this.updateProgress,
+        onThrowUpdate: this.updateProgress,
+        snap: {
+          x: this.snapX,
+        },
+      })
+
+      this.animation = gsap.to('.collab', 0.8, {
+        xPercent: '+=' + this.numSlides * 100,
+        ease: 'none',
+        paused: true,
+        repeat: -1,
+        modifiers: {
+          xPercent: this.wrap,
+        },
+      })
+
+      this.resize()
+
+      window.addEventListener('resize', this.resize)
+    },
     onClick(slug) {
       this.$router.push(`/post/${slug}`)
     },

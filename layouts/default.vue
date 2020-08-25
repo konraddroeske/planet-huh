@@ -4,7 +4,7 @@
     <div id="blurrableContent">
       <Nav />
       <main id="main" class="main">
-        <Nuxt />
+        <Nuxt keep-alive />
       </main>
       <Footer />
     </div>

@@ -8,65 +8,109 @@ export const state = () => ({
     senses: true,
   },
   filters: [],
+  filtersList: {
+    moods: `{mood: {id_not: "null"}}`,
+    senses: `{sense_every: {id_not: "null"}}`,
+    cities: `{city_every: {id_not: "null"}}`,
+  },
+  formattedFilters: null,
   postsFeed: [],
 })
 
 export const actions = {
-  async getSomePosts({ commit, state }, numPosts = 4) {
+  async getCategoryPosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
-        posts(orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
+        posts(where: ${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
           id
           title
           slug
           date
           city {
-            latitude
+            name
+            coordinates {
+              latitude
+              longitude
+            }
           }
-          sense
-          mood
+          sense {
+            name
+          }
+          mood {
+            mood
+            moodCategory
+          }
           coverImage {
             url
-            height
             width
+            height
           }
         }
       }`)
 
       const { posts } = data.data
-      commit('setSomePosts', posts)
+      commit('setCategoryPosts', posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
     }
   },
   checkTitle({ state, commit }, filters) {
-    let counter = 0
-    let title = ''
+    // let counter = 0
+    // let title = ''
 
-    // check if array
-    if (Array.isArray(filters)) {
-      for (let i = 0; i < filters.length; i++) {
-        if (state.titles[filters[i]] === true) {
-          counter += 1
-          title = filters[i]
-        }
+    // // check if array
+    // if (Array.isArray(filters)) {
+    //   for (let i = 0; i < filters.length; i++) {
+    //     if (state.titles[filters[i]] === true) {
+    //       counter += 1
+    //       title = filters[i]
+    //     }
 
-        if (counter >= 2) {
-          break
-        }
-      }
+    //     if (counter >= 2) {
+    //       break
+    //     }
+    //   }
 
-      counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
-    } else {
-      state.titles[filters] === true
-        ? commit('setTitle', filters)
-        : commit('setTitle', 'all')
-    }
+    //   counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
+    // } else {
+    //   state.titles[filters] === true
+    //     ? commit('setTitle', filters)
+    //     : commit('setTitle', 'all')
+    // }
+
+    commit('setTitle', filters[0])
   },
-  handleFilters({ dispatch, commit, state }, payload) {
-    dispatch('checkTitle', payload)
+  formatFilters({ state, dispatch, commit }, payload) {
+    // set categories
+    let filters = ''
+
+    if (state.filtersList[payload[0]]) {
+      payload.forEach((item) => {
+        if (state.titles[item] && filters === '') {
+          filters += state.filtersList[item]
+        } else if (state.titles[item] && filters.length > 0) {
+          filters += `AND: ${state.filtersList[item]}`
+        }
+      })
+    } else if (payload[1] === 'cities') {
+      // check if a mood, city, or sense
+      filters = `{city_every: {name: "${payload[0]}"}}`
+    } else if (payload[1] === 'moods') {
+      console.log(payload[0])
+      filters = `{mood: {mood: "${payload[0]}"}}`
+    }
+    // where: {mood: {id_not: "null"}, AND: {sense_every: {id_not: "null"}, AND: {city_every: {id_not: "null"}}}}
+    // set sub categories
+
+    commit('setFormattedFilters', filters)
+    dispatch('getCategoryPosts')
+  },
+  handlePosts({ dispatch, commit, state }, payload) {
+    commit('resetFeed')
     commit('setFilters', payload)
+    dispatch('checkTitle', payload)
+    dispatch('formatFilters', payload)
   },
 }
 
@@ -78,9 +122,19 @@ export const mutations = {
     state.filters = []
   },
   setFilters(state, payload) {
+    console.log('set filters')
     state.filters = payload
+  },
+  resetFeed(state) {
+    state.postsFeed = []
+  },
+  setFormattedFilters(state, filters) {
+    state.formattedFilters = filters
   },
   addFilter(state, filter) {
     state.fitlers.push(filter)
+  },
+  setCategoryPosts(state, newPosts) {
+    state.postsFeed = state.postsFeed.concat(newPosts)
   },
 }

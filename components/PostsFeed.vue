@@ -26,8 +26,8 @@
             </nuxt-link>
           </h3>
           <p class="postTags">
-            {{ post.city }}, {{ formattedSense(post.sense) }},
-            {{ formattedMood(post.mood) }}
+            {{ post.city }}{{ post.sense[0] ? formattedSense(post.sense) : null
+            }}{{ post.mood ? formattedMood(post.mood) : null }}
           </p>
         </li>
       </ul>
@@ -82,11 +82,26 @@ export default {
     },
   },
   mounted() {
-    this.width = window.matchMedia('(min-width: 1024px)')
-    this.setPadding(this.width)
-    this.width.addListener(this.setPadding)
+    this.onMount()
+  },
+  beforeDestroy() {
+    this.onDestroy()
+  },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
+    onMount() {
+      this.width = window.matchMedia('(min-width: 1024px)')
+      this.setPadding(this.width)
+      this.width.addListener(this.setPadding)
+    },
+    onDestroy() {
+      this.width.removeListener(this.setPadding)
+    },
     onLoad() {
       if (this.width.matches) {
         this.onResize()
@@ -131,10 +146,10 @@ export default {
       this.getSomePosts()
     },
     formattedSense(sense) {
-      return Array.isArray(sense) ? sense.toString(',') : sense
+      return `, ${sense[0].name}`
     },
     formattedMood(mood) {
-      return `${mood.mood}`
+      return `, ${mood.mood}`
     },
   },
 }
@@ -239,7 +254,7 @@ section {
 }
 
 .postTitle {
-  font-weight: $bold;
+  font-weight: $medium;
   font-size: 1.75rem;
   margin: 1rem 0;
 
@@ -263,7 +278,7 @@ section {
 .postTags {
   text-transform: uppercase;
   font-size: 1rem;
-  font-weight: $bold;
+  font-weight: $medium;
   margin: 0;
 
   @media (min-width: $bp-desktop) {

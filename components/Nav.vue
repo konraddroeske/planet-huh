@@ -1,6 +1,5 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <!-- <h1 id="welcome" class="welcome">Welcome To Planet Huh</h1> -->
     <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
@@ -30,105 +29,6 @@ export default {
   data() {
     return {
       toggle: false,
-      cities: [
-        [40.71427, -74.00597, 'New York City'],
-        [52.52437, 13.41053, 'Berlin'],
-        [51.5074, -0.1278, 'London'],
-        [30.0444, 31.2357, 'Cairo'],
-        [-33.9249, 19.4241, 'Cape Town'],
-        [-37.8136, 144.9631, 'Melbourne'],
-        [-22.9068, -43.1729, 'Rio De Janeiro'],
-        [43.6532, -79.3832, 'Toronto'],
-        [42.3601, -71.0589, 'Boston'],
-      ],
-      colors: [
-        {
-          r: 116,
-          g: 155,
-          b: 255,
-          latitude: 30,
-          longitude: 0,
-          posts: [
-            { title: 'blue0' },
-            { title: 'blue1' },
-            { title: 'blue2' },
-            { title: 'blue3' },
-            { title: 'blue4' },
-            { title: 'blue5' },
-          ],
-          name: 'blue',
-        },
-        {
-          r: 255,
-          g: 147,
-          b: 30,
-          latitude: 30,
-          longitude: -120,
-          posts: [
-            { title: 'orange1' },
-            { title: 'orange2' },
-            { title: 'orange3' },
-          ],
-          name: 'orange',
-        },
-        {
-          r: 209,
-          g: 221,
-          b: 188,
-          latitude: 30,
-          longitude: 120,
-          posts: [
-            { title: 'green0' },
-            { title: 'green1' },
-            { title: 'green2' },
-            { title: 'green3' },
-            { title: 'green4' },
-            { title: 'green5' },
-          ],
-          name: 'green',
-        },
-        {
-          r: 193,
-          g: 146,
-          b: 224,
-          latitude: -30,
-          longitude: 60,
-          posts: [
-            { title: 'magenta0' },
-            { title: 'magenta1' },
-            { title: 'magenta2' },
-          ],
-          name: 'magenta',
-        },
-        {
-          r: 255,
-          g: 123,
-          b: 172,
-          latitude: -30,
-          longitude: -60,
-          posts: [{ title: 'red0' }, { title: 'red1' }, { title: 'red2' }],
-          name: 'red',
-        },
-        {
-          r: 255,
-          g: 229,
-          b: 172,
-          latitude: -30,
-          longitude: 180,
-          posts: [
-            { title: 'yellow0' },
-            { title: 'yellow1' },
-            { title: 'yellow2' },
-            { title: 'yellow3' },
-            { title: 'yellow4' },
-            { title: 'yellow5' },
-            { title: 'yellow6' },
-            { title: 'yellow7' },
-            { title: 'yellow8' },
-          ],
-          name: 'yellow',
-        },
-      ],
       currentNav: null,
     }
   },
@@ -145,18 +45,34 @@ export default {
     isOpen() {
       return this.$store.state.isOpen
     },
+    cities() {
+      return this.$store.state.nav.cities
+    },
+    colors() {
+      return Object.values(this.$store.state.nav.moods)
+    },
   },
   mounted() {
     this.initThree()
   },
   beforeDestroy() {
-    if (!this.isNavLarge) {
-      const nav = document.querySelector('#navContainer')
-      nav.removeEventListener('click', this.route, false)
-      nav.removeEventListener('touchstart', this.route, false)
-    }
+    this.onDestroy()
+  },
+  activated() {
+    this.initThree()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
+    onMount() {},
+    onDestroy() {
+      if (!this.isNavLarge) {
+        const nav = document.querySelector('#navContainer')
+        nav.removeEventListener('click', this.route, false)
+        nav.removeEventListener('touchstart', this.route, false)
+      }
+    },
     setNavSmall() {
       this.$store.dispatch('setNavSmall')
       this.$store.dispatch('setNavContainerSmall')
@@ -284,16 +200,24 @@ export default {
         )
 
         if (intersects[0].object === currentTarget) {
+          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
+
           this.$router.push({
-            path: `/post/${currentTarget.name}`,
+            // path: `/post/${currentTarget.name}`,
+            path: 'categories',
+            query: { filters: [currentTarget.name, category] },
           })
         }
       }
 
       const navRouter = () => {
         if (currentTarget) {
+          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
+
           this.$router.push({
-            path: `/post/${currentTarget.name}`,
+            // path: `/post/${currentTarget.name}`,
+            path: 'categories',
+            query: { filters: [currentTarget.name, category] },
           })
         }
       }
@@ -580,6 +504,7 @@ export default {
       })
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setClearColor(0x000000, 0)
+
       // renderer.setSize(window.innerWidth, window.innerHeight)
 
       const scene = new THREE.Scene()
@@ -1127,8 +1052,12 @@ export default {
 
       const navRouterTitle = (e) => {
         if (e.target) {
+          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
+
           this.$router.push({
-            path: `/post/${e.target.innerHTML}`,
+            // path: `/post/${e.target.innerHTML}`,
+            path: 'categories',
+            query: { filters: [currentTarget.name, category] },
           })
         }
       }
@@ -1452,6 +1381,18 @@ export default {
       }
 
       requestAnimationFrame(render)
+
+      // Cancel Animation when WebGL Context Lost
+
+      const cancelAnimation = () => {
+        event.preventDefault()
+        console.log('context lost')
+        cancelAnimationFrame(render)
+      }
+
+      renderer
+        .getContext()
+        .canvas.addEventListener('webglcontextlost', cancelAnimation, false)
     },
   },
 }

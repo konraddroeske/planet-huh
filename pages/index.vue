@@ -26,13 +26,13 @@ export default {
     PostsFeed,
   },
   async fetch({ store }) {
-    await store.dispatch('homepage/getHomepage')
-    await store.dispatch('homepage/getSomePosts', 4)
+    if (store.state.homepage.postsFeed.length === 0) {
+      await store.dispatch('homepage/getHomepage')
+      await store.dispatch('homepage/getSomePosts', 4)
+    }
   },
   transition: {
     leave(el, done) {
-      console.log('leaving index')
-
       const isNavLarge = window.$nuxt.$store.state.isNavLarge
 
       if (isNavLarge) {
@@ -59,15 +59,29 @@ export default {
     },
   },
   mounted() {
-    if (this.isMobile) {
-      this.$store.commit('setNavOpen', true)
-    }
+    this.onMount()
   },
   beforeDestroy() {
-    if (this.isMobile && this.isOpen) {
-      // and scroll is locked
-      this.$store.commit('setNavOpen', false)
-    }
+    this.onDestroy()
+  },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
+  },
+  methods: {
+    onMount() {
+      if (this.isMobile) {
+        this.$store.commit('setNavOpen', true)
+      }
+    },
+    onDestroy() {
+      if (this.isMobile && this.isOpen) {
+        // and scroll is locked
+        this.$store.commit('setNavOpen', false)
+      }
+    },
   },
 }
 </script>

@@ -1,6 +1,6 @@
 <template>
   <div v-if="post">
-    <HeroBanner v-bind="post" :city="'Toronto'" />
+    <HeroBanner v-bind="post" />
     <RichText :content="post.content" />
     <ArtistCredits :artists="[post.artist]" />
     <SocialShare :title="post.title" :link="link" />
@@ -28,11 +28,11 @@ const setNav = () => {
 }
 
 const entering = () => {
-  console.log('entering post')
+  // console.log('entering post')
 }
 
 const leaving = () => {
-  console.log('leaving post')
+  // console.log('leaving post')
 }
 
 const leavingToIndex = () => {
@@ -91,7 +91,9 @@ export default {
         coverImage {
           url
         }
-        sense
+        sense {
+          name
+        }
         mood {
           moodCategory
           mood
@@ -103,6 +105,9 @@ export default {
           social
           socialUrl
         }
+        city {
+          name
+        }
       }
     }`)
 
@@ -113,16 +118,28 @@ export default {
     }
   },
   mounted() {
-    const nav = document.querySelector('#navContainer')
-    nav.addEventListener('click', this.route, false)
-    nav.addEventListener('touchstart', this.route, false)
+    this.onMount()
   },
   beforeDestroy() {
-    const nav = document.querySelector('#navContainer')
-    nav.removeEventListener('click', this.route, false)
-    nav.removeEventListener('touchstart', this.route, false)
+    this.onDestroy()
+  },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
+    onMount() {
+      const nav = document.querySelector('#navContainer')
+      nav.addEventListener('click', this.route, false)
+      nav.addEventListener('touchstart', this.route, false)
+    },
+    onDestroy() {
+      const nav = document.querySelector('#navContainer')
+      nav.removeEventListener('click', this.route, false)
+      nav.removeEventListener('touchstart', this.route, false)
+    },
     route() {
       this.$router.push({
         path: `/`,
