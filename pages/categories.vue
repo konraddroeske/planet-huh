@@ -24,11 +24,11 @@ const setNav = () => {
 }
 
 const entering = () => {
-  console.log('entering categories')
+  // console.log('entering categories')
 }
 
 const leaving = () => {
-  console.log('leaving categories')
+  // console.log('leaving categories')
 }
 
 const leavingToIndex = () => {
@@ -74,17 +74,32 @@ export default {
   },
   mounted() {
     this.onHeroLoad()
-
-    const nav = document.querySelector('#navContainer')
-    nav.addEventListener('click', this.route, false)
-    nav.addEventListener('touchstart', this.route, false)
+    this.onMount()
   },
   beforeDestroy() {
-    const nav = document.querySelector('#navContainer')
-    nav.removeEventListener('click', this.route, false)
-    nav.removeEventListener('touchstart', this.route, false)
+    this.onDestroy()
+  },
+  activated() {
+    setTimeout(() => {
+      this.onHeroLoad()
+    }, 300)
+
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
+    onMount() {
+      const nav = document.querySelector('#navContainer')
+      nav.addEventListener('click', this.route, false)
+      nav.addEventListener('touchstart', this.route, false)
+    },
+    onDestroy() {
+      const nav = document.querySelector('#navContainer')
+      nav.removeEventListener('click', this.route, false)
+      nav.removeEventListener('touchstart', this.route, false)
+    },
     onHeroLoad() {
       this.$store.dispatch('setNavContainerSmall')
     },

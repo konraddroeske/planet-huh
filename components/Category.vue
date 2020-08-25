@@ -32,16 +32,16 @@ export default {
     },
   },
   mounted() {
-    this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
-    this.$refs.link.$el.addEventListener('mouseout', this.endGradient)
-    this.$refs.link.$el.addEventListener('focus', this.startGradient)
-    this.$refs.link.$el.addEventListener('blur', this.endGradient)
+    this.onMount()
   },
   beforeDestroy() {
-    this.$refs.link.$el.removeEventListener('mouseover', this.startGradient)
-    this.$refs.link.$el.removeEventListener('mouseout', this.endGradient)
-    this.$refs.link.$el.removeEventListener('focus', this.startGradient)
-    this.$refs.link.$el.removeEventListener('blur', this.endGradient)
+    this.onDestroy()
+  },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
   },
   methods: {
     startGradient() {
@@ -52,6 +52,18 @@ export default {
     },
     navigate() {
       console.log('navigating programmatically')
+    },
+    onMount() {
+      this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
+      this.$refs.link.$el.addEventListener('mouseout', this.endGradient)
+      this.$refs.link.$el.addEventListener('focus', this.startGradient)
+      this.$refs.link.$el.addEventListener('blur', this.endGradient)
+    },
+    onDestroy() {
+      this.$refs.link.$el.removeEventListener('mouseover', this.startGradient)
+      this.$refs.link.$el.removeEventListener('mouseout', this.endGradient)
+      this.$refs.link.$el.removeEventListener('focus', this.startGradient)
+      this.$refs.link.$el.removeEventListener('blur', this.endGradient)
     },
   },
 }

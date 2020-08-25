@@ -59,15 +59,29 @@ export default {
     },
   },
   mounted() {
-    if (this.isMobile) {
-      this.$store.commit('setNavOpen', true)
-    }
+    this.onMount()
   },
   beforeDestroy() {
-    if (this.isMobile && this.isOpen) {
-      // and scroll is locked
-      this.$store.commit('setNavOpen', false)
-    }
+    this.onDestroy()
+  },
+  activated() {
+    this.onMount()
+  },
+  deactivated() {
+    this.onDestroy()
+  },
+  methods: {
+    onMount() {
+      if (this.isMobile) {
+        this.$store.commit('setNavOpen', true)
+      }
+    },
+    onDestroy() {
+      if (this.isMobile && this.isOpen) {
+        // and scroll is locked
+        this.$store.commit('setNavOpen', false)
+      }
+    },
   },
 }
 </script>

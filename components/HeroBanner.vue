@@ -79,6 +79,11 @@ export default {
       return this.city.length > 0 ? `${this.city[0].name}` : null
     },
   },
+  activated() {
+    setTimeout(() => {
+      this.$store.dispatch('setNavContainerSmall')
+    }, 300)
+  },
   methods: {
     onImgLoad() {
       this.$store.dispatch('setNavContainerSmall')

@@ -111,8 +111,6 @@ export const mutations = {
         city.name,
       ])
     })
-
-    console.log(state.cities)
   },
   setMoods(state, moods) {
     moods.forEach((mood) => {
@@ -120,7 +118,5 @@ export const mutations = {
         title: mood.mood,
       })
     })
-
-    console.log(state.moods)
   },
 }
