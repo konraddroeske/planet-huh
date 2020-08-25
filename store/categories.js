@@ -56,34 +56,36 @@ export const actions = {
     }
   },
   checkTitle({ state, commit }, filters) {
-    let counter = 0
-    let title = ''
+    // let counter = 0
+    // let title = ''
 
-    // check if array
-    if (Array.isArray(filters)) {
-      for (let i = 0; i < filters.length; i++) {
-        if (state.titles[filters[i]] === true) {
-          counter += 1
-          title = filters[i]
-        }
+    // // check if array
+    // if (Array.isArray(filters)) {
+    //   for (let i = 0; i < filters.length; i++) {
+    //     if (state.titles[filters[i]] === true) {
+    //       counter += 1
+    //       title = filters[i]
+    //     }
 
-        if (counter >= 2) {
-          break
-        }
-      }
+    //     if (counter >= 2) {
+    //       break
+    //     }
+    //   }
 
-      counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
-    } else {
-      state.titles[filters] === true
-        ? commit('setTitle', filters)
-        : commit('setTitle', 'all')
-    }
+    //   counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
+    // } else {
+    //   state.titles[filters] === true
+    //     ? commit('setTitle', filters)
+    //     : commit('setTitle', 'all')
+    // }
+
+    commit('setTitle', filters[0])
   },
   formatFilters({ state, dispatch, commit }, payload) {
     // set categories
     let filters = ''
 
-    if (Array.isArray(payload)) {
+    if (state.filtersList[payload[0]]) {
       payload.forEach((item) => {
         if (state.titles[item] && filters === '') {
           filters += state.filtersList[item]
@@ -91,8 +93,12 @@ export const actions = {
           filters += `AND: ${state.filtersList[item]}`
         }
       })
-    } else {
-      filters += state.filtersList[payload]
+    } else if (payload[1] === 'cities') {
+      // check if a mood, city, or sense
+      filters = `{city_every: {name: "${payload[0]}"}}`
+    } else if (payload[1] === 'moods') {
+      console.log(payload[0])
+      filters = `{mood: {mood: "${payload[0]}"}}`
     }
     // where: {mood: {id_not: "null"}, AND: {sense_every: {id_not: "null"}, AND: {city_every: {id_not: "null"}}}}
     // set sub categories
