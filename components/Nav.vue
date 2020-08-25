@@ -1231,40 +1231,6 @@ export default {
           setActiveTitles()
         }
 
-        // HOVER ANIMATIONS
-
-        // globe main sprite
-
-        // if (currentTarget && currentTarget.material.opacity >= 0 && !isFading) {
-        //   isFading = true
-        //   // currentTarget.material.opacity -= 0.03
-        //   console.log('fading target')
-        //   gsap.to(currentTarget.material, 1, { opacity: 0 })
-        // }
-
-        // spritesAll.forEach((obj) => {
-        //   if (obj !== currentTarget && obj.material.opacity <= 1) {
-        //     obj.material.opacity += 0.03
-        //   }
-        // })
-
-        // globe alt sprite
-
-        // spritesAllAlt.forEach((obj, index) => {
-        //   if (currentTarget) {
-        //     if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
-        //       obj.material.opacity += 0.03
-        //     } else if (
-        //       obj.name !== currentTarget.name &&
-        //       obj.material.opacity >= 0
-        //     ) {
-        //       obj.material.opacity -= 0.03
-        //     }
-        //   } else if (obj.material.opacity >= 0) {
-        //     obj.material.opacity -= 0.03
-        //   }
-        // })
-
         if (pivotMain && mood && globe) {
           // Title Raycast (disappear when not in view)
           if (currentTarget && this.isMobile) {
