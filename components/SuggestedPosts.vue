@@ -22,7 +22,7 @@
         <RightArrow />
       </ButtonArrow>
 
-      <div id="suggestedSlider" :ref="'slider'">
+      <div id="suggestedSlider">
         <ul :ref="'postList'" class="postList">
           <li
             v-for="(post, index) of posts"
@@ -73,7 +73,6 @@ export default {
   data() {
     return {
       posts: [],
-      duration: 0.5,
       activeSlide: 0,
       offsets: [],
       isDesktop: false,
@@ -140,18 +139,18 @@ export default {
       }
       this.offsets = newOffsets
 
+      this.setDraggable()
+    },
+    setDraggable() {
       const that = this
-
-      this.$nextTick(function () {
-        Draggable.create('.postList', {
-          type: 'x',
-          bounds: '#suggestedSlider',
-          inertia: true,
-          snap: that.offsets,
-          onDragEnd() {
-            that.activeSlide = that.offsets.indexOf(this.endX)
-          },
-        })
+      Draggable.create('.postList', {
+        type: 'x',
+        bounds: '#suggestedSlider',
+        inertia: true,
+        snap: that.offsets,
+        onDragEnd() {
+          that.activeSlide = that.offsets.indexOf(this.endX)
+        },
       })
     },
     handleSlide(direction) {
@@ -166,7 +165,7 @@ export default {
           : this.activeSlide + increment
       }
 
-      gsap.to(this.$refs.postList, this.duration, {
+      gsap.to(this.$refs.postList, 0.5, {
         x: this.offsets[this.activeSlide],
       })
     },
