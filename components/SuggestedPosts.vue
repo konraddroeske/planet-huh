@@ -1,5 +1,5 @@
 <template>
-  <Wrapper>
+  <Wrapper v-if="posts.length">
     <section class="suggestedPosts">
       <h2 class="title">You Might Like</h2>
 
@@ -22,7 +22,7 @@
         <RightArrow />
       </ButtonArrow>
 
-      <div id="suggestedSlider" :ref="'slider'">
+      <div id="suggestedSlider">
         <ul :ref="'postList'" class="postList">
           <li
             v-for="(post, index) of posts"
@@ -44,8 +44,8 @@
               </nuxt-link>
             </h3>
             <p class="postTags">
-              <!-- {{ post.cityName }}, {{ post.senseName }}, {{ post.moodName }} -->
-              Toronto, Touch, Happy
+              {{ post.city[0].name }}, {{ post.sense[0].name }},
+              {{ post.mood.mood }}
             </p>
           </li>
         </ul>
@@ -70,10 +70,41 @@ export default {
     RightArrow,
     Wrapper,
   },
+  props: {
+    city: {
+      type: Object,
+      required: true,
+      validator(obj) {
+        return (
+          typeof obj.name === 'string' &&
+          ['include', 'exclude'].includes(obj.filterType)
+        )
+      },
+    },
+    sense: {
+      type: Object,
+      required: true,
+      validator(obj) {
+        return (
+          typeof obj.name === 'string' &&
+          ['include', 'exclude'].includes(obj.filterType)
+        )
+      },
+    },
+    mood: {
+      type: Object,
+      required: true,
+      validator(obj) {
+        return (
+          typeof obj.name === 'string' &&
+          ['include', 'exclude'].includes(obj.filterType)
+        )
+      },
+    },
+  },
   data() {
     return {
       posts: [],
-      duration: 0.5,
       activeSlide: 0,
       offsets: [],
       isDesktop: false,
@@ -83,12 +114,25 @@ export default {
     numSlides() {
       return this.posts.length
     },
+    computedWhere() {
+      const { city, sense, mood } = this.$props
+
+      const cityFilter =
+        city.filterType === 'include' ? 'city_some' : 'city_none'
+      const senseFilter =
+        sense.filterType === 'include' ? 'sense_some' : 'sense_none'
+      const moodFilter = mood.filterType === 'include' ? 'mood' : 'mood_not'
+
+      const cityWhere = `${cityFilter}: {name: "${city.name}"}`
+      const senseWhere = `${senseFilter}: {name: "${sense.name}"}`
+      const moodWhere = `mood: {${moodFilter}: "${mood.name}"}`
+
+      return `where: {${cityWhere}, ${senseWhere}, ${moodWhere}}`
+    },
   },
   async created() {
-    gsap.registerPlugin(Draggable, InertiaPlugin)
-
     const { data } = await fetchContent(`{
-      posts(orderBy: date_DESC, first: 6) {
+      posts(orderBy: date_DESC, first: 6, ${this.computedWhere}) {
         title
         slug
         coverImage {
@@ -96,8 +140,17 @@ export default {
         }
         date
         excerpt
+        city {
+          name
+        }
+        sense {
+          name
+        }
+        mood {
+          mood
+        }
       }
-      collabPosts(orderBy: date_DESC, first: 6) {
+      collabPosts(orderBy: date_DESC, first: 6, ${this.computedWhere}) {
         title
         slug
         coverImage {
@@ -105,13 +158,36 @@ export default {
         }
         date
         excerpt
+        city {
+          name
+        }
+        sense {
+          name
+        }
+        mood {
+          mood
+        }
       }
     }`)
 
     const { posts, collabPosts } = data.data
 
-    // Sorted in random order
-    this.posts = posts.concat(collabPosts).sort((a, b) => 0.5 - Math.random())
+    const randomizedPosts = posts
+      .concat(collabPosts)
+      .sort((a, b) => 0.5 - Math.random())
+
+    // Remove current post if the user is on a post page
+    const currentSlug = this.$route.params.slug
+    if (currentSlug) {
+      const postIndex = randomizedPosts.findIndex(
+        (post) => post.slug === currentSlug
+      )
+      if (postIndex >= 0) {
+        randomizedPosts.splice(postIndex, 1)
+      }
+    }
+
+    this.posts = randomizedPosts
 
     // This runs the callback AFTER this.posts re-renders the DOM
     this.$nextTick(function () {
@@ -119,6 +195,7 @@ export default {
     })
   },
   mounted() {
+    gsap.registerPlugin(Draggable, InertiaPlugin)
     window.addEventListener('resize', this.setSnapPoints)
   },
   beforeDestroy() {
@@ -140,18 +217,18 @@ export default {
       }
       this.offsets = newOffsets
 
+      this.setDraggable()
+    },
+    setDraggable() {
       const that = this
-
-      this.$nextTick(function () {
-        Draggable.create('.postList', {
-          type: 'x',
-          bounds: '#suggestedSlider',
-          inertia: true,
-          snap: that.offsets,
-          onDragEnd() {
-            that.activeSlide = that.offsets.indexOf(this.endX)
-          },
-        })
+      Draggable.create('.postList', {
+        type: 'x',
+        bounds: '#suggestedSlider',
+        inertia: true,
+        snap: that.offsets,
+        onDragEnd() {
+          that.activeSlide = that.offsets.indexOf(this.endX)
+        },
       })
     },
     handleSlide(direction) {
@@ -166,7 +243,7 @@ export default {
           : this.activeSlide + increment
       }
 
-      gsap.to(this.$refs.postList, this.duration, {
+      gsap.to(this.$refs.postList, 0.5, {
         x: this.offsets[this.activeSlide],
       })
     },
@@ -240,7 +317,7 @@ export default {
   white-space: normal;
   width: 85vw;
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
 
   &:not(:last-child) {
     margin-right: 1rem;
@@ -249,7 +326,7 @@ export default {
   @media (min-width: $bp-desktop) {
     width: calc(28.3vw - 1.3rem);
     text-align: left;
-    margin-bottom: 4rem;
+    margin-bottom: 6rem;
 
     &:not(:last-child) {
       margin-right: 2rem;

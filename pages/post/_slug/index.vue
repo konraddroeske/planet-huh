@@ -4,7 +4,11 @@
     <RichText :content="post.content" />
     <ArtistCredits :artists="[post.artist]" />
     <SocialShare :title="post.title" :link="link" />
-    <SuggestedPosts />
+    <SuggestedPosts
+      :city="{ name: post.city[0].name, filterType: 'exclude' }"
+      :sense="{ name: post.sense[0].name, filterType: 'exclude' }"
+      :mood="{ name: post.mood.mood, filterType: 'exclude' }"
+    />
   </div>
 </template>
 
