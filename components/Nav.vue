@@ -166,6 +166,7 @@ export default {
       let intersects = null
 
       const raycasterTitle = new THREE.Raycaster()
+      let intersectsTitle = null
 
       const setTarget = (target) => {
         target ? (currentTarget = target) : (currentTarget = null)
@@ -245,7 +246,6 @@ export default {
       }
 
       // OBJECT CONTROLS
-      // https://github.com/albertopiras/threeJS-object-controls
 
       // MOUSE DESKTOP
 
@@ -279,6 +279,48 @@ export default {
           ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1
         rayMouse.y =
           -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1
+
+        raycaster.setFromCamera(rayMouse, camera)
+
+        if (this.currentNav === pivotGlobe) {
+          intersects = raycaster.intersectObjects(spriteCities)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+            toggleHover = true
+          } else {
+            toggleClick = false
+            toggleHover = false
+          }
+        }
+
+        if (this.currentNav === pivotMood) {
+          intersects = raycaster.intersectObjects(spriteMoodsFlat)
+
+          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
+            toggleHover = true
+          } else {
+            toggleClick = false
+            toggleHover = false
+          }
+        }
+
+        if (
+          intersects.length >= 2 &&
+          intersects[0].object.name !== 'globe' &&
+          intersects[0].object.name !== 'mood' &&
+          currentTarget !== intersects[0].object &&
+          !gsap.isTweening(pivotMain.rotation)
+        ) {
+          setTarget(intersects[0].object)
+          addTitle(intersects[0].object)
+          addSprites(intersects[0].object)
+        }
+
+        if (intersects.length < 2 && currentTarget) {
+          setTarget(null)
+          removeTitle()
+          removeSprites()
+        }
 
         if (isDragging) {
           mouseX = e.clientX - windowHalfX
@@ -377,10 +419,11 @@ export default {
           if (currentTarget) {
             setTarget(null)
             removeTitle()
+            removeSprites()
           }
-
           setTarget(intersects[0].object)
           addTitle(intersects[0].object)
+          addSprites(intersects[0].object)
         }
 
         isDragging = true
@@ -504,11 +547,7 @@ export default {
       })
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setClearColor(0x000000, 0)
-
-      // renderer.setSize(window.innerWidth, window.innerHeight)
-
       const scene = new THREE.Scene()
-      // scene.background = new THREE.Color('white')
 
       // CAMERA PIVOT
 
@@ -552,7 +591,7 @@ export default {
       {
         const texture = loader.load(globeTexture)
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-        const geometry = new THREE.SphereGeometry(1, 64, 64)
+        const geometry = new THREE.SphereGeometry(1, 32, 32)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
@@ -628,10 +667,8 @@ export default {
 
         // find minumum value
         const minDistance = Math.min.apply(null, distances)
-        // console.log(minDistance)
 
         // add position to colors
-
         if (y >= -0.7 && y <= 0.7 && minDistance < 0.5) {
           colors[distances.indexOf(minDistance)].positions.push([x, y, z])
         }
@@ -660,7 +697,7 @@ export default {
 
       {
         const radius = 1
-        const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
+        const geometry = new THREE.SphereBufferGeometry(radius, 32, 32)
 
         const vertexShader = `
           precision mediump float;
@@ -1024,6 +1061,31 @@ export default {
         Object.values(spriteMoodsAlt).flat()
       )
 
+      // SPRITES
+      const activeSprites = []
+
+      const addSprites = (mainSprite) => {
+        gsap.to(mainSprite.material, 0.4, { opacity: 0 })
+        const altSprite = spritesAllAlt.filter(
+          (sprite) => sprite.name === mainSprite.name
+        )[0]
+        gsap.to(altSprite.material, 0.4, { opacity: 1 })
+
+        activeSprites.push([mainSprite.material, altSprite.material])
+
+        // fade all others
+        removeSprites(mainSprite.material, altSprite.material)
+      }
+
+      const removeSprites = (mainSprite = null, altSprite = null) => {
+        activeSprites.forEach((arr) => {
+          if (arr[0] !== mainSprite && arr[1] !== altSprite) {
+            gsap.to(arr[0], 0.4, { opacity: 1 })
+            gsap.to(arr[1], 0.4, { opacity: 0 })
+          }
+        })
+      }
+
       // TITLE TEXT
       const activeTitles = []
       const posRaycast = new THREE.Vector2()
@@ -1096,10 +1158,10 @@ export default {
         removeTitle(newTitle)
       }
 
-      const removeTitle = (title) => {
-        if (!title) {
-          title = null
-        }
+      const removeTitle = (title = null) => {
+        // if (!title) {
+        //   title = null
+        // }
 
         // iterate through all, except object and fade/remove all
         for (let i = 0; i < activeTitles.length; i += 1) {
@@ -1130,6 +1192,8 @@ export default {
         }
       }
 
+      // Raycast
+
       // GLOW
 
       // Globe
@@ -1154,8 +1218,6 @@ export default {
       // RENDER
 
       const render = () => {
-        // GLOW SHADER
-
         // RESIZE
 
         if (resizeRendererToDisplaySize(renderer)) {
@@ -1164,95 +1226,17 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        // RAYCASTER DESKTOP
-
-        if (!this.isMobile) {
-          raycaster.setFromCamera(rayMouse, camera)
-
-          if (this.currentNav === pivotGlobe) {
-            intersects = raycaster.intersectObjects(spriteCities)
-
-            if (intersects.length > 0 && intersects[0].object.name === 'mood') {
-              toggleHover = true
-            } else {
-              toggleClick = false
-              toggleHover = false
-            }
-          }
-
-          if (this.currentNav === pivotMood) {
-            intersects = raycaster.intersectObjects(spriteMoodsFlat)
-
-            if (
-              intersects.length > 0 &&
-              intersects[0].object.name === 'globe'
-            ) {
-              toggleHover = true
-            } else {
-              toggleClick = false
-              toggleHover = false
-            }
-          }
-
-          if (
-            intersects.length >= 2 &&
-            intersects[0].object.name !== 'globe' &&
-            intersects[0].object.name !== 'mood' &&
-            currentTarget !== intersects[0].object &&
-            !gsap.isTweening(pivotMain.rotation)
-          ) {
-            setTarget(intersects[0].object)
-            addTitle(intersects[0].object)
-          }
-
-          if (intersects.length < 2 && currentTarget) {
-            setTarget(null)
-            removeTitle()
-          }
-        }
-
         // adds tracking animation to titles
         if (activeTitles.length > 0) {
           setActiveTitles()
         }
 
-        // HOVER ANIMATIONS
-
-        // globe main sprite
-
-        if (currentTarget && currentTarget.material.opacity >= 0) {
-          currentTarget.material.opacity -= 0.03
-        }
-
-        spritesAll.forEach((obj) => {
-          if (obj !== currentTarget && obj.material.opacity <= 1) {
-            obj.material.opacity += 0.03
-          }
-        })
-
-        // globe alt sprite
-
-        spritesAllAlt.forEach((obj, index) => {
-          if (currentTarget) {
-            if (obj.name === currentTarget.name && obj.material.opacity <= 1) {
-              obj.material.opacity += 0.03
-            } else if (
-              obj.name !== currentTarget.name &&
-              obj.material.opacity >= 0
-            ) {
-              obj.material.opacity -= 0.03
-            }
-          } else if (obj.material.opacity >= 0) {
-            obj.material.opacity -= 0.03
-          }
-        })
-
         if (pivotMain && mood && globe) {
           // Title Raycast (disappear when not in view)
-          if (currentTarget) {
+          if (currentTarget && this.isMobile) {
             raycasterTitle.setFromCamera(posRaycast, camera)
 
-            const intersectsTitle =
+            intersectsTitle =
               this.currentNav === pivotGlobe
                 ? raycasterTitle.intersectObjects(spriteCities)
                 : raycasterTitle.intersectObjects(spriteMoodsFlat)
@@ -1268,7 +1252,7 @@ export default {
             }
           }
 
-          if (this.currentNav === pivotGlobe) {
+          if (this.currentNav === pivotGlobe && isThrowing) {
             // HORIZONAL ROTATION
             deltaX =
               (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
@@ -1282,7 +1266,7 @@ export default {
             }
           }
 
-          if (this.currentNav === pivotMood) {
+          if (this.currentNav === pivotMood && isThrowing) {
             // HORIZONAL ROTATION
             deltaX =
               (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
@@ -1338,11 +1322,11 @@ export default {
                   pivotGlobe.rotation.x += 0.0015
                 }
               }
-
               globe.rotateOnAxis(globeAxis, 0.0015)
             }
 
             targetRotationYMood = pivotMood.rotation.x
+
             if (pivotMood.rotation.x > 0.01) {
               pivotMood.rotation.x += -0.0015
             } else if (pivotMood.rotation.x < -0.01) {
@@ -1371,7 +1355,6 @@ export default {
             } else if (pivotGlobe.rotation.x < -0.01) {
               pivotGlobe.rotation.x += 0.0015
             }
-
             globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
