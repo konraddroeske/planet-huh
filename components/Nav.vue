@@ -200,16 +200,24 @@ export default {
         )
 
         if (intersects[0].object === currentTarget) {
+          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
+
           this.$router.push({
-            path: `/post/${currentTarget.name}`,
+            // path: `/post/${currentTarget.name}`,
+            path: 'categories',
+            query: { filters: [currentTarget.name, category] },
           })
         }
       }
 
       const navRouter = () => {
         if (currentTarget) {
+          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
+
           this.$router.push({
-            path: `/post/${currentTarget.name}`,
+            // path: `/post/${currentTarget.name}`,
+            path: 'categories',
+            query: { filters: [currentTarget.name, category] },
           })
         }
       }
@@ -1044,8 +1052,12 @@ export default {
 
       const navRouterTitle = (e) => {
         if (e.target) {
+          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
+
           this.$router.push({
-            path: `/post/${e.target.innerHTML}`,
+            // path: `/post/${e.target.innerHTML}`,
+            path: 'categories',
+            query: { filters: [currentTarget.name, category] },
           })
         }
       }
