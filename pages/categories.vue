@@ -80,6 +80,12 @@ export default {
     this.onDestroy()
   },
   activated() {
+    const routeParams = Object.values(this.$route.query)[0]
+
+    if (this.$store.state.categories.filters[0] !== routeParams[0]) {
+      this.$store.dispatch('categories/handlePosts', routeParams)
+    }
+
     setTimeout(() => {
       this.onHeroLoad()
     }, 300)
