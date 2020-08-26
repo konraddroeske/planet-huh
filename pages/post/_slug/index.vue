@@ -1,8 +1,13 @@
 <template>
   <div v-if="post">
-    <HeroBanner v-bind="post" />
+    <HeroBanner v-if="post.artist.length === 1" v-bind="post" />
+    <CollabBanner
+      v-if="post.artist.length > 1"
+      v-bind="post"
+      :headline="'Presented by Red Bull'"
+    />
     <RichText :content="post.content" />
-    <ArtistCredits :artists="[post.artist]" />
+    <ArtistCredits :artists="post.artist" />
     <SocialShare :title="post.title" :link="link" />
     <SuggestedPosts
       :city="{ name: post.city[0].name, filterType: 'exclude' }"
@@ -17,6 +22,7 @@ import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import { fetchContent } from '@/utils/api'
 import HeroBanner from '@/components/HeroBanner'
+import CollabBanner from '@/components/CollabBanner'
 import RichText from '@/components/RichText'
 import ArtistCredits from '@/components/ArtistCredits'
 import SocialShare from '@/components/SocialShare'
@@ -52,6 +58,7 @@ export default {
   layout: 'default',
   components: {
     HeroBanner,
+    CollabBanner,
     RichText,
     ArtistCredits,
     SocialShare,
@@ -82,7 +89,7 @@ export default {
   },
   async created() {
     const { data } = await fetchContent(`{
-      post(where: {slug: "${this.slug}"}) {
+      collabPost(where: {slug: "${this.slug}"}) {
         title
         excerpt
         date
@@ -104,6 +111,7 @@ export default {
         }
         artist {
           name
+          location
           about
           website
           social
@@ -115,10 +123,12 @@ export default {
       }
     }`)
 
+    const { coverImage, content } = data.data.collabPost
+
     this.post = {
-      ...data.data.post,
-      imageSrc: data.data.post.coverImage.url,
-      content: data.data.post.content.raw.children,
+      ...data.data.collabPost,
+      imageSrc: coverImage.url,
+      content: content.raw.children,
     }
   },
   mounted() {
