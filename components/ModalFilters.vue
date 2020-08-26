@@ -1,36 +1,40 @@
 <template>
   <div class="modalFilters">
-    <div class="modalButtonContainer">
-      <ModalNavButton @onClick="closeModal" />
-    </div>
     <div class="filtersTop">
-      <h2 class="filtersTitle">Filter By:</h2>
+      <div class="topBar">
+        <h2 class="filtersTitle">Filter By:</h2>
+        <div class="modalButtonContainer">
+          <ModalNavButton @onClick="closeModal" />
+        </div>
+      </div>
       <div class="filtersCategory">
-        <h3><button>Sense</button></h3>
-        <ul class="filtersList">
+        <button ref="sense" class="categoryButton">Sense</button>
+        <ul class="filtersList senses">
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
-            <button>{{ sense.name }}</button>
+            <button class="listButton">{{ sense.name }}</button>
           </li>
         </ul>
       </div>
       <div class="filtersCategory">
-        <h3><button>Mood</button></h3>
-        <ul class="filtersList">
+        <button ref="mood" class="categoryButton">Mood</button>
+        <ul class="filtersList moods">
           <li v-for="mood of moods" :key="mood.id" class="filtersItem">
-            <button>{{ mood.moodCategory }}</button>
+            <button class="listButton">{{ mood }}</button>
           </li>
         </ul>
       </div>
       <div class="filtersCategory">
-        <h3><button>City</button></h3>
-        <ul class="filtersList">
+        <button ref="city" class="categoryButton">City</button>
+        <ul class="filtersList cities">
           <li v-for="city of cities" :key="city.id" class="filtersItem">
-            <button>{{ city.name }}</button>
+            <button class="listButton">{{ city.name }}</button>
           </li>
         </ul>
       </div>
     </div>
-    <button>Clear Selection</button>
+    <div>
+      <button class="clearButton">Clear Selection</button>
+    </div>
   </div>
 </template>
 
@@ -44,13 +48,21 @@ export default {
   },
   computed: mapState({
     cities: (state) => state.categories.cities,
-    moods: (state) => state.categories.moods,
     senses: (state) => state.categories.senses,
+    moods: (state) =>
+      [...new Set(state.categories.moods.map((mood) => mood.moodCategory))]
+        .map((category) => category.replace(/([a-z])([A-Z])/, '$1 $2'))
+        .sort()
+        .reverse(),
   }),
   methods: {
     clearSelection() {},
     toggleFilter() {},
     closeModal() {},
+    toggleCategory() {
+      // add to filters
+      // if mobile, expand and contract
+    },
   },
 }
 </script>
@@ -63,21 +75,110 @@ export default {
   right: 0;
   left: 0;
   width: 100;
-  z-index: $z-modal;
-  padding: 2rem;
+  z-index: $z-filters;
 
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.5);
 
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  padding: 1rem 1rem 4.4rem 1rem;
+
+  .topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .filtersCategory {
+    padding: 1rem 0;
+    border-bottom: 1px solid $black;
+  }
+
+  .filtersCategory:last-child {
+    border-bottom: none;
+  }
+
+  h2,
+  button {
+    font-weight: $medium;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    padding: 0.5rem 0.8rem;
+    font-size: $font-lg;
+  }
+
+  button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .categoryButton {
+    font-size: 1.2rem;
+    color: $accent;
+    padding: 0.6rem 0.9rem;
+  }
+
+  .listButton {
+    font-size: $font-x-sm;
+    margin: 0.2rem 0.6rem 0.2rem 0;
+    border-radius: 180px;
+    padding: 0.6rem 1rem;
+  }
+
+  .listButton:hover,
+  .listButton:focus,
+  .listButton:active {
+    background-color: $accentTransparent;
+  }
+
+  .clearButton {
+    text-decoration: underline;
+    padding: 0.6rem 1rem;
+  }
+
+  ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .senses,
+  .moods,
+  .cities {
+    height: 0;
+    overflow: hidden;
+  }
+
+  .senses {
+    height: 100%;
+  }
+
+  .moods {
+    li {
+      width: 50%;
+    }
+  }
 }
 
-.modalButtonContainer {
-  position: absolute;
-  right: 2rem;
-  top: 1.5rem;
+@media (min-width: $bp-mobile) {
+  .filtersCategory {
+    padding: 2rem 0;
+  }
+}
+
+@media (min-width: $bp-desktop) {
+  .modalFilters {
+    padding: 1.5rem 2rem 3.4rem 2rem;
+  }
 }
 </style>

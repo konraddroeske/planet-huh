@@ -8,6 +8,7 @@ export const state = () => ({
     senses: true,
   },
   filters: [],
+  modal: false,
   filtersList: {
     moods: `{mood: {id_not: "null"}}`,
     senses: `{sense_every: {id_not: "null"}}`,
@@ -92,7 +93,7 @@ export const actions = {
   async getSenses({ commit, state }) {
     try {
       const { data } = await fetchContent(`{
-        cities(orderBy: name_ASC) {
+        senses(orderBy: name_ASC) {
             id
             name
             createdAt
@@ -100,6 +101,7 @@ export const actions = {
       }`)
 
       const { senses } = data.data
+
       commit('setSenses', senses)
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -217,6 +219,11 @@ export const mutations = {
     state.moods = moods
   },
   setSenses(state, senses) {
+    console.log(senses)
     state.senses = senses
+  },
+  toggleModal(state) {
+    console.log('toggle modal')
+    state.modal = !state.modal
   },
 }
