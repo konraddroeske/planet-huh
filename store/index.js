@@ -10,6 +10,9 @@ export const actions = {
   async nuxtServerInit({ dispatch }) {
     await dispatch('nav/getMoods')
     await dispatch('nav/getCities')
+    await dispatch('categories/getMoods')
+    await dispatch('categories/getCities')
+    await dispatch('categories/getSenses')
   },
   setNavSmall({ state, commit }) {
     commit('setNavSize', false)
@@ -91,7 +94,7 @@ export const actions = {
         height: '100vh',
       })
   },
-  setNavLarge({ state, commit }) {
+  setNavLarge({ state, commit }, el = null) {
     commit('setNavSize', true)
 
     if (state.isMobile) {
@@ -131,6 +134,11 @@ export const actions = {
 
     gsap.to('#toggleContainer', navTime, { autoAlpha: 1 })
     gsap.to('#navFeedContainer', navTime, { autoAlpha: 1 })
+    if (el) {
+      gsap.set(el, {
+        autoAlpha: 1,
+      })
+    }
   },
   setNavContainerSmall() {
     gsap.to('#nav3d', 0.6, {

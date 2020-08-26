@@ -6,15 +6,22 @@
       :to="{ name: '' }"
       :variant="variant"
     />
+    <div class="buttonContainer">
+      <ButtonFilter @onClick="toggleMenu">
+        Filter Posts
+      </ButtonFilter>
+    </div>
   </div>
 </template>
 
 <script>
-import CategoryTitle from '@/components/CategoryTitle.vue'
+import CategoryTitle from '@/components/CategoryTitle'
+import ButtonFilter from '@/components/ButtonFilter'
 
 export default {
   components: {
     CategoryTitle,
+    ButtonFilter,
   },
   props: {
     // variant: {
@@ -35,6 +42,9 @@ export default {
       disabled: true,
     }
   },
+  methods: {
+    toggleMenu() {},
+  },
 }
 </script>
 
@@ -44,5 +54,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+.buttonContainer {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
 }
 </style>

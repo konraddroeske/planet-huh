@@ -31,13 +31,13 @@ const leaving = () => {
   // console.log('leaving categories')
 }
 
-const leavingToIndex = () => {
+const leavingToIndex = (el) => {
   const setNavContainerLarge =
     window.$nuxt.$store._actions.setNavContainerLarge[0]
   setNavContainerLarge()
 
   const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-  setNavLarge()
+  setNavLarge(el)
 }
 
 export default {
@@ -51,7 +51,9 @@ export default {
       entering()
     }
 
-    to.path === '/' ? leavingToIndex() : leaving()
+    to.path === '/'
+      ? leavingToIndex(to.matched[0].instances.default.$el)
+      : leaving()
   },
   components: {
     CategoryHero,
@@ -66,11 +68,7 @@ export default {
     },
   },
   async created() {
-    const routeParams = Object.values(this.$route.query)[0]
-
-    if (this.$store.state.categories.filters[0] !== routeParams[0]) {
-      await this.$store.dispatch('categories/handlePosts', routeParams)
-    }
+    await this.$store.dispatch('categories/handleQueries', this.$route.query)
   },
   mounted() {
     this.onHeroLoad()
@@ -80,11 +78,7 @@ export default {
     this.onDestroy()
   },
   activated() {
-    const routeParams = Object.values(this.$route.query)[0]
-
-    if (this.$store.state.categories.filters[0] !== routeParams[0]) {
-      this.$store.dispatch('categories/handlePosts', routeParams)
-    }
+    this.$store.dispatch('categories/handleQueries', this.$route.query)
 
     setTimeout(() => {
       this.onHeroLoad()
