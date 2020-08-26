@@ -1226,141 +1226,148 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        // adds tracking animation to titles
-        if (activeTitles.length > 0) {
-          setActiveTitles()
-        }
-
-        if (pivotMain && mood && globe) {
-          // Title Raycast (disappear when not in view)
-          if (currentTarget && this.isMobile) {
-            raycasterTitle.setFromCamera(posRaycast, camera)
-
-            intersectsTitle =
-              this.currentNav === pivotGlobe
-                ? raycasterTitle.intersectObjects(spriteCities)
-                : raycasterTitle.intersectObjects(spriteMoodsFlat)
-
-            if (intersectsTitle.length > 0) {
-              if (
-                intersectsTitle[0].object.name === 'globe' ||
-                intersectsTitle[0].object.name === 'mood'
-              ) {
-                setTarget(null)
-                removeTitle()
-              }
-            }
+        if (this.isIndex) {
+          // adds tracking animation to titles
+          if (activeTitles.length > 0) {
+            setActiveTitles()
           }
 
-          if (this.currentNav === pivotGlobe && isThrowing) {
-            // HORIZONAL ROTATION
-            deltaX =
-              (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
-            pivotGlobe.rotation.y += deltaX
+          if (pivotMain && mood && globe) {
+            // Title Raycast (disappear when not in view)
+            if (currentTarget && this.isMobile) {
+              raycasterTitle.setFromCamera(posRaycast, camera)
 
-            // VERTICAL ROTATION
-            deltaY =
-              (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
-            if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
-              pivotGlobe.rotation.x += deltaY
-            }
-          }
+              intersectsTitle =
+                this.currentNav === pivotGlobe
+                  ? raycasterTitle.intersectObjects(spriteCities)
+                  : raycasterTitle.intersectObjects(spriteMoodsFlat)
 
-          if (this.currentNav === pivotMood && isThrowing) {
-            // HORIZONAL ROTATION
-            deltaX =
-              (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
-            pivotMood.rotation.y += deltaX
-
-            // VERTICAL ROTATION
-            deltaY =
-              (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
-            if (isThrowing && checkMaxAngle(pivotMood, deltaY, 'x')) {
-              pivotMood.rotation.x += deltaY
-            }
-          }
-
-          // CAMERA ZOOM IN
-
-          if (!this.isMobile && isDragging && !currentTarget && this.isIndex) {
-            if (camera.position.z >= maxZoom) {
-              zoomPosition *= zoomInSpeed
-              camera.position.z -= zoomPosition
-            }
-          }
-
-          if (isDragging && this.isMobile && this.isIndex) {
-            if (camera.position.z >= maxZoom) {
-              zoomPosition *= zoomInSpeed
-              camera.position.z -= zoomPosition
-            }
-          }
-
-          // CAMERA ZOOM OUT
-
-          if ((!isDragging && lerpTimerBool) || !this.isIndex) {
-            if (camera.position.z <= minZoom) {
-              camera.position.z += zoomOutSpeed
-            }
-
-            // if momentum is below certain amount, we are not throwing
-            if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
-              isThrowing = false
-            }
-          }
-
-          if (this.currentNav === pivotGlobe) {
-            if (!isDragging && lerpTimerBool) {
-              // OBJECT CORRECTION LERP
-
-              if (!isThrowing) {
-                targetRotationYGlobe = pivotGlobe.rotation.x
-
-                if (pivotGlobe.rotation.x > 0.01) {
-                  pivotGlobe.rotation.x += -0.0015
-                } else if (pivotGlobe.rotation.x < -0.01) {
-                  pivotGlobe.rotation.x += 0.0015
+              if (intersectsTitle.length > 0) {
+                if (
+                  intersectsTitle[0].object.name === 'globe' ||
+                  intersectsTitle[0].object.name === 'mood'
+                ) {
+                  setTarget(null)
+                  removeTitle()
                 }
               }
-              globe.rotateOnAxis(globeAxis, 0.0015)
             }
 
-            targetRotationYMood = pivotMood.rotation.x
+            if (this.currentNav === pivotGlobe && isThrowing) {
+              // HORIZONAL ROTATION
+              deltaX =
+                (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
+              pivotGlobe.rotation.y += deltaX
 
-            if (pivotMood.rotation.x > 0.01) {
-              pivotMood.rotation.x += -0.0015
-            } else if (pivotMood.rotation.x < -0.01) {
-              pivotMood.rotation.x += 0.0015
+              // VERTICAL ROTATION
+              deltaY =
+                (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
+              if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
+                pivotGlobe.rotation.x += deltaY
+              }
             }
-            mood.rotateOnAxis(globeAxis, 0.0015)
-          }
 
-          if (this.currentNav === pivotMood) {
-            if (!isDragging && lerpTimerBool) {
-              if (!isThrowing) {
-                targetRotationYMood = pivotMood.rotation.x
-                if (pivotMood.rotation.x > 0.01) {
-                  pivotMood.rotation.x += -0.0015
-                } else if (pivotMood.rotation.x < -0.01) {
-                  pivotMood.rotation.x += 0.0015
+            if (this.currentNav === pivotMood && isThrowing) {
+              // HORIZONAL ROTATION
+              deltaX =
+                (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
+              pivotMood.rotation.y += deltaX
+
+              // VERTICAL ROTATION
+              deltaY =
+                (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
+              if (isThrowing && checkMaxAngle(pivotMood, deltaY, 'x')) {
+                pivotMood.rotation.x += deltaY
+              }
+            }
+
+            // CAMERA ZOOM IN
+
+            if (
+              !this.isMobile &&
+              isDragging &&
+              !currentTarget &&
+              this.isIndex
+            ) {
+              if (camera.position.z >= maxZoom) {
+                zoomPosition *= zoomInSpeed
+                camera.position.z -= zoomPosition
+              }
+            }
+
+            if (isDragging && this.isMobile && this.isIndex) {
+              if (camera.position.z >= maxZoom) {
+                zoomPosition *= zoomInSpeed
+                camera.position.z -= zoomPosition
+              }
+            }
+
+            // CAMERA ZOOM OUT
+
+            if ((!isDragging && lerpTimerBool) || !this.isIndex) {
+              if (camera.position.z <= minZoom) {
+                camera.position.z += zoomOutSpeed
+              }
+
+              // if momentum is below certain amount, we are not throwing
+              if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
+                isThrowing = false
+              }
+            }
+
+            if (this.currentNav === pivotGlobe) {
+              if (!isDragging && lerpTimerBool) {
+                // OBJECT CORRECTION LERP
+
+                if (!isThrowing) {
+                  targetRotationYGlobe = pivotGlobe.rotation.x
+
+                  if (pivotGlobe.rotation.x > 0.01) {
+                    pivotGlobe.rotation.x += -0.0015
+                  } else if (pivotGlobe.rotation.x < -0.01) {
+                    pivotGlobe.rotation.x += 0.0015
+                  }
                 }
+                globe.rotateOnAxis(globeAxis, 0.0015)
+              }
+
+              targetRotationYMood = pivotMood.rotation.x
+
+              if (pivotMood.rotation.x > 0.01) {
+                pivotMood.rotation.x += -0.0015
+              } else if (pivotMood.rotation.x < -0.01) {
+                pivotMood.rotation.x += 0.0015
               }
               mood.rotateOnAxis(globeAxis, 0.0015)
             }
 
-            targetRotationYGlobe = pivotGlobe.rotation.x
+            if (this.currentNav === pivotMood) {
+              if (!isDragging && lerpTimerBool) {
+                if (!isThrowing) {
+                  targetRotationYMood = pivotMood.rotation.x
+                  if (pivotMood.rotation.x > 0.01) {
+                    pivotMood.rotation.x += -0.0015
+                  } else if (pivotMood.rotation.x < -0.01) {
+                    pivotMood.rotation.x += 0.0015
+                  }
+                }
+                mood.rotateOnAxis(globeAxis, 0.0015)
+              }
 
-            if (pivotGlobe.rotation.x > 0.01) {
-              pivotGlobe.rotation.x += -0.0015
-            } else if (pivotGlobe.rotation.x < -0.01) {
-              pivotGlobe.rotation.x += 0.0015
+              targetRotationYGlobe = pivotGlobe.rotation.x
+
+              if (pivotGlobe.rotation.x > 0.01) {
+                pivotGlobe.rotation.x += -0.0015
+              } else if (pivotGlobe.rotation.x < -0.01) {
+                pivotGlobe.rotation.x += 0.0015
+              }
+              globe.rotateOnAxis(globeAxis, 0.0015)
             }
-            globe.rotateOnAxis(globeAxis, 0.0015)
           }
         }
-        renderer.render(scene, camera)
 
         requestAnimationFrame(render)
+        renderer.render(scene, camera)
       }
 
       requestAnimationFrame(render)

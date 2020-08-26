@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import gsap from 'gsap'
 import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
 import CategoryHero from '@/components/CategoryHero'
@@ -59,14 +60,10 @@ export default {
     CategoryHero,
     PostsFeed,
   },
-  computed: {
-    title() {
-      return this.$store.state.categories.title
-    },
-    posts() {
-      return this.$store.state.categories.postsFeed
-    },
-  },
+  computed: mapState({
+    title: (state) => state.categories.title,
+    posts: (state) => state.categories.postsFeed,
+  }),
   async created() {
     await this.$store.dispatch('categories/handleQueries', this.$route.query)
   },

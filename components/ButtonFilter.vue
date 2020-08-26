@@ -25,7 +25,8 @@ button {
   color: $white;
 
   &:hover,
-  &:focus {
+  &:active {
+    border: 2px solid $accent;
     background: $accent;
   }
 }

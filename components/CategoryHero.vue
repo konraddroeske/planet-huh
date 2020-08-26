@@ -7,7 +7,7 @@
       :variant="variant"
     />
     <div class="buttonContainer">
-      <ButtonFilter @onClick="toggleMenu">
+      <ButtonFilter @clicked="toggleModal">
         Filter Posts
       </ButtonFilter>
     </div>
@@ -24,13 +24,6 @@ export default {
     ButtonFilter,
   },
   props: {
-    // variant: {
-    //   type: String,
-    //   required: true,
-    //   validator(value) {
-    //     return ['light', 'dark', 'gradient'].includes(value)
-    //   },
-    // },
     title: {
       type: String,
       required: true,
@@ -43,7 +36,9 @@ export default {
     }
   },
   methods: {
-    toggleMenu() {},
+    toggleModal() {
+      this.$store.commit('categories/toggleModal')
+    },
   },
 }
 </script>
@@ -62,5 +57,19 @@ export default {
   bottom: 4rem;
   left: 50%;
   transform: translateX(-50%);
+}
+
+@media (min-width: $bp-tablet) {
+  .buttonContainer {
+    left: 1rem;
+    bottom: 3rem;
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: $bp-desktop) {
+  .buttonContainer {
+    left: 2rem;
+  }
 }
 </style>
