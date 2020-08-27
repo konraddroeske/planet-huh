@@ -99,7 +99,6 @@ export default {
 
   @media (min-width: $bp-desktop) {
     margin-top: 0;
-    margin-bottom: 0;
     text-align: left;
   }
 }

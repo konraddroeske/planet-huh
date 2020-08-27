@@ -3,15 +3,18 @@
     <div class="wrapper">
       <div class="heroRow">
         <img class="bannerImage" :src="imageSrc" alt="" @load="onImgLoad" />
-        <h1 class="titleText postTitle">{{ title }}</h1>
+        <h1 class="titleText postTitle">
+          <span class="miniTitle">{{ titleArray[0] }}</span>
+          {{ titleArray.slice(1).join(' ') }}
+        </h1>
 
         <div class="titleText artistOne">
           {{ artistOne.name }}
-          <span class="artistCity">{{ artistOne.location }}</span>
+          <span class="miniTitle">{{ artistOne.location }}</span>
         </div>
 
         <div class="titleText artistTwo">
-          <span class="artistCity">{{ artistTwo.location }}</span>
+          <span class="miniTitle">{{ artistTwo.location }}</span>
           {{ artistTwo.name }}
         </div>
       </div>
@@ -110,6 +113,9 @@ export default {
     artistTwo() {
       return this.artist[1]
     },
+    titleArray() {
+      return this.title.split(/\s+/)
+    },
   },
   activated() {
     setTimeout(() => {
@@ -131,7 +137,6 @@ export default {
 
   @media (min-width: $bp-desktop) {
     margin-top: 0;
-    margin-bottom: 0;
     text-align: left;
   }
 }
@@ -149,6 +154,10 @@ export default {
 .heroRow {
   position: relative;
   min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   @media (min-width: $bp-desktop) {
     display: flex;
     flex-direction: row-reverse;
@@ -185,10 +194,11 @@ export default {
 }
 
 .postTitle {
-  position: absolute;
-  top: calc(50% - 1rem);
-  left: 0;
-  right: 0;
+  position: relative;
+  // position: absolute;
+  // top: calc(50% - 1rem);
+  // left: 0;
+  // right: 0;
 }
 
 .artistOne {
@@ -205,7 +215,7 @@ export default {
   right: 0;
 }
 
-.artistCity {
+.miniTitle {
   display: block;
   font-weight: $medium;
   font-size: 1.15rem;
@@ -223,15 +233,16 @@ export default {
 
 .headline {
   color: $gray;
-  font-weight: $semibold;
+  font-weight: $medium;
   font-size: 1.1rem;
-  margin: 5rem 0 3rem;
+  margin: 4rem 0 2rem;
   @media (min-width: $bp-desktop) {
     font-size: 1.5rem;
   }
 }
 
 .metaRow {
+  margin: 0 0 3rem;
   @media (min-width: $bp-desktop) {
     display: flex;
     width: calc(100% - 4rem);
@@ -255,7 +266,7 @@ export default {
 .dateTitle,
 .categoriesTitle {
   display: block;
-  margin-top: 2rem;
+  margin-top: 2.5rem;
 
   @media (min-width: $bp-desktop) {
     display: inline-block;
