@@ -136,8 +136,7 @@ export default {
   text-align: center;
 
   @media (min-width: $bp-desktop) {
-    margin-top: 0;
-    text-align: left;
+    margin-top: 9rem;
   }
 }
 
@@ -146,23 +145,21 @@ export default {
   margin: 0 auto;
 
   @media (min-width: $bp-desktop) {
-    width: 100%;
-    margin: 0;
+    width: 90%;
+    position: relative;
   }
 }
 
 .heroRow {
   position: relative;
-  min-height: 80vh;
+  height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
   @media (min-width: $bp-desktop) {
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    position: relative;
+    height: 65vh;
   }
 }
 
@@ -175,10 +172,6 @@ export default {
   height: 100%;
   width: 100%;
   object-fit: cover;
-
-  @media (min-width: $bp-desktop) {
-    width: 50%;
-  }
 }
 
 .titleText {
@@ -188,48 +181,49 @@ export default {
   font-size: 2.25rem;
   @media (min-width: $bp-desktop) {
     font-size: 3.5rem;
-    width: 75%;
-    margin-bottom: 1rem;
   }
 }
 
 .postTitle {
   position: relative;
-  // position: absolute;
-  // top: calc(50% - 1rem);
-  // left: 0;
-  // right: 0;
 }
 
 .artistOne {
   position: absolute;
   top: -1.5rem;
   left: 0;
-  right: 0;
+  width: 100%;
+
+  @media (min-width: $bp-desktop) {
+    text-align: left;
+    top: -2rem;
+    left: -1.5rem;
+    width: calc(100% + 3rem);
+  }
 }
 
 .artistTwo {
   position: absolute;
   bottom: -1.5rem;
-  left: 0;
   right: 0;
+  width: 100%;
+
+  @media (min-width: $bp-desktop) {
+    text-align: right;
+    bottom: -2rem;
+    right: -1.5rem;
+    width: calc(100% + 3rem);
+  }
 }
 
 .miniTitle {
   display: block;
   font-weight: $medium;
   font-size: 1.15rem;
+  @media (min-width: $bp-desktop) {
+    font-size: 1.5rem;
+  }
 }
-
-// .bannerText {
-//   @media (min-width: $bp-desktop) {
-//     width: 50%;
-//     padding-left: 2rem;
-//     padding-right: 5%;
-//     padding-top: 1.5rem;
-//     padding-bottom: 1.5rem;
-//   }
-// }
 
 .headline {
   color: $gray;
@@ -237,29 +231,36 @@ export default {
   font-size: 1.1rem;
   margin: 4rem 0 2rem;
   @media (min-width: $bp-desktop) {
-    font-size: 1.5rem;
+    font-family: $font-display;
+    font-weight: $semibold;
+    font-size: 1.25rem;
+    color: $black;
+    text-transform: none;
+    margin: 6rem 0 4rem;
   }
 }
 
 .metaRow {
   margin: 0 0 3rem;
   @media (min-width: $bp-desktop) {
-    display: flex;
-    width: calc(100% - 4rem);
     margin: 2rem 2rem 0 2rem;
   }
 }
 
 .dateContainer {
   @media (min-width: $bp-desktop) {
-    width: 50%;
+    position: absolute;
+    top: calc(65vh + 1rem);
+    left: 0;
   }
 }
 
 .categoriesContainer {
   @media (min-width: $bp-desktop) {
-    width: 50%;
     display: flex;
+    position: absolute;
+    right: 0;
+    top: -2.5rem;
   }
 }
 
