@@ -12,13 +12,16 @@
         <button
           ref="sense"
           class="categoryButton"
+          :class="setCategoryClass('senses')"
           @click="toggleCategory('sensesList')"
         >
           Sense
         </button>
         <ul id="sensesList" class="filtersList senses">
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
-            <button class="listButton">{{ sense.name }}</button>
+            <button class="listButton" :class="setFiltersClass(sense)">
+              {{ sense.name }}
+            </button>
           </li>
         </ul>
       </div>
@@ -26,13 +29,16 @@
         <button
           ref="mood"
           class="categoryButton"
+          :class="setCategoryClass('moods')"
           @click="toggleCategory('moodsList')"
         >
           Mood
         </button>
         <ul id="moodsList" class="filtersList moods">
           <li v-for="mood of moods" :key="mood.id" class="filtersItem">
-            <button class="listButton">{{ mood }}</button>
+            <button class="listButton" :class="setFiltersClass(mood)">
+              {{ mood }}
+            </button>
           </li>
         </ul>
       </div>
@@ -40,13 +46,16 @@
         <button
           ref="city"
           class="categoryButton"
+          :class="setCategoryClass('cities')"
           @click="toggleCategory('citiesList')"
         >
           City
         </button>
         <ul id="citiesList" class="filtersList cities">
           <li v-for="city of cities" :key="city.id" class="filtersItem">
-            <button class="listButton">{{ city.name }}</button>
+            <button class="listButton" :class="setFiltersClass(city)">
+              {{ city.name }}
+            </button>
           </li>
         </ul>
       </div>
@@ -77,15 +86,23 @@ export default {
       modalRef: null,
     }
   },
-  computed: mapState({
-    cities: (state) => state.categories.cities,
-    senses: (state) => state.categories.senses,
-    moods: (state) =>
-      [...new Set(state.categories.moods.map((mood) => mood.moodCategory))]
-        .map((category) => category.replace(/([a-z])([A-Z])/, '$1 $2'))
-        .sort()
-        .reverse(),
-  }),
+  computed: {
+    setSubCategoryClass(name) {
+      return {
+        highlighted: this.filters.includes(name),
+      }
+    },
+    ...mapState({
+      cities: (state) => state.categories.cities,
+      senses: (state) => state.categories.senses,
+      moods: (state) =>
+        [...new Set(state.categories.moods.map((mood) => mood.moodCategory))]
+          .map((category) => category.replace(/([a-z])([A-Z])/, '$1 $2'))
+          .sort()
+          .reverse(),
+      filters: (state) => state.categories.filters,
+    }),
+  },
   mounted() {
     this.onMount()
   },
@@ -94,6 +111,7 @@ export default {
   },
   methods: {
     onMount() {
+      console.log(this.$store.state.categories.filters)
       this.modalRef = this.$refs.modalFilters
       this.setModalListener()
       this.openModal()
@@ -144,6 +162,16 @@ export default {
 
       // add to filters
     },
+    setCategoryClass(name) {
+      return {
+        bolded: this.filters.includes(name),
+      }
+    },
+    setFiltersClass(name) {
+      return {
+        highlighted: this.filters.includes(name),
+      }
+    },
   },
 }
 </script>
@@ -173,15 +201,6 @@ export default {
   .filtersTop {
     position: relative;
   }
-
-  // .resize-observer {
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   right: 0;
-  //   bottom: 0;
-  //   pointer-events: none;
-  // }
 
   .topBar {
     display: flex;
@@ -258,6 +277,14 @@ export default {
     li {
       width: 50%;
     }
+  }
+
+  .bolded {
+    font-weight: 600;
+  }
+
+  .highlighted {
+    background-color: $accentTransparent;
   }
 }
 
