@@ -188,6 +188,7 @@ blockquote {
 
 .caption {
   margin: 0.5rem 0;
+  font-size: 0.65rem;
 }
 
 .video {
