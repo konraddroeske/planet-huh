@@ -15,7 +15,7 @@ export default {
   },
   methods: {
     onClick(event) {
-      this.$emit('clicked')
+      this.$emit("clicked")
     },
   },
 }

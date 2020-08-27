@@ -9,11 +9,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import gsap from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import CategoryHero from '@/components/CategoryHero'
-import PostsFeed from '@/components/PostsFeed'
+import { mapState } from "vuex"
+import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"
+import CategoryHero from "@/components/CategoryHero"
+import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -42,19 +42,19 @@ const leavingToIndex = (el) => {
 }
 
 export default {
-  layout: 'default',
+  layout: "default",
   transition(to, from) {
     if (!from) {
       return setNav()
     }
 
-    if (from.path === '/') {
+    if (from.path === "/") {
       entering()
     }
 
-    to.path === '/'
-      ? leavingToIndex(to.matched[0].instances.default.$el)
-      : leaving()
+    // console.log(to.matched[0])
+
+    to.path === "/" ? leavingToIndex(to.matched[0].instances) : leaving()
   },
   components: {
     CategoryHero,
@@ -64,18 +64,17 @@ export default {
     title: (state) => state.categories.title,
     posts: (state) => state.categories.postsFeed,
   }),
-  async created() {
-    await this.$store.dispatch('categories/handleQueries', this.$route.query)
-  },
-  mounted() {
-    this.onHeroLoad()
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
-  },
+  // mounted() {
+  //   console.log('mounted')
+  //   this.onHeroLoad()
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   this.onDestroy()
+  // },
   activated() {
-    this.$store.dispatch('categories/handleQueries', this.$route.query)
+    console.log("activated")
+    this.$store.dispatch("categories/handleQueries", this.$route.query)
 
     setTimeout(() => {
       this.onHeroLoad()
@@ -88,17 +87,17 @@ export default {
   },
   methods: {
     onMount() {
-      const nav = document.querySelector('#navContainer')
-      nav.addEventListener('click', this.route, false)
-      nav.addEventListener('touchstart', this.route, false)
+      const nav = document.querySelector("#navContainer")
+      nav.addEventListener("click", this.route, false)
+      nav.addEventListener("touchstart", this.route, false)
     },
     onDestroy() {
-      const nav = document.querySelector('#navContainer')
-      nav.removeEventListener('click', this.route, false)
-      nav.removeEventListener('touchstart', this.route, false)
+      const nav = document.querySelector("#navContainer")
+      nav.removeEventListener("click", this.route, false)
+      nav.removeEventListener("touchstart", this.route, false)
     },
     onHeroLoad() {
-      this.$store.dispatch('setNavContainerSmall')
+      this.$store.dispatch("setNavContainerSmall")
     },
     route() {
       this.$router.push({

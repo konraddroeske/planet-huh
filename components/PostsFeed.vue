@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import gsap from 'gsap'
-import Wrapper from '@/components/Wrapper'
-import Button from '@/components/Button'
-import Date from '@/components/Date'
+import gsap from "gsap"
+import Wrapper from "@/components/Wrapper"
+import Button from "@/components/Button"
+import Date from "@/components/Date"
 
 export default {
   components: { Wrapper, Button, Date },
@@ -70,7 +70,7 @@ export default {
     formattedPosts() {
       return this.posts.map((post) => ({
         ...post,
-        city: 'Toronto',
+        city: "Toronto",
       }))
     },
   },
@@ -81,12 +81,12 @@ export default {
       }
     },
   },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
-  },
+  // mounted() {
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   this.onDestroy()
+  // },
   activated() {
     this.onMount()
   },
@@ -95,7 +95,7 @@ export default {
   },
   methods: {
     onMount() {
-      this.width = window.matchMedia('(min-width: 1024px)')
+      this.width = window.matchMedia("(min-width: 1024px)")
       this.setPadding(this.width)
       this.width.addListener(this.setPadding)
     },
@@ -108,7 +108,7 @@ export default {
       }
     },
     onResize() {
-      const images = document.querySelectorAll('.postImageContainer')
+      const images = document.querySelectorAll(".postImageContainer")
 
       for (let i = 1; i < images.length; i++) {
         if (i % 2 === 1) {
@@ -122,12 +122,12 @@ export default {
       if (width.matches) {
         this.onResize()
         // add resize event listener
-        window.addEventListener('resize', this.onResize)
+        window.addEventListener("resize", this.onResize)
       } else {
         // remove resize event listener
-        window.removeEventListener('resize', this.onResize)
+        window.removeEventListener("resize", this.onResize)
 
-        const images = document.querySelectorAll('.postImageContainer')
+        const images = document.querySelectorAll(".postImageContainer")
 
         for (let i = 1; i < images.length; i++) {
           if (i % 2 === 1) {

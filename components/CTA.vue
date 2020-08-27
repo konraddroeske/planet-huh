@@ -11,8 +11,8 @@
 </template>
 
 <script>
-import Wrapper from './Wrapper'
-import Button from './Button'
+import Wrapper from "./Wrapper"
+import Button from "./Button"
 export default {
   components: { Wrapper, Button },
   computed: {

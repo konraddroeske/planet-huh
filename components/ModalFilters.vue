@@ -13,11 +13,11 @@
           ref="sense"
           class="categoryButton"
           :class="setCategoryClass('senses')"
-          @click="toggleCategory('sensesList')"
+          @click="toggleCategory('senses')"
         >
           Sense
         </button>
-        <ul id="sensesList" class="filtersList senses">
+        <ul id="senses" class="filtersList senses">
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
             <button class="listButton" :class="setFiltersClass(sense)">
               {{ sense.name }}
@@ -30,11 +30,11 @@
           ref="mood"
           class="categoryButton"
           :class="setCategoryClass('moods')"
-          @click="toggleCategory('moodsList')"
+          @click="toggleCategory('moods')"
         >
           Mood
         </button>
-        <ul id="moodsList" class="filtersList moods">
+        <ul id="moods" class="filtersList moods">
           <li v-for="mood of moods" :key="mood.id" class="filtersItem">
             <button class="listButton" :class="setFiltersClass(mood)">
               {{ mood }}
@@ -47,11 +47,11 @@
           ref="city"
           class="categoryButton"
           :class="setCategoryClass('cities')"
-          @click="toggleCategory('citiesList')"
+          @click="toggleCategory('cities')"
         >
           City
         </button>
-        <ul id="citiesList" class="filtersList cities">
+        <ul id="cities" class="filtersList cities">
           <li v-for="city of cities" :key="city.id" class="filtersItem">
             <button class="listButton" :class="setFiltersClass(city)">
               {{ city.name }}
@@ -67,12 +67,12 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import VueResize from 'vue-resize'
-import gsap from 'gsap'
-import { mapState } from 'vuex'
-import ModalNavButton from '@/components/ModalNavButton'
-import 'vue-resize/dist/vue-resize.css'
+import Vue from "vue"
+import VueResize from "vue-resize"
+import gsap from "gsap"
+import { mapState } from "vuex"
+import ModalNavButton from "@/components/ModalNavButton"
+import "vue-resize/dist/vue-resize.css"
 
 Vue.use(VueResize)
 
@@ -97,7 +97,7 @@ export default {
       senses: (state) => state.categories.senses,
       moods: (state) =>
         [...new Set(state.categories.moods.map((mood) => mood.moodCategory))]
-          .map((category) => category.replace(/([a-z])([A-Z])/, '$1 $2'))
+          .map((category) => category.replace(/([a-z])([A-Z])/, "$1 $2"))
           .sort()
           .reverse(),
       filters: (state) => state.categories.filters,
@@ -106,18 +106,18 @@ export default {
   mounted() {
     this.onMount()
   },
-  activated() {
-    this.onMount()
-  },
+  // activated() {
+  //   console.log('activated')
+  //   this.onMount()
+  // },
   methods: {
     onMount() {
-      console.log(this.$store.state.categories.filters)
       this.modalRef = this.$refs.modalFilters
       this.setModalListener()
       this.openModal()
     },
     setModalListener() {
-      this.$nuxt.$on('close-modal', () => {
+      this.$nuxt.$on("close-modal", () => {
         this.closeModal()
       })
     },
@@ -125,31 +125,31 @@ export default {
     toggleFilter() {},
     openModal() {
       if (!gsap.isTweening(this.modalRef)) {
-        gsap.to(this.modalRef, 0.4, { x: '0%' })
+        gsap.to(this.modalRef, 0.4, { x: "0%" })
       }
     },
     closeModal() {
       if (!gsap.isTweening(this.modalRef)) {
         const tl = gsap.timeline({
           onComplete: () => {
-            this.$store.commit('categories/setModal', false)
+            this.$store.commit("categories/setModal", false)
           },
         })
 
-        tl.to(this.modalRef, 0.4, { x: '100%' })
+        tl.to(this.modalRef, 0.4, { x: "100%" })
       }
     },
     handleResize() {
       this.animateList(0)
     },
     animateList(time) {
-      const filtersList = document.querySelectorAll('.filtersList')
+      const filtersList = document.querySelectorAll(".filtersList")
 
       filtersList.forEach((list) => {
         if (list.id === this.currentCategory) {
-          gsap.to(list, time, { maxHeight: list.scrollHeight + 'px' })
+          gsap.to(list, time, { maxHeight: list.scrollHeight + "px" })
         } else {
-          gsap.to(list, time, { maxHeight: '0px' })
+          gsap.to(list, time, { maxHeight: "0px" })
         }
       })
     },
@@ -161,6 +161,7 @@ export default {
       this.animateList(0.4)
 
       // add to filters
+      this.toggleFilter(category)
     },
     setCategoryClass(name) {
       return {

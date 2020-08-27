@@ -26,10 +26,10 @@
 </template>
 
 <script>
-import CategoryNav from './CategoryNav'
-import PageNav from './PageNav'
-import SocialLinks from './SocialLinks'
-import SearchBar from './SearchBar'
+import CategoryNav from "./CategoryNav"
+import PageNav from "./PageNav"
+import SocialLinks from "./SocialLinks"
+import SearchBar from "./SearchBar"
 export default {
   components: { CategoryNav, PageNav, SocialLinks, SearchBar },
   data() {
@@ -39,13 +39,13 @@ export default {
   },
   methods: {
     toggleModal() {
-      const blurrableContent = document.getElementById('blurrableContent')
+      const blurrableContent = document.getElementById("blurrableContent")
       if (this.isOpen) {
-        blurrableContent.classList.remove('blurContent')
-        document.body.classList.remove('lockScroll')
+        blurrableContent.classList.remove("blurContent")
+        document.body.classList.remove("lockScroll")
       } else {
-        blurrableContent.classList.add('blurContent')
-        document.body.classList.add('lockScroll')
+        blurrableContent.classList.add("blurContent")
+        document.body.classList.add("lockScroll")
       }
       this.isOpen = !this.isOpen
     },
@@ -67,7 +67,7 @@ export default {
   @media (min-width: $bp-desktop) {
     display: grid;
     grid-template-rows: repeat(5, 1fr);
-    grid-template-areas: 'empty1' 'empty2' 'categoryNav' 'pageNav' 'searchBarSocial';
+    grid-template-areas: "empty1" "empty2" "categoryNav" "pageNav" "searchBarSocial";
   }
 }
 
@@ -94,7 +94,7 @@ export default {
   opacity: 0;
 }
 
-label[for='menuButton'] {
+label[for="menuButton"] {
   display: block;
   height: 2rem;
   width: 4rem;
@@ -114,7 +114,7 @@ label[for='menuButton'] {
 .menuIcon,
 .menuIcon::before,
 .menuIcon::after {
-  content: '';
+  content: "";
   display: block;
   height: 0.125rem;
   background: $black;
@@ -137,11 +137,11 @@ label[for='menuButton'] {
   top: 0.45rem;
 }
 
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
+.sandwichMenu input[type="checkbox"]:checked + label > .menuIcon {
   background: none;
 }
 
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon::before {
+.sandwichMenu input[type="checkbox"]:checked + label > .menuIcon::before {
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
   bottom: 0;
@@ -149,7 +149,7 @@ label[for='menuButton'] {
   transition: all 0.2s ease;
 }
 
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon::after {
+.sandwichMenu input[type="checkbox"]:checked + label > .menuIcon::after {
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
   top: 0;

@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import Category from './Category'
+import Category from "./Category"
 export default {
   components: { Category },
   props: {
@@ -43,7 +43,7 @@ export default {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark', 'gradient'].includes(value)
+        return ["light", "dark", "gradient"].includes(value)
       },
     },
   },

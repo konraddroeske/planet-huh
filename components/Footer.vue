@@ -102,11 +102,11 @@
 </template>
 
 <script>
-import Logo from './Logo'
-import CategoryNav from './CategoryNav'
-import PageNav from './PageNav'
-import SearchBar from './SearchBar'
-import SocialLinks from './SocialLinks'
+import Logo from "./Logo"
+import CategoryNav from "./CategoryNav"
+import PageNav from "./PageNav"
+import SearchBar from "./SearchBar"
+import SocialLinks from "./SocialLinks"
 export default {
   components: { Logo, CategoryNav, PageNav, SearchBar, SocialLinks },
 }
