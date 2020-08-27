@@ -8,6 +8,7 @@ export const state = () => ({
     senses: true,
   },
   filters: [],
+  modal: false,
   filtersList: {
     moods: `{mood: {id_not: "null"}}`,
     senses: `{sense_every: {id_not: "null"}}`,
@@ -15,6 +16,9 @@ export const state = () => ({
   },
   formattedFilters: null,
   postsFeed: [],
+  cities: [],
+  moods: [],
+  senses: [],
 })
 
 export const actions = {
@@ -28,10 +32,6 @@ export const actions = {
           date
           city {
             name
-            coordinates {
-              latitude
-              longitude
-            }
           }
           sense {
             name
@@ -55,7 +55,62 @@ export const actions = {
       console.log(error)
     }
   },
+  async getMoods({ commit, state }) {
+    try {
+      const { data } = await fetchContent(`{
+        moods(orderBy: mood_ASC) {
+            id
+            mood
+            moodCategory
+            createdAt
+        }
+      }`)
+
+      const { moods } = data.data
+      commit('setMoods', moods)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  },
+  async getCities({ commit, state }) {
+    try {
+      const { data } = await fetchContent(`{
+        cities(orderBy: name_ASC) {
+            id
+            name
+            createdAt
+        }
+      }`)
+
+      const { cities } = data.data
+      commit('setCities', cities)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  },
+  async getSenses({ commit, state }) {
+    try {
+      const { data } = await fetchContent(`{
+        senses(orderBy: name_ASC) {
+            id
+            name
+            createdAt
+        }
+      }`)
+
+      const { senses } = data.data
+
+      commit('setSenses', senses)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  },
   checkTitle({ state, commit }, filters) {
+    // console.log('check title', filters)
+
     // let counter = 0
     // let title = ''
 
@@ -79,12 +134,12 @@ export const actions = {
     //     : commit('setTitle', 'all')
     // }
 
-    commit('setTitle', filters[0])
+    commit('setTitle', Array.isArray(filters) ? filters[0] : filters)
   },
   formatFilters({ state, dispatch, commit }, payload) {
-    // set categories
     let filters = ''
 
+    // check if a mood, city, or sense
     if (state.filtersList[payload[0]]) {
       payload.forEach((item) => {
         if (state.titles[item] && filters === '') {
@@ -94,35 +149,55 @@ export const actions = {
         }
       })
     } else if (payload[1] === 'cities') {
-      // check if a mood, city, or sense
       filters = `{city_every: {name: "${payload[0]}"}}`
     } else if (payload[1] === 'moods') {
-      console.log(payload[0])
       filters = `{mood: {mood: "${payload[0]}"}}`
     }
-    // where: {mood: {id_not: "null"}, AND: {sense_every: {id_not: "null"}, AND: {city_every: {id_not: "null"}}}}
-    // set sub categories
+
+    // console.log('api filter', filters)
 
     commit('setFormattedFilters', filters)
     dispatch('getCategoryPosts')
+
+    // where: {mood: {id_not: "null"}, AND: {sense_every: {id_not: "null"}, AND: {city_every: {id_not: "null"}}}}
+    // set sub categories
   },
-  handlePosts({ dispatch, commit, state }, payload) {
-    commit('resetFeed')
-    commit('setFilters', payload)
-    dispatch('checkTitle', payload)
-    dispatch('formatFilters', payload)
+  handleQueries({ dispatch, commit, state }, payload) {
+    let params = Object.values(payload)
+
+    // check if nested or normal array
+    Array.isArray(params[0])
+      ? (params = JSON.parse(JSON.stringify(params[0])))
+      : (params = JSON.parse(JSON.stringify(params)))
+
+    let counter = 0
+
+    if (state.filters.length > 0) {
+      for (let i = 0; i < state.filters.length; i++) {
+        if (params[i] !== state.filters[i]) {
+          counter += 1
+        }
+      }
+    }
+
+    // check if page is already loaded
+    if (state.filters.length === 0 || counter > 0) {
+      commit('resetFeed')
+      commit('setFilters', params)
+      dispatch('checkTitle', params)
+      dispatch('formatFilters', params)
+    }
   },
 }
 
 export const mutations = {
-  setTitle(state, title) {
-    state.title = title
+  setTitle(state, payload) {
+    state.title = payload
   },
   resetFilters(state) {
     state.filters = []
   },
   setFilters(state, payload) {
-    console.log('set filters')
     state.filters = payload
   },
   resetFeed(state) {
@@ -136,5 +211,19 @@ export const mutations = {
   },
   setCategoryPosts(state, newPosts) {
     state.postsFeed = state.postsFeed.concat(newPosts)
+  },
+  setCities(state, cities) {
+    state.cities = cities
+  },
+  setMoods(state, moods) {
+    state.moods = moods
+  },
+  setSenses(state, senses) {
+    console.log(senses)
+    state.senses = senses
+  },
+  toggleModal(state) {
+    console.log('toggle modal')
+    state.modal = !state.modal
   },
 }

@@ -18,14 +18,17 @@ $extrabold: 900;
 $black: #000000;
 $white: #ffffff;
 $accent: #749bff;
+$accentTransparent: rgba(116, 155, 255, 0.15);
 $gray: #7e7e7e;
 
 // Positioning
 $z-above: 10;
 $z-modal: 20;
 $z-fixed: 30;
+$z-filters: 40;
 
 // Font Size
+$font-x-sm: 0.8rem;
 $font-sm: 1rem;
 $font-md: 1.5rem;
 $font-lg: 2rem;

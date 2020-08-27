@@ -6,24 +6,24 @@
       :to="{ name: '' }"
       :variant="variant"
     />
+    <div class="buttonContainer">
+      <ButtonFilter @clicked="toggleModal">
+        Filter Posts
+      </ButtonFilter>
+    </div>
   </div>
 </template>
 
 <script>
-import CategoryTitle from '@/components/CategoryTitle.vue'
+import CategoryTitle from '@/components/CategoryTitle'
+import ButtonFilter from '@/components/ButtonFilter'
 
 export default {
   components: {
     CategoryTitle,
+    ButtonFilter,
   },
   props: {
-    // variant: {
-    //   type: String,
-    //   required: true,
-    //   validator(value) {
-    //     return ['light', 'dark', 'gradient'].includes(value)
-    //   },
-    // },
     title: {
       type: String,
       required: true,
@@ -35,6 +35,11 @@ export default {
       disabled: true,
     }
   },
+  methods: {
+    toggleModal() {
+      this.$store.commit('categories/toggleModal')
+    },
+  },
 }
 </script>
 
@@ -44,5 +49,27 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+.buttonContainer {
+  position: absolute;
+  bottom: 4rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+@media (min-width: $bp-tablet) {
+  .buttonContainer {
+    left: 1rem;
+    bottom: 3rem;
+    transform: translateX(0);
+  }
+}
+
+@media (min-width: $bp-desktop) {
+  .buttonContainer {
+    left: 2rem;
+  }
 }
 </style>
