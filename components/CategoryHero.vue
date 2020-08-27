@@ -37,7 +37,12 @@ export default {
   },
   methods: {
     toggleModal() {
-      this.$store.commit('categories/toggleModal')
+      this.$store.state.categories.modal
+        ? this.closeModal()
+        : this.$store.commit('categories/setModal', true)
+    },
+    closeModal() {
+      this.$nuxt.$emit('close-modal')
     },
   },
 }
