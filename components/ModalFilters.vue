@@ -1,31 +1,50 @@
 <template>
-  <div class="modalFilters">
+  <div ref="modalFilters" class="modalFilters">
+    <resize-observer @notify="handleResize()" />
     <div class="filtersTop">
       <div class="topBar">
         <h2 class="filtersTitle">Filter By:</h2>
         <div class="modalButtonContainer">
-          <ModalNavButton @onClick="closeModal" />
+          <ModalNavButton @clicked="closeModal()" />
         </div>
       </div>
       <div class="filtersCategory">
-        <button ref="sense" class="categoryButton">Sense</button>
-        <ul class="filtersList senses">
+        <button
+          ref="sense"
+          class="categoryButton"
+          @click="toggleCategory('sensesList')"
+        >
+          Sense
+        </button>
+        <ul id="sensesList" class="filtersList senses">
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
             <button class="listButton">{{ sense.name }}</button>
           </li>
         </ul>
       </div>
       <div class="filtersCategory">
-        <button ref="mood" class="categoryButton">Mood</button>
-        <ul class="filtersList moods">
+        <button
+          ref="mood"
+          class="categoryButton"
+          @click="toggleCategory('moodsList')"
+        >
+          Mood
+        </button>
+        <ul id="moodsList" class="filtersList moods">
           <li v-for="mood of moods" :key="mood.id" class="filtersItem">
             <button class="listButton">{{ mood }}</button>
           </li>
         </ul>
       </div>
       <div class="filtersCategory">
-        <button ref="city" class="categoryButton">City</button>
-        <ul class="filtersList cities">
+        <button
+          ref="city"
+          class="categoryButton"
+          @click="toggleCategory('citiesList')"
+        >
+          City
+        </button>
+        <ul id="citiesList" class="filtersList cities">
           <li v-for="city of cities" :key="city.id" class="filtersItem">
             <button class="listButton">{{ city.name }}</button>
           </li>
@@ -39,12 +58,24 @@
 </template>
 
 <script>
+import Vue from 'vue'
+import VueResize from 'vue-resize'
+import gsap from 'gsap'
 import { mapState } from 'vuex'
 import ModalNavButton from '@/components/ModalNavButton'
+import 'vue-resize/dist/vue-resize.css'
+
+Vue.use(VueResize)
 
 export default {
   components: {
     ModalNavButton,
+  },
+  data() {
+    return {
+      currentCategory: null,
+      modalRef: null,
+    }
   },
   computed: mapState({
     cities: (state) => state.categories.cities,
@@ -55,13 +86,63 @@ export default {
         .sort()
         .reverse(),
   }),
+  mounted() {
+    this.onMount()
+  },
+  activated() {
+    this.onMount()
+  },
   methods: {
+    onMount() {
+      this.modalRef = this.$refs.modalFilters
+      this.setModalListener()
+      this.openModal()
+    },
+    setModalListener() {
+      this.$nuxt.$on('close-modal', () => {
+        this.closeModal()
+      })
+    },
     clearSelection() {},
     toggleFilter() {},
-    closeModal() {},
-    toggleCategory() {
+    openModal() {
+      if (!gsap.isTweening(this.modalRef)) {
+        gsap.to(this.modalRef, 0.4, { x: '0%' })
+      }
+    },
+    closeModal() {
+      if (!gsap.isTweening(this.modalRef)) {
+        const tl = gsap.timeline({
+          onComplete: () => {
+            this.$store.commit('categories/setModal', false)
+          },
+        })
+
+        tl.to(this.modalRef, 0.4, { x: '100%' })
+      }
+    },
+    handleResize() {
+      this.animateList(0)
+    },
+    animateList(time) {
+      const filtersList = document.querySelectorAll('.filtersList')
+
+      filtersList.forEach((list) => {
+        if (list.id === this.currentCategory) {
+          gsap.to(list, time, { maxHeight: list.scrollHeight + 'px' })
+        } else {
+          gsap.to(list, time, { maxHeight: '0px' })
+        }
+      })
+    },
+    toggleCategory(category) {
+      this.currentCategory === category
+        ? (this.currentCategory = null)
+        : (this.currentCategory = category)
+
+      this.animateList(0.4)
+
       // add to filters
-      // if mobile, expand and contract
     },
   },
 }
@@ -86,6 +167,21 @@ export default {
   justify-content: space-between;
 
   padding: 1rem 1rem 4.4rem 1rem;
+
+  transform: translateX(100%);
+
+  .filtersTop {
+    position: relative;
+  }
+
+  // .resize-observer {
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   pointer-events: none;
+  // }
 
   .topBar {
     display: flex;
@@ -152,15 +248,10 @@ export default {
     flex-wrap: wrap;
   }
 
-  .senses,
-  .moods,
-  .cities {
-    height: 0;
+  .filtersList {
+    max-height: 0;
     overflow: hidden;
-  }
-
-  .senses {
-    height: 100%;
+    position: relative;
   }
 
   .moods {
@@ -171,8 +262,13 @@ export default {
 }
 
 @media (min-width: $bp-mobile) {
-  .filtersCategory {
-    padding: 2rem 0;
+  .modalFilters {
+    left: auto;
+    max-width: $bp-mobile;
+
+    .filtersCategory {
+      padding: 2rem 0;
+    }
   }
 }
 
