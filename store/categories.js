@@ -107,9 +107,6 @@ export const actions = {
   checkTitle({ state, commit }, filters) {
     commit("setTitle", Array.isArray(filters) ? filters[0] : filters)
   },
-  formatObject(payload) {
-    console.log(payload)
-  },
   formatFilters({ state, dispatch, commit }, payload) {
     let filters = {}
 
@@ -154,13 +151,14 @@ export const actions = {
         filtersArr.push(cityObj)
       }
 
+      // must combine mood categories with mood
       if (mood.length > 0) {
         const moodFilters = city.filter((item) => item !== "moods")
         moodObj = { mood: { id_not: "null" } }
         let str = "mood.AND"
 
         for (let i = 0; i < moodFilters.length; i++) {
-          set(moodObj, str, { moodCategory: moodFilters[i] })
+          set(moodObj, str, { mood: moodFilters[i] })
           str += ".AND"
         }
 
@@ -277,9 +275,9 @@ export const mutations = {
     state.moods = moods
 
     moods.forEach((mood) => {
-      state.allFilters[mood.moodCategory] = {
+      state.allFilters[mood.mood] = {
         type: "mood",
-        query: `name: ${mood.moodCategory}`,
+        query: `name: ${mood.mood}`,
       }
     })
   },
@@ -288,7 +286,7 @@ export const mutations = {
 
     senses.forEach((sense) => {
       state.allFilters[sense.name] = {
-        type: "mood",
+        type: "sense",
         query: `name: ${sense.name}`,
       }
     })
