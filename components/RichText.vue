@@ -30,6 +30,18 @@
           {{ item.text }}
         </h6>
 
+        <ul v-if="item.type === 'bulleted-list'" :key="index">
+          <li v-for="listItem in item.listItems" :key="listItem">
+            {{ listItem }}
+          </li>
+        </ul>
+
+        <ol v-if="item.type === 'numbered-list'" :key="index">
+          <li v-for="listItem in item.listItems" :key="listItem">
+            {{ listItem }}
+          </li>
+        </ol>
+
         <blockquote v-if="item.type === 'block-quote'" :key="index">
           <q>{{ item.text }}</q>
           <div class="source">— {{ item.source }}</div>
@@ -100,6 +112,24 @@ export default {
             type: item.type,
             text: item.children[0].text.trim(),
           })
+        } else if (
+          item.type === 'bulleted-list' ||
+          item.type === 'numbered-list'
+        ) {
+          const lastItem = cleanContent[cleanContent.length - 1]
+
+          const listItems = item.children.map(
+            (child) => child.children[0].children[0].text
+          )
+
+          if (lastItem.type === item.type) {
+            lastItem.listItems = lastItem.listItems.concat(listItems)
+          } else {
+            cleanContent.push({
+              type: item.type,
+              listItems,
+            })
+          }
         } else if (item.type === 'block-quote') {
           const [text, source] = item.children[0].text.split('@')
           cleanContent.push({
@@ -208,6 +238,66 @@ h6 {
   font-weight: $semibold;
   font-size: 1rem;
   line-height: 20px;
+}
+
+ul {
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    color: $mediumGray;
+    font-family: $font-body;
+    font-size: 1rem;
+    line-height: 24px;
+    padding-left: 2.5rem;
+    position: relative;
+
+    &:not(:last-child) {
+      margin-bottom: 0.1rem;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 0.75rem;
+      height: 0.05rem;
+      top: 40%;
+      left: 0;
+      background: $accent;
+    }
+  }
+}
+
+ol {
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: counter;
+
+  li {
+    color: $mediumGray;
+    font-family: $font-body;
+    font-size: 1rem;
+    line-height: 24px;
+    padding-left: 2.5rem;
+    counter-increment: counter;
+    position: relative;
+
+    &:not(:last-child) {
+      margin-bottom: 0.1rem;
+    }
+
+    &::before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      content: counter(counter) '.';
+      color: $accent;
+      font-family: $font-display;
+      font-weight: $medium;
+    }
+  }
 }
 
 blockquote {
