@@ -132,25 +132,7 @@ export default {
   },
   async created() {
     const { data } = await fetchContent(`{
-      posts(orderBy: date_DESC, first: 6, ${this.computedWhere}) {
-        title
-        slug
-        coverImage {
-          url
-        }
-        date
-        excerpt
-        city {
-          name
-        }
-        sense {
-          name
-        }
-        mood {
-          mood
-        }
-      }
-      collabPosts(orderBy: date_DESC, first: 6, ${this.computedWhere}) {
+      posts(orderBy: date_DESC, first: 12, ${this.computedWhere}) {
         title
         slug
         coverImage {
@@ -170,11 +152,9 @@ export default {
       }
     }`)
 
-    const { posts, collabPosts } = data.data
+    const { posts } = data.data
 
-    const randomizedPosts = posts
-      .concat(collabPosts)
-      .sort((a, b) => 0.5 - Math.random())
+    const randomizedPosts = posts.sort((a, b) => 0.5 - Math.random())
 
     // Remove current post if the user is on a post page
     const currentSlug = this.$route.params.slug

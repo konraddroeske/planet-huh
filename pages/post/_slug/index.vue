@@ -89,7 +89,7 @@ export default {
   },
   async created() {
     const { data } = await fetchContent(`{
-      collabPost(where: {slug: "${this.slug}"}) {
+      post(where: {slug: "${this.slug}"}) {
         title
         excerpt
         date
@@ -123,10 +123,10 @@ export default {
       }
     }`)
 
-    const { coverImage, content } = data.data.collabPost
+    const { coverImage, content } = data.data.post
 
     this.post = {
-      ...data.data.collabPost,
+      ...data.data.post,
       imageSrc: coverImage.url,
       content: content.raw.children,
     }
