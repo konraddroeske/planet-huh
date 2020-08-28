@@ -6,6 +6,30 @@
           {{ item.text }}
         </p>
 
+        <h1 v-if="item.type === 'heading-one'" :key="index">
+          {{ item.text }}
+        </h1>
+
+        <h2 v-if="item.type === 'heading-two'" :key="index">
+          {{ item.text }}
+        </h2>
+
+        <h3 v-if="item.type === 'heading-three'" :key="index">
+          {{ item.text }}
+        </h3>
+
+        <h4 v-if="item.type === 'heading-four'" :key="index">
+          {{ item.text }}
+        </h4>
+
+        <h5 v-if="item.type === 'heading-five'" :key="index">
+          {{ item.text }}
+        </h5>
+
+        <h6 v-if="item.type === 'heading-six'" :key="index">
+          {{ item.text }}
+        </h6>
+
         <blockquote v-if="item.type === 'block-quote'" :key="index">
           <q>{{ item.text }}</q>
           <div class="source">— {{ item.source }}</div>
@@ -61,7 +85,17 @@ export default {
 
       const cleanContent = []
       rawContent.forEach((item, index) => {
-        if (item.type === 'paragraph') {
+        if (
+          [
+            'paragraph',
+            'heading-one',
+            'heading-two',
+            'heading-three',
+            'heading-four',
+            'heading-five',
+            'heading-six',
+          ].includes(item.type)
+        ) {
           cleanContent.push({
             type: item.type,
             text: item.children[0].text.trim(),
@@ -134,6 +168,46 @@ p {
   @media (min-width: $bp-desktop) {
     font-size: 1.15rem;
   }
+}
+
+h1 {
+  font-weight: $extrabold;
+  font-size: 3.4rem;
+  text-transform: uppercase;
+  line-height: 55px;
+}
+
+h2 {
+  font-weight: $extrabold;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  line-height: 45px;
+}
+
+h3 {
+  color: $accent;
+  font-weight: $semibold;
+  font-size: 2.25rem;
+  line-height: 40px;
+}
+
+h4 {
+  font-weight: $semibold;
+  font-size: 1.5rem;
+  line-height: 30px;
+}
+
+h5 {
+  font-weight: $semibold;
+  font-size: 1.25rem;
+  line-height: 24px;
+}
+
+h6 {
+  color: $mediumGray;
+  font-weight: $semibold;
+  font-size: 1rem;
+  line-height: 20px;
 }
 
 blockquote {
