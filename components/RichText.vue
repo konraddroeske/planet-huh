@@ -3,7 +3,10 @@
     <div class="wrapper">
       <template v-for="(item, index) of organizedContent">
         <p v-if="item.type === 'paragraph'" :key="index">
-          {{ item.text }}
+          <span
+            class="linkContainer"
+            v-html="renderChildrenWithLinks(item.children)"
+          ></span>
         </p>
 
         <h1 v-if="item.type === 'heading-one'" :key="index">
@@ -97,9 +100,13 @@ export default {
 
       const cleanContent = []
       rawContent.forEach((item, index) => {
-        if (
+        if (item.type === 'paragraph') {
+          cleanContent.push({
+            type: item.type,
+            children: item.children,
+          })
+        } else if (
           [
-            'paragraph',
             'heading-one',
             'heading-two',
             'heading-three',
@@ -110,7 +117,7 @@ export default {
         ) {
           cleanContent.push({
             type: item.type,
-            text: item.children[0].text.trim(),
+            text: this.childrenToText(item.children),
           })
         } else if (
           item.type === 'bulleted-list' ||
@@ -118,8 +125,8 @@ export default {
         ) {
           const lastItem = cleanContent[cleanContent.length - 1]
 
-          const listItems = item.children.map(
-            (child) => child.children[0].children[0].text
+          const listItems = item.children.map((listItem) =>
+            this.childrenToText(listItem.children[0].children)
           )
 
           if (lastItem.type === item.type) {
@@ -131,7 +138,7 @@ export default {
             })
           }
         } else if (item.type === 'block-quote') {
-          const [text, source] = item.children[0].text.split('@')
+          const [text, source] = this.childrenToText(item.children).split('@')
           cleanContent.push({
             type: item.type,
             text: text.trim(),
@@ -175,6 +182,30 @@ export default {
       return cleanContent
     },
   },
+  methods: {
+    childrenToText(children) {
+      return children
+        .map((child) =>
+          child.type === 'link'
+            ? this.childrenToText(child.children)
+            : child.text
+        )
+        .join('')
+        .trim()
+    },
+    renderChildrenWithLinks(children) {
+      return children
+        .map((child) =>
+          child.type === 'link'
+            ? `<a class="link" href="${child.href}">${this.childrenToText(
+                child.children
+              )}</a>`
+            : child.text
+        )
+        .join('')
+        .trim()
+    },
+  },
 }
 </script>
 
@@ -197,6 +228,18 @@ p {
 
   @media (min-width: $bp-desktop) {
     font-size: 1.15rem;
+  }
+}
+
+.linkContainer >>> .link,
+.linkContainer >>> .link:visited {
+  color: $black;
+  text-decoration-color: $accent;
+
+  &:hover,
+  &:focus {
+    color: $accent;
+    text-decoration-color: $black;
   }
 }
 
