@@ -3,10 +3,12 @@
     <div class="wrapper">
       <template v-for="(item, index) of organizedContent">
         <p v-if="item.type === 'paragraph'" :key="index">
-          <span
-            class="linkContainer"
-            v-html="renderChildrenWithLinks(item.children)"
-          ></span>
+          <template v-for="(child, idx) of item.children">
+            <template v-if="typeof child === 'string'">{{ child }}</template>
+            <a v-else :key="idx" :href="child.href">
+              {{ child.text }}
+            </a>
+          </template>
         </p>
 
         <h1 v-if="item.type === 'heading-one'" :key="index">
@@ -103,7 +105,7 @@ export default {
         if (item.type === 'paragraph') {
           cleanContent.push({
             type: item.type,
-            children: item.children,
+            children: this.parseChildrenWithLinks(item.children),
           })
         } else if (
           [
@@ -193,17 +195,16 @@ export default {
         .join('')
         .trim()
     },
-    renderChildrenWithLinks(children) {
-      return children
-        .map((child) =>
-          child.type === 'link'
-            ? `<a class="link" href="${child.href}">${this.childrenToText(
-                child.children
-              )}</a>`
-            : child.text
-        )
-        .join('')
-        .trim()
+    parseChildrenWithLinks(children) {
+      return children.map((child) =>
+        child.type === 'link'
+          ? {
+              type: child.type,
+              href: child.href,
+              text: this.childrenToText(child.children),
+            }
+          : child.text
+      )
     },
   },
 }
@@ -229,17 +230,17 @@ p {
   @media (min-width: $bp-desktop) {
     font-size: 1.15rem;
   }
-}
 
-.linkContainer >>> .link,
-.linkContainer >>> .link:visited {
-  color: $black;
-  text-decoration-color: $accent;
+  a,
+  a:visited {
+    color: $black;
+    text-decoration-color: $accent;
 
-  &:hover,
-  &:focus {
-    color: $accent;
-    text-decoration-color: $black;
+    &:hover,
+    &:focus {
+      color: $accent;
+      text-decoration-color: $black;
+    }
   }
 }
 
