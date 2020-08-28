@@ -218,8 +218,6 @@ export const actions = {
           str = str.replace(`"${category}"`, `"${category}"`.replace(/"/g, ""))
         })
 
-        console.log(str)
-
         return str
       }
 
