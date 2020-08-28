@@ -128,9 +128,11 @@ export default {
 p {
   font-family: $font-body;
   font-size: 1.1rem;
+  color: $mediumGray;
+  line-height: 1.65;
 
   @media (min-width: $bp-desktop) {
-    font-size: 1.25rem;
+    font-size: 1.15rem;
   }
 }
 
@@ -186,6 +188,7 @@ blockquote {
 
 .caption {
   margin: 0.5rem 0;
+  font-size: 0.65rem;
 }
 
 .video {

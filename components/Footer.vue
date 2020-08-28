@@ -133,7 +133,7 @@ footer {
   position: relative;
   bottom: 1.5rem;
   border-radius: 180px;
-  padding: 0.25rem;
+  padding: 0.25rem 0.25rem 0.15rem 0.25rem;
 }
 
 .secondRow {
