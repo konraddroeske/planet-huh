@@ -130,6 +130,9 @@ export default {
     }
   },
   computed: {
+    isCategories() {
+      return this.$route.fullPath.includes("categories")
+    },
     setSubCategoryClass(name) {
       return {
         highlighted: this.filters.includes(name),
@@ -143,9 +146,18 @@ export default {
       allFilters: (state) => state.categories.allFilters,
     }),
   },
+  watch: {
+    // whenever question changes, this function will run
+    isCategories(newVal, oldVal) {
+      if (newVal === false) {
+        this.closeModal()
+      }
+    },
+  },
   mounted() {
     this.onMount()
   },
+
   // activated() {
   //   console.log('activated')
   //   this.onMount()
