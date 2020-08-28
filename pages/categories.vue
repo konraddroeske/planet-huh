@@ -62,7 +62,9 @@ export default {
   },
   computed: mapState({
     title: (state) => state.categories.title,
-    posts: (state) => state.categories.postsFeed,
+    posts: (state) => {
+      return state.categories.postsFeed
+    },
   }),
   // mounted() {
   //   console.log('mounted')

@@ -1,4 +1,5 @@
 import set from "lodash.set"
+import isEmpty from "lodash.isempty"
 import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
@@ -7,9 +8,9 @@ export const state = () => ({
   modal: false,
   formattedFilters: null,
   allFilters: {
-    cities: { type: "city" },
-    moods: { type: "mood" },
-    senses: { type: "sense" },
+    cities: { type: "city", hasParent: false },
+    moods: { type: "mood", hasParent: false },
+    senses: { type: "sense", hasParent: false },
   },
   postsFeed: [],
   cities: [],
@@ -21,6 +22,8 @@ export const state = () => ({
 
 export const actions = {
   async getCategoryPosts({ commit, state }, numPosts = 4) {
+    // console.log(state.formattedFilters)
+
     try {
       const { data } = await fetchContent(`{
         posts(where: ${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
@@ -106,15 +109,15 @@ export const actions = {
       console.log(error)
     }
   },
-  checkTitle({ state, commit }, filters) {
-    commit("setTitle", Array.isArray(filters) ? filters[0] : filters)
+  checkTitle({ state, commit }) {
+    state.filters.length === 1
+      ? commit("setTitle", state.filters[0])
+      : commit("setTitle", "All")
   },
   formatFilters({ state, dispatch, commit }, payload) {
     let filters = {}
 
-    // if empty, then no filters
-    if (!state.filters) {
-    } else {
+    if (state.filters.length > 0) {
       // create city, mood, sense arrays
       const city = []
       const mood = []
@@ -205,7 +208,7 @@ export const actions = {
     }
 
     const format = (obj) => {
-      if (obj) {
+      if (!isEmpty(obj)) {
         let str = JSON.stringify(obj, 0, 4)
         const keys = str.match(/".*?":/g)
 
@@ -221,7 +224,7 @@ export const actions = {
         return str
       }
 
-      return ""
+      return `{}`
     }
 
     commit("setFormattedFilters", format(filters))
@@ -248,17 +251,26 @@ export const actions = {
     if (state.filters.length === 0 || counter > 0) {
       commit("resetFeed")
       commit("setFilters", params)
-      dispatch("checkTitle", params)
+      dispatch("checkTitle")
       dispatch("formatFilters")
       dispatch("getCategoryPosts")
     }
   },
   toggleFilter({ state, dispatch, commit }, filter) {
+    commit("resetFeed")
+
     state.filters.includes(filter)
       ? commit("removeFilter", filter)
       : commit("addFilter", filter)
 
-    dispatch("checkTitle", state.filters)
+    dispatch("checkTitle")
+    dispatch("formatFilters")
+    dispatch("getCategoryPosts")
+  },
+  clearFilters({ state, dispatch, commit }) {
+    commit("resetFeed")
+    commit("resetFilters")
+    dispatch("checkTitle")
     dispatch("formatFilters")
     dispatch("getCategoryPosts")
   },
@@ -275,6 +287,29 @@ export const mutations = {
     state.filters = payload
   },
   addFilter(state, filter) {
+    // if category, remove all sub category filters
+    if (state.allFilters[filter].hasParent === false) {
+      state.filters = state.filters.filter((item) => {
+        // account for mood/mood categories types
+        if (
+          state.allFilters[filter].type === "mood" ||
+          state.allFilters[filter].type === "moodCategory"
+        ) {
+          return (
+            state.allFilters[item].type !== "mood" &&
+            state.allFilters[item].type !== "moodCategory"
+          )
+        }
+
+        return state.allFilters[item].type !== state.allFilters[filter].type
+      })
+    } else {
+      // search for and remove parent
+      state.filters = state.filters.filter(
+        (item) => item !== state.allFilters[filter].hasParent
+      )
+    }
+
     state.filters.push(filter)
   },
   removeFilter(state, filter) {
@@ -296,6 +331,7 @@ export const mutations = {
     cities.forEach((city) => {
       state.allFilters[city.name] = {
         type: "city",
+        hasParent: "cities",
         query: `name: ${city.name}`,
       }
     })
@@ -314,6 +350,7 @@ export const mutations = {
     moods.forEach((mood) => {
       state.allFilters[mood.mood] = {
         type: "mood",
+        hasParent: "moods",
         query: `name: ${mood.mood}`,
       }
     })
@@ -321,6 +358,7 @@ export const mutations = {
     state.moodCategories.forEach((moodCategory) => {
       state.allFilters[moodCategory] = {
         type: "moodCategory",
+        hasParent: "moods",
         query: `name: ${moodCategory}`,
       }
     })
@@ -331,6 +369,7 @@ export const mutations = {
     senses.forEach((sense) => {
       state.allFilters[sense.name] = {
         type: "sense",
+        hasParent: "senses",
         query: `name: ${sense.name}`,
       }
     })

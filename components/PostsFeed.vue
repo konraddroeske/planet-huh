@@ -26,7 +26,8 @@
             </nuxt-link>
           </h3>
           <p class="postTags">
-            {{ post.city }}{{ post.sense[0] ? formattedSense(post.sense) : null
+            {{ post.city[0].name
+            }}{{ post.sense[0] ? formattedSense(post.sense) : null
             }}{{ post.mood ? formattedMood(post.mood) : null }}
           </p>
         </li>
@@ -70,15 +71,14 @@ export default {
     formattedPosts() {
       return this.posts.map((post) => ({
         ...post,
-        city: "Toronto",
       }))
     },
   },
   watch: {
     posts(newPosts, oldPosts) {
-      if (newPosts.length === oldPosts.length) {
-        this.allPostsFetched = true
-      }
+      newPosts.length === oldPosts.length
+        ? (this.allPostsFetched = true)
+        : (this.allPostsFetched = false)
     },
   },
   // mounted() {

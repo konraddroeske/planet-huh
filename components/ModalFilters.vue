@@ -18,6 +18,15 @@
           Sense
         </button>
         <ul id="senses" class="filtersList senses">
+          <li class="filtersItem">
+            <button
+              class="listButton"
+              :class="setFiltersClass('senses')"
+              @click="toggleFilter('senses')"
+            >
+              All
+            </button>
+          </li>
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
             <button
               class="listButton"
@@ -39,6 +48,15 @@
           Mood
         </button>
         <ul id="moods" class="filtersList moods">
+          <li class="filtersItem">
+            <button
+              class="listButton"
+              :class="setFiltersClass('moods')"
+              @click="toggleFilter('moods')"
+            >
+              All
+            </button>
+          </li>
           <li
             v-for="(moodCategory, index) of moodCategories"
             :key="index"
@@ -64,6 +82,15 @@
           City
         </button>
         <ul id="cities" class="filtersList cities">
+          <li class="filtersItem">
+            <button
+              class="listButton"
+              :class="setFiltersClass('cities')"
+              @click="toggleFilter('cities')"
+            >
+              All
+            </button>
+          </li>
           <li v-for="city of cities" :key="city.id" class="filtersItem">
             <button
               class="listButton"
@@ -77,7 +104,7 @@
       </div>
     </div>
     <div>
-      <button class="clearButton">Clear Selection</button>
+      <button class="clearButton" @click="clearFilters">Clear Selection</button>
     </div>
   </div>
 </template>
@@ -113,6 +140,7 @@ export default {
       senses: (state) => state.categories.senses,
       moodCategories: (state) => state.categories.moodCategories,
       filters: (state) => state.categories.filters,
+      allFilters: (state) => state.categories.allFilters,
     }),
   },
   mounted() {
@@ -133,8 +161,10 @@ export default {
         this.closeModal()
       })
     },
-    ...mapActions({ toggleFilter: "categories/toggleFilter" }),
-    clearSelection() {},
+    ...mapActions({
+      toggleFilter: "categories/toggleFilter",
+      clearFilters: "categories/clearFilters",
+    }),
     openModal() {
       if (!gsap.isTweening(this.modalRef)) {
         gsap.to(this.modalRef, 0.4, { x: "0%" })
@@ -171,13 +201,13 @@ export default {
         : (this.currentCategory = category)
 
       this.animateList(0.4)
-
-      // add to filters
-      // this.toggleFilter(category)
     },
     setCategoryClass(name) {
       return {
-        bolded: this.filters.includes(name),
+        bolded: this.filters.some(
+          (filter) =>
+            this.allFilters[filter].hasParent === name || filter === name
+        ),
       }
     },
     setFiltersClass(name) {
@@ -263,7 +293,7 @@ export default {
   }
 
   .listButton:hover,
-  .listButton:focus,
+  // .listButton:focus,
   .listButton:active {
     background-color: $accentTransparent;
   }
