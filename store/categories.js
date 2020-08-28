@@ -15,6 +15,8 @@ export const state = () => ({
   cities: [],
   moods: [],
   senses: [],
+  moodCategories: [],
+  moodCategoriesUnformatted: [],
 })
 
 export const actions = {
@@ -110,12 +112,10 @@ export const actions = {
   formatFilters({ state, dispatch, commit }, payload) {
     let filters = {}
 
-    console.log("current filters", state.filters)
-
     // if empty, then no filters
     if (!state.filters) {
     } else {
-      // create city, mood, sense strings
+      // create city, mood, sense arrays
       const city = []
       const mood = []
       const sense = []
@@ -125,7 +125,10 @@ export const actions = {
         if (state.allFilters[item].type === "city") {
           city.push(item)
         }
-        if (state.allFilters[item].type === "mood") {
+        if (
+          state.allFilters[item].type === "mood" ||
+          state.allFilters[item].type === "moodCategory"
+        ) {
           mood.push(item)
         }
         if (state.allFilters[item].type === "sense") {
@@ -153,12 +156,22 @@ export const actions = {
 
       // must combine mood categories with mood
       if (mood.length > 0) {
-        const moodFilters = city.filter((item) => item !== "moods")
+        const moodFilters = mood.filter((item) => item !== "moods")
+
         moodObj = { mood: { id_not: "null" } }
         let str = "mood.AND"
 
         for (let i = 0; i < moodFilters.length; i++) {
-          set(moodObj, str, { mood: moodFilters[i] })
+          if (state.allFilters[moodFilters[i]].type === "mood") {
+            set(moodObj, str, { mood: moodFilters[i] })
+          }
+
+          if (state.allFilters[moodFilters[i]].type === "moodCategory") {
+            set(moodObj, str, {
+              moodCategory: moodFilters[i].replace(/\s+/g, ""),
+            })
+          }
+
           str += ".AND"
         }
 
@@ -178,7 +191,7 @@ export const actions = {
         filtersArr.push(senseObj)
       }
 
-      let finalStr = ""
+      let finalStr = "AND"
 
       // concatenate all on filter obj
       for (let i = 0; i < filtersArr.length; i++) {
@@ -186,19 +199,26 @@ export const actions = {
           filters = filtersArr[i]
         } else {
           set(filters, finalStr, filtersArr[i])
+          finalStr += ".AND"
         }
-
-        finalStr += ".AND"
       }
     }
 
     const format = (obj) => {
       if (obj) {
         let str = JSON.stringify(obj, 0, 4)
-        const arr = str.match(/".*?":/g)
+        const keys = str.match(/".*?":/g)
 
-        for (let i = 0; i < arr.length; i++)
-          str = str.replace(arr[i], arr[i].replace(/"/g, ""))
+        for (let i = 0; i < keys.length; i++) {
+          str = str.replace(keys[i], keys[i].replace(/"/g, ""))
+        }
+
+        // iterate through enumerations and replace
+        state.moodCategoriesUnformatted.forEach((category) => {
+          str = str.replace(`"${category}"`, `"${category}"`.replace(/"/g, ""))
+        })
+
+        console.log(str)
 
         return str
       }
@@ -206,11 +226,9 @@ export const actions = {
       return ""
     }
 
-    console.log("formatted filters", format(filters))
-
     commit("setFormattedFilters", format(filters))
   },
-  handleQueries({ dispatch, commit, state }, payload) {
+  handleRouteQueries({ dispatch, commit, state }, payload) {
     let params = Object.values(payload)
 
     // check if nested or normal array
@@ -237,6 +255,15 @@ export const actions = {
       dispatch("getCategoryPosts")
     }
   },
+  toggleFilter({ state, dispatch, commit }, filter) {
+    state.filters.includes(filter)
+      ? commit("removeFilter", filter)
+      : commit("addFilter", filter)
+
+    dispatch("checkTitle", state.filters)
+    dispatch("formatFilters")
+    dispatch("getCategoryPosts")
+  },
 }
 
 export const mutations = {
@@ -249,14 +276,18 @@ export const mutations = {
   setFilters(state, payload) {
     state.filters = payload
   },
+  addFilter(state, filter) {
+    state.filters.push(filter)
+  },
+  removeFilter(state, filter) {
+    state.filters = state.filters.filter((ele) => ele !== filter)
+  },
+
   resetFeed(state) {
     state.postsFeed = []
   },
   setFormattedFilters(state, filters) {
     state.formattedFilters = filters
-  },
-  addFilter(state, filter) {
-    state.fitlers.push(filter)
   },
   setCategoryPosts(state, newPosts) {
     state.postsFeed = state.postsFeed.concat(newPosts)
@@ -274,10 +305,25 @@ export const mutations = {
   setMoods(state, moods) {
     state.moods = moods
 
+    state.moodCategoriesUnformatted = [
+      ...new Set(state.moods.map((mood) => mood.moodCategory)),
+    ]
+
+    state.moodCategories = state.moodCategoriesUnformatted.map((category) =>
+      category.replace(/([a-z])([A-Z])/, "$1 $2")
+    )
+
     moods.forEach((mood) => {
       state.allFilters[mood.mood] = {
         type: "mood",
         query: `name: ${mood.mood}`,
+      }
+    })
+
+    state.moodCategories.forEach((moodCategory) => {
+      state.allFilters[moodCategory] = {
+        type: "moodCategory",
+        query: `name: ${moodCategory}`,
       }
     })
   },

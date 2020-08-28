@@ -19,7 +19,11 @@
         </button>
         <ul id="senses" class="filtersList senses">
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
-            <button class="listButton" :class="setFiltersClass(sense)">
+            <button
+              class="listButton"
+              :class="setFiltersClass(sense.name)"
+              @click="toggleFilter(sense.name)"
+            >
               {{ sense.name }}
             </button>
           </li>
@@ -35,9 +39,17 @@
           Mood
         </button>
         <ul id="moods" class="filtersList moods">
-          <li v-for="mood of moods" :key="mood.id" class="filtersItem">
-            <button class="listButton" :class="setFiltersClass(mood)">
-              {{ mood }}
+          <li
+            v-for="(moodCategory, index) of moodCategories"
+            :key="index"
+            class="filtersItem"
+          >
+            <button
+              class="listButton"
+              :class="setFiltersClass(moodCategory)"
+              @click="toggleFilter(moodCategory)"
+            >
+              {{ moodCategory }}
             </button>
           </li>
         </ul>
@@ -53,7 +65,11 @@
         </button>
         <ul id="cities" class="filtersList cities">
           <li v-for="city of cities" :key="city.id" class="filtersItem">
-            <button class="listButton" :class="setFiltersClass(city)">
+            <button
+              class="listButton"
+              :class="setFiltersClass(city.name)"
+              @click="toggleFilter(city.name)"
+            >
               {{ city.name }}
             </button>
           </li>
@@ -70,7 +86,7 @@
 import Vue from "vue"
 import VueResize from "vue-resize"
 import gsap from "gsap"
-import { mapState } from "vuex"
+import { mapState, mapActions } from "vuex"
 import ModalNavButton from "@/components/ModalNavButton"
 import "vue-resize/dist/vue-resize.css"
 
@@ -95,11 +111,7 @@ export default {
     ...mapState({
       cities: (state) => state.categories.cities,
       senses: (state) => state.categories.senses,
-      moods: (state) =>
-        [...new Set(state.categories.moods.map((mood) => mood.moodCategory))]
-          .map((category) => category.replace(/([a-z])([A-Z])/, "$1 $2"))
-          .sort()
-          .reverse(),
+      moodCategories: (state) => state.categories.moodCategories,
       filters: (state) => state.categories.filters,
     }),
   },
@@ -121,8 +133,8 @@ export default {
         this.closeModal()
       })
     },
+    ...mapActions({ toggleFilter: "categories/toggleFilter" }),
     clearSelection() {},
-    toggleFilter() {},
     openModal() {
       if (!gsap.isTweening(this.modalRef)) {
         gsap.to(this.modalRef, 0.4, { x: "0%" })
@@ -161,7 +173,7 @@ export default {
       this.animateList(0.4)
 
       // add to filters
-      this.toggleFilter(category)
+      // this.toggleFilter(category)
     },
     setCategoryClass(name) {
       return {
