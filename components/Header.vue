@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import Logo from './Logo'
-import ModalNav from './ModalNav'
+import Logo from "./Logo"
+import ModalNav from "./ModalNav"
 export default {
   components: { Logo, ModalNav },
 }

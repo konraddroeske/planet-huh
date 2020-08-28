@@ -18,15 +18,15 @@
 </template>
 
 <script>
-import gsap from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import { fetchContent } from '@/utils/api'
-import HeroBanner from '@/components/HeroBanner'
-import CollabBanner from '@/components/CollabBanner'
-import RichText from '@/components/RichText'
-import ArtistCredits from '@/components/ArtistCredits'
-import SocialShare from '@/components/SocialShare'
-import SuggestedPosts from '@/components/SuggestedPosts'
+import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"
+import { fetchContent } from "@/utils/api"
+import HeroBanner from "@/components/HeroBanner"
+import CollabBanner from "@/components/CollabBanner"
+import RichText from "@/components/RichText"
+import ArtistCredits from "@/components/ArtistCredits"
+import SocialShare from "@/components/SocialShare"
+import SuggestedPosts from "@/components/SuggestedPosts"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -55,7 +55,7 @@ const leavingToIndex = () => {
 }
 
 export default {
-  layout: 'default',
+  layout: "default",
   components: {
     HeroBanner,
     CollabBanner,
@@ -69,11 +69,11 @@ export default {
       return setNav()
     }
 
-    if (from.path === '/') {
+    if (from.path === "/") {
       entering()
     }
 
-    to.path === '/' ? leavingToIndex() : leaving()
+    to.path === "/" ? leavingToIndex() : leaving()
   },
   data() {
     return {
@@ -131,12 +131,12 @@ export default {
       content: content.raw.children,
     }
   },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
-  },
+  // mounted() {
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   this.onDestroy()
+  // },
   activated() {
     this.onMount()
   },
@@ -145,14 +145,14 @@ export default {
   },
   methods: {
     onMount() {
-      const nav = document.querySelector('#navContainer')
-      nav.addEventListener('click', this.route, false)
-      nav.addEventListener('touchstart', this.route, false)
+      const nav = document.querySelector("#navContainer")
+      nav.addEventListener("click", this.route, false)
+      nav.addEventListener("touchstart", this.route, false)
     },
     onDestroy() {
-      const nav = document.querySelector('#navContainer')
-      nav.removeEventListener('click', this.route, false)
-      nav.removeEventListener('touchstart', this.route, false)
+      const nav = document.querySelector("#navContainer")
+      nav.removeEventListener("click", this.route, false)
+      nav.removeEventListener("touchstart", this.route, false)
     },
     route() {
       this.$router.push({

@@ -13,17 +13,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import Nav from '@/components/Nav'
+import { mapState } from "vuex"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
+import Nav from "@/components/Nav"
 export default {
   components: { Header, Nav, Footer },
   computed: mapState({
     modal: (state) => state.categories.modal,
   }),
   mounted() {
-    this.$store.commit('setMobile', this.$device.isMobile)
+    this.$store.commit("setMobile", this.$device.isMobile)
   },
 }
 </script>

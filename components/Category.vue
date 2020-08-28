@@ -19,7 +19,7 @@ export default {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark', 'gradient'].includes(value)
+        return ["light", "dark", "gradient"].includes(value)
       },
     },
     to: {
@@ -31,12 +31,12 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
-  },
+  // mounted() {
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   this.onDestroy()
+  // },
   activated() {
     this.onMount()
   },
@@ -45,25 +45,25 @@ export default {
   },
   methods: {
     startGradient() {
-      this.$refs.container.classList.add('largeGradient')
+      this.$refs.container.classList.add("largeGradient")
     },
     endGradient() {
-      this.$refs.container.classList.remove('largeGradient')
+      this.$refs.container.classList.remove("largeGradient")
     },
     navigate() {
-      console.log('navigating programmatically')
+      console.log("navigating programmatically")
     },
     onMount() {
-      this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
-      this.$refs.link.$el.addEventListener('mouseout', this.endGradient)
-      this.$refs.link.$el.addEventListener('focus', this.startGradient)
-      this.$refs.link.$el.addEventListener('blur', this.endGradient)
+      this.$refs.link.$el.addEventListener("mouseover", this.startGradient)
+      this.$refs.link.$el.addEventListener("mouseout", this.endGradient)
+      this.$refs.link.$el.addEventListener("focus", this.startGradient)
+      this.$refs.link.$el.addEventListener("blur", this.endGradient)
     },
     onDestroy() {
-      this.$refs.link.$el.removeEventListener('mouseover', this.startGradient)
-      this.$refs.link.$el.removeEventListener('mouseout', this.endGradient)
-      this.$refs.link.$el.removeEventListener('focus', this.startGradient)
-      this.$refs.link.$el.removeEventListener('blur', this.endGradient)
+      this.$refs.link.$el.removeEventListener("mouseover", this.startGradient)
+      this.$refs.link.$el.removeEventListener("mouseout", this.endGradient)
+      this.$refs.link.$el.removeEventListener("focus", this.startGradient)
+      this.$refs.link.$el.removeEventListener("blur", this.endGradient)
     },
   },
 }
@@ -139,7 +139,7 @@ export default {
   position: relative;
 
   ::before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     height: 2.5rem;

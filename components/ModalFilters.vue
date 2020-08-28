@@ -13,13 +13,26 @@
           ref="sense"
           class="categoryButton"
           :class="setCategoryClass('senses')"
-          @click="toggleCategory('sensesList')"
+          @click="toggleCategory('senses')"
         >
           Sense
         </button>
-        <ul id="sensesList" class="filtersList senses">
+        <ul id="senses" class="filtersList senses">
+          <li class="filtersItem">
+            <button
+              class="listButton"
+              :class="setFiltersClass('senses')"
+              @click="toggleFilter('senses')"
+            >
+              All
+            </button>
+          </li>
           <li v-for="sense of senses" :key="sense.id" class="filtersItem">
-            <button class="listButton" :class="setFiltersClass(sense)">
+            <button
+              class="listButton"
+              :class="setFiltersClass(sense.name)"
+              @click="toggleFilter(sense.name)"
+            >
               {{ sense.name }}
             </button>
           </li>
@@ -30,14 +43,31 @@
           ref="mood"
           class="categoryButton"
           :class="setCategoryClass('moods')"
-          @click="toggleCategory('moodsList')"
+          @click="toggleCategory('moods')"
         >
           Mood
         </button>
-        <ul id="moodsList" class="filtersList moods">
-          <li v-for="mood of moods" :key="mood.id" class="filtersItem">
-            <button class="listButton" :class="setFiltersClass(mood)">
-              {{ mood }}
+        <ul id="moods" class="filtersList moods">
+          <li class="filtersItem">
+            <button
+              class="listButton"
+              :class="setFiltersClass('moods')"
+              @click="toggleFilter('moods')"
+            >
+              All
+            </button>
+          </li>
+          <li
+            v-for="(moodCategory, index) of moodCategories"
+            :key="index"
+            class="filtersItem"
+          >
+            <button
+              class="listButton"
+              :class="setFiltersClass(moodCategory)"
+              @click="toggleFilter(moodCategory)"
+            >
+              {{ moodCategory }}
             </button>
           </li>
         </ul>
@@ -47,13 +77,26 @@
           ref="city"
           class="categoryButton"
           :class="setCategoryClass('cities')"
-          @click="toggleCategory('citiesList')"
+          @click="toggleCategory('cities')"
         >
           City
         </button>
-        <ul id="citiesList" class="filtersList cities">
+        <ul id="cities" class="filtersList cities">
+          <li class="filtersItem">
+            <button
+              class="listButton"
+              :class="setFiltersClass('cities')"
+              @click="toggleFilter('cities')"
+            >
+              All
+            </button>
+          </li>
           <li v-for="city of cities" :key="city.id" class="filtersItem">
-            <button class="listButton" :class="setFiltersClass(city)">
+            <button
+              class="listButton"
+              :class="setFiltersClass(city.name)"
+              @click="toggleFilter(city.name)"
+            >
               {{ city.name }}
             </button>
           </li>
@@ -61,18 +104,18 @@
       </div>
     </div>
     <div>
-      <button class="clearButton">Clear Selection</button>
+      <button class="clearButton" @click="clearFilters">Clear Selection</button>
     </div>
   </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import VueResize from 'vue-resize'
-import gsap from 'gsap'
-import { mapState } from 'vuex'
-import ModalNavButton from '@/components/ModalNavButton'
-import 'vue-resize/dist/vue-resize.css'
+import Vue from "vue"
+import VueResize from "vue-resize"
+import gsap from "gsap"
+import { mapState, mapActions } from "vuex"
+import ModalNavButton from "@/components/ModalNavButton"
+import "vue-resize/dist/vue-resize.css"
 
 Vue.use(VueResize)
 
@@ -87,6 +130,9 @@ export default {
     }
   },
   computed: {
+    isCategories() {
+      return this.$route.fullPath.includes("categories")
+    },
     setSubCategoryClass(name) {
       return {
         highlighted: this.filters.includes(name),
@@ -95,61 +141,69 @@ export default {
     ...mapState({
       cities: (state) => state.categories.cities,
       senses: (state) => state.categories.senses,
-      moods: (state) =>
-        [...new Set(state.categories.moods.map((mood) => mood.moodCategory))]
-          .map((category) => category.replace(/([a-z])([A-Z])/, '$1 $2'))
-          .sort()
-          .reverse(),
+      moodCategories: (state) => state.categories.moodCategories,
       filters: (state) => state.categories.filters,
+      allFilters: (state) => state.categories.allFilters,
     }),
+  },
+  watch: {
+    // whenever question changes, this function will run
+    isCategories(newVal, oldVal) {
+      if (newVal === false) {
+        this.closeModal()
+      }
+    },
   },
   mounted() {
     this.onMount()
   },
-  activated() {
-    this.onMount()
-  },
+
+  // activated() {
+  //   console.log('activated')
+  //   this.onMount()
+  // },
   methods: {
     onMount() {
-      console.log(this.$store.state.categories.filters)
       this.modalRef = this.$refs.modalFilters
       this.setModalListener()
       this.openModal()
     },
     setModalListener() {
-      this.$nuxt.$on('close-modal', () => {
+      this.$nuxt.$on("close-modal", () => {
         this.closeModal()
       })
     },
-    clearSelection() {},
-    toggleFilter() {},
+    ...mapActions({
+      toggleFilter: "categories/toggleFilter",
+      clearFilters: "categories/clearFilters",
+    }),
     openModal() {
       if (!gsap.isTweening(this.modalRef)) {
-        gsap.to(this.modalRef, 0.4, { x: '0%' })
+        gsap.to(this.modalRef, 0.4, { x: "0%" })
       }
     },
     closeModal() {
       if (!gsap.isTweening(this.modalRef)) {
         const tl = gsap.timeline({
           onComplete: () => {
-            this.$store.commit('categories/setModal', false)
+            this.$store.commit("categories/setModal", false)
           },
         })
 
-        tl.to(this.modalRef, 0.4, { x: '100%' })
+        tl.to(this.modalRef, 0.4, { x: "100%" })
       }
     },
     handleResize() {
       this.animateList(0)
     },
     animateList(time) {
-      const filtersList = document.querySelectorAll('.filtersList')
+      const filtersList = document.querySelectorAll(".filtersList")
 
       filtersList.forEach((list) => {
         if (list.id === this.currentCategory) {
-          gsap.to(list, time, { maxHeight: list.scrollHeight + 'px' })
+          gsap.to(list, time, { maxHeight: list.scrollHeight + "px" })
         } else {
-          gsap.to(list, time, { maxHeight: '0px' })
+          gsap.to(list, time, { maxHeight: "0px" })
         }
       })
     },
@@ -159,12 +213,13 @@ export default {
         : (this.currentCategory = category)
 
       this.animateList(0.4)
-
-      // add to filters
     },
     setCategoryClass(name) {
       return {
-        bolded: this.filters.includes(name),
+        bolded: this.filters.some(
+          (filter) =>
+            this.allFilters[filter].hasParent === name || filter === name
+        ),
       }
     },
     setFiltersClass(name) {
@@ -250,7 +305,7 @@ export default {
   }
 
   .listButton:hover,
-  .listButton:focus,
+  // .listButton:focus,
   .listButton:active {
     background-color: $accentTransparent;
   }

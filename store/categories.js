@@ -1,28 +1,29 @@
-import { fetchContent } from '@/utils/api'
+import set from "lodash.set"
+import isEmpty from "lodash.isempty"
+import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
-  title: '',
-  titles: {
-    cities: true,
-    moods: true,
-    senses: true,
-  },
+  title: "",
   filters: [],
   modal: false,
-  filtersList: {
-    moods: `{mood: {id_not: "null"}}`,
-    senses: `{sense_every: {id_not: "null"}}`,
-    cities: `{city_every: {id_not: "null"}}`,
-  },
   formattedFilters: null,
+  allFilters: {
+    cities: { type: "city", hasParent: false },
+    moods: { type: "mood", hasParent: false },
+    senses: { type: "sense", hasParent: false },
+  },
   postsFeed: [],
   cities: [],
   moods: [],
   senses: [],
+  moodCategories: [],
+  moodCategoriesUnformatted: [],
 })
 
 export const actions = {
   async getCategoryPosts({ commit, state }, numPosts = 4) {
+    // console.log(state.formattedFilters)
+
     try {
       const { data } = await fetchContent(`{
         posts(where: ${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
@@ -49,7 +50,7 @@ export const actions = {
       }`)
 
       const { posts } = data.data
-      commit('setCategoryPosts', posts)
+      commit("setCategoryPosts", posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -67,7 +68,7 @@ export const actions = {
       }`)
 
       const { moods } = data.data
-      commit('setMoods', moods)
+      commit("setMoods", moods)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -84,7 +85,7 @@ export const actions = {
       }`)
 
       const { cities } = data.data
-      commit('setCities', cities)
+      commit("setCities", cities)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -102,67 +103,133 @@ export const actions = {
 
       const { senses } = data.data
 
-      commit('setSenses', senses)
+      commit("setSenses", senses)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
     }
   },
-  checkTitle({ state, commit }, filters) {
-    // console.log('check title', filters)
-
-    // let counter = 0
-    // let title = ''
-
-    // // check if array
-    // if (Array.isArray(filters)) {
-    //   for (let i = 0; i < filters.length; i++) {
-    //     if (state.titles[filters[i]] === true) {
-    //       counter += 1
-    //       title = filters[i]
-    //     }
-
-    //     if (counter >= 2) {
-    //       break
-    //     }
-    //   }
-
-    //   counter === 1 ? commit('setTitle', title) : commit('setTitle', 'all')
-    // } else {
-    //   state.titles[filters] === true
-    //     ? commit('setTitle', filters)
-    //     : commit('setTitle', 'all')
-    // }
-
-    commit('setTitle', Array.isArray(filters) ? filters[0] : filters)
+  checkTitle({ state, commit }) {
+    state.filters.length === 1
+      ? commit("setTitle", state.filters[0])
+      : commit("setTitle", "All")
   },
   formatFilters({ state, dispatch, commit }, payload) {
-    let filters = ''
+    let filters = {}
 
-    // check if a mood, city, or sense
-    if (state.filtersList[payload[0]]) {
-      payload.forEach((item) => {
-        if (state.titles[item] && filters === '') {
-          filters += state.filtersList[item]
-        } else if (state.titles[item] && filters.length > 0) {
-          filters += `AND: ${state.filtersList[item]}`
+    if (state.filters.length > 0) {
+      // create city, mood, sense arrays
+      const city = []
+      const mood = []
+      const sense = []
+
+      // separate into categories
+      state.filters.forEach((item) => {
+        if (state.allFilters[item].type === "city") {
+          city.push(item)
+        }
+        if (
+          state.allFilters[item].type === "mood" ||
+          state.allFilters[item].type === "moodCategory"
+        ) {
+          mood.push(item)
+        }
+        if (state.allFilters[item].type === "sense") {
+          sense.push(item)
         }
       })
-    } else if (payload[1] === 'cities') {
-      filters = `{city_every: {name: "${payload[0]}"}}`
-    } else if (payload[1] === 'moods') {
-      filters = `{mood: {mood: "${payload[0]}"}}`
+
+      const filtersArr = []
+      let cityObj = null
+      let moodObj = null
+      let senseObj = null
+
+      // interate through arrs, and create objects
+      if (city.length > 0) {
+        const cityFilters = city.filter((item) => item !== "cities")
+        cityObj = { city_every: { id_not: "null" } }
+        let str = "city_every.AND"
+
+        for (let i = 0; i < cityFilters.length; i++) {
+          set(cityObj, str, { name: cityFilters[i] })
+          str += ".AND"
+        }
+        filtersArr.push(cityObj)
+      }
+
+      // must combine mood categories with mood
+      if (mood.length > 0) {
+        const moodFilters = mood.filter((item) => item !== "moods")
+
+        moodObj = { mood: { id_not: "null" } }
+        let str = "mood.AND"
+
+        for (let i = 0; i < moodFilters.length; i++) {
+          if (state.allFilters[moodFilters[i]].type === "mood") {
+            set(moodObj, str, { mood: moodFilters[i] })
+          }
+
+          if (state.allFilters[moodFilters[i]].type === "moodCategory") {
+            set(moodObj, str, {
+              moodCategory: moodFilters[i].replace(/\s+/g, ""),
+            })
+          }
+
+          str += ".AND"
+        }
+
+        filtersArr.push(moodObj)
+      }
+
+      if (sense.length > 0) {
+        const senseFilters = sense.filter((item) => item !== "senses")
+        senseObj = { sense_every: { id_not: "null" } }
+        let str = "sense_every.AND"
+
+        for (let i = 0; i < senseFilters.length; i++) {
+          set(senseObj, str, { name: senseFilters[i] })
+          str += ".AND"
+        }
+
+        filtersArr.push(senseObj)
+      }
+
+      let finalStr = "AND"
+
+      // concatenate all on filter obj
+      for (let i = 0; i < filtersArr.length; i++) {
+        if (i === 0) {
+          filters = filtersArr[i]
+        } else {
+          set(filters, finalStr, filtersArr[i])
+          finalStr += ".AND"
+        }
+      }
     }
 
-    // console.log('api filter', filters)
+    const format = (obj) => {
+      if (!isEmpty(obj)) {
+        let str = JSON.stringify(obj, 0, 4)
+        const keys = str.match(/".*?":/g)
 
-    commit('setFormattedFilters', filters)
-    dispatch('getCategoryPosts')
+        for (let i = 0; i < keys.length; i++) {
+          str = str.replace(keys[i], keys[i].replace(/"/g, ""))
+        }
 
-    // where: {mood: {id_not: "null"}, AND: {sense_every: {id_not: "null"}, AND: {city_every: {id_not: "null"}}}}
-    // set sub categories
+        // iterate through enumerations and replace
+        state.moodCategoriesUnformatted.forEach((category) => {
+          str = str.replace(`"${category}"`, `"${category}"`.replace(/"/g, ""))
+        })
+
+        return str
+      }
+
+      return `{}`
+    }
+
+    commit("setFormattedFilters", format(filters))
   },
-  handleQueries({ dispatch, commit, state }, payload) {
+  handleRouteQueries({ dispatch, commit, state }, payload) {
     let params = Object.values(payload)
 
     // check if nested or normal array
@@ -182,11 +249,30 @@ export const actions = {
 
     // check if page is already loaded
     if (state.filters.length === 0 || counter > 0) {
-      commit('resetFeed')
-      commit('setFilters', params)
-      dispatch('checkTitle', params)
-      dispatch('formatFilters', params)
+      commit("resetFeed")
+      commit("setFilters", params)
+      dispatch("checkTitle")
+      dispatch("formatFilters")
+      dispatch("getCategoryPosts")
     }
+  },
+  toggleFilter({ state, dispatch, commit }, filter) {
+    commit("resetFeed")
+
+    state.filters.includes(filter)
+      ? commit("removeFilter", filter)
+      : commit("addFilter", filter)
+
+    dispatch("checkTitle")
+    dispatch("formatFilters")
+    dispatch("getCategoryPosts")
+  },
+  clearFilters({ state, dispatch, commit }) {
+    commit("resetFeed")
+    commit("resetFilters")
+    dispatch("checkTitle")
+    dispatch("formatFilters")
+    dispatch("getCategoryPosts")
   },
 }
 
@@ -200,26 +286,93 @@ export const mutations = {
   setFilters(state, payload) {
     state.filters = payload
   },
+  addFilter(state, filter) {
+    // if category, remove all sub category filters
+    if (state.allFilters[filter].hasParent === false) {
+      state.filters = state.filters.filter((item) => {
+        // account for mood/mood categories types
+        if (
+          state.allFilters[filter].type === "mood" ||
+          state.allFilters[filter].type === "moodCategory"
+        ) {
+          return (
+            state.allFilters[item].type !== "mood" &&
+            state.allFilters[item].type !== "moodCategory"
+          )
+        }
+
+        return state.allFilters[item].type !== state.allFilters[filter].type
+      })
+    } else {
+      // search for and remove parent
+      state.filters = state.filters.filter(
+        (item) => item !== state.allFilters[filter].hasParent
+      )
+    }
+
+    state.filters.push(filter)
+  },
+  removeFilter(state, filter) {
+    state.filters = state.filters.filter((ele) => ele !== filter)
+  },
+
   resetFeed(state) {
     state.postsFeed = []
   },
   setFormattedFilters(state, filters) {
     state.formattedFilters = filters
   },
-  addFilter(state, filter) {
-    state.fitlers.push(filter)
-  },
   setCategoryPosts(state, newPosts) {
     state.postsFeed = state.postsFeed.concat(newPosts)
   },
   setCities(state, cities) {
     state.cities = cities
+
+    cities.forEach((city) => {
+      state.allFilters[city.name] = {
+        type: "city",
+        hasParent: "cities",
+        query: `name: ${city.name}`,
+      }
+    })
   },
   setMoods(state, moods) {
     state.moods = moods
+
+    state.moodCategoriesUnformatted = [
+      ...new Set(state.moods.map((mood) => mood.moodCategory)),
+    ]
+
+    state.moodCategories = state.moodCategoriesUnformatted.map((category) =>
+      category.replace(/([a-z])([A-Z])/, "$1 $2")
+    )
+
+    moods.forEach((mood) => {
+      state.allFilters[mood.mood] = {
+        type: "mood",
+        hasParent: "moods",
+        query: `name: ${mood.mood}`,
+      }
+    })
+
+    state.moodCategories.forEach((moodCategory) => {
+      state.allFilters[moodCategory] = {
+        type: "moodCategory",
+        hasParent: "moods",
+        query: `name: ${moodCategory}`,
+      }
+    })
   },
   setSenses(state, senses) {
     state.senses = senses
+
+    senses.forEach((sense) => {
+      state.allFilters[sense.name] = {
+        type: "sense",
+        hasParent: "senses",
+        query: `name: ${sense.name}`,
+      }
+    })
   },
   setModal(state, payload) {
     state.modal = payload

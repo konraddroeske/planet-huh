@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import CategoryTitle from '@/components/CategoryTitle'
-import ButtonFilter from '@/components/ButtonFilter'
+import CategoryTitle from "@/components/CategoryTitle"
+import ButtonFilter from "@/components/ButtonFilter"
 
 export default {
   components: {
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      variant: 'gradient',
+      variant: "gradient",
       disabled: true,
     }
   },
@@ -39,10 +39,10 @@ export default {
     toggleModal() {
       this.$store.state.categories.modal
         ? this.closeModal()
-        : this.$store.commit('categories/setModal', true)
+        : this.$store.commit("categories/setModal", true)
     },
     closeModal() {
-      this.$nuxt.$emit('close-modal')
+      this.$nuxt.$emit("close-modal")
     },
   },
 }

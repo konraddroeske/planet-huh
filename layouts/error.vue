@@ -12,7 +12,7 @@ export default {
     error: {
       type: Object,
       required: true,
-      validator: (obj) => typeof obj.statusCode === 'number',
+      validator: (obj) => typeof obj.statusCode === "number",
     },
   },
 }

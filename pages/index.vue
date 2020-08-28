@@ -8,17 +8,17 @@
 </template>
 
 <script>
-import gsap from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import CTA from '@/components/CTA'
-import FeaturedCollabs from '@/components/FeaturedCollabs'
-import CategoryNav from '@/components/CategoryNav'
-import PostsFeed from '@/components/PostsFeed'
+import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"
+import CTA from "@/components/CTA"
+import FeaturedCollabs from "@/components/FeaturedCollabs"
+import CategoryNav from "@/components/CategoryNav"
+import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
 
 export default {
-  layout: 'default',
+  layout: "default",
   components: {
     CTA,
     FeaturedCollabs,
@@ -27,8 +27,8 @@ export default {
   },
   async fetch({ store }) {
     if (store.state.homepage.postsFeed.length === 0) {
-      await store.dispatch('homepage/getHomepage')
-      await store.dispatch('homepage/getSomePosts', 4)
+      await store.dispatch("homepage/getHomepage")
+      await store.dispatch("homepage/getSomePosts", 4)
     }
   },
   transition: {
@@ -58,12 +58,12 @@ export default {
       return this.$store.state.homepage.postsFeed
     },
   },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
-  },
+  // mounted() {
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   this.onDestroy()
+  // },
   activated() {
     this.onMount()
   },
@@ -73,13 +73,13 @@ export default {
   methods: {
     onMount() {
       if (this.isMobile) {
-        this.$store.commit('setNavOpen', true)
+        this.$store.commit("setNavOpen", true)
       }
     },
     onDestroy() {
       if (this.isMobile && this.isOpen) {
         // and scroll is locked
-        this.$store.commit('setNavOpen', false)
+        this.$store.commit("setNavOpen", false)
       }
     },
   },

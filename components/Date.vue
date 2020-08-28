@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import moment from "moment"
 export default {
   props: {
     input: {
@@ -13,7 +13,7 @@ export default {
   },
   computed: {
     date() {
-      return moment(this.$props.input).format('MMMM D, YYYY')
+      return moment(this.$props.input).format("MMMM D, YYYY")
     },
   },
 }

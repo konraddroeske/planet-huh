@@ -1,8 +1,8 @@
-import { fetchContent } from '@/utils/api'
+import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
-  ctaTitle: '',
-  ctaText: '',
+  ctaTitle: "",
+  ctaText: "",
   featuredPosts: [],
   featuredCollabPosts: [],
   postsFeed: [],
@@ -49,7 +49,7 @@ export const actions = {
         featuredCollabPosts,
       } = data.data.homePages[0]
 
-      commit('setHomepage', {
+      commit("setHomepage", {
         ctaTitle,
         ctaText,
         featuredPosts,
@@ -91,7 +91,7 @@ export const actions = {
       }`)
 
       const { posts } = data.data
-      commit('setSomePosts', posts)
+      commit("setSomePosts", posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)

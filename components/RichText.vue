@@ -56,51 +56,51 @@ export default {
     organizedContent() {
       // Note: This filters out empty paragraphs (blank spaces in content)
       const rawContent = this.$props.content.filter(
-        (item) => item.type !== 'paragraph' || item.children[0].text.trim()
+        (item) => item.type !== "paragraph" || item.children[0].text.trim()
       )
 
       const cleanContent = []
       rawContent.forEach((item, index) => {
-        if (item.type === 'paragraph') {
+        if (item.type === "paragraph") {
           cleanContent.push({
             type: item.type,
             text: item.children[0].text.trim(),
           })
-        } else if (item.type === 'block-quote') {
-          const [text, source] = item.children[0].text.split('@')
+        } else if (item.type === "block-quote") {
+          const [text, source] = item.children[0].text.split("@")
           cleanContent.push({
             type: item.type,
             text: text.trim(),
             source: source.trim(),
           })
-        } else if (item.type === 'image') {
+        } else if (item.type === "image") {
           const lastItem = cleanContent[cleanContent.length - 1]
 
           if (
             !lastItem ||
-            (lastItem && !['full-image', 'flex-images'].includes(lastItem.type))
+            (lastItem && !["full-image", "flex-images"].includes(lastItem.type))
           ) {
             cleanContent.push({
-              type: 'full-image',
+              type: "full-image",
               src: item.src,
               caption: item.altText.trim(),
             })
-          } else if (lastItem.type === 'full-image') {
+          } else if (lastItem.type === "full-image") {
             const lastImage = cleanContent.pop()
             cleanContent.push({
-              type: 'flex-images',
+              type: "flex-images",
               images: [
                 { src: lastImage.src, caption: lastImage.caption },
                 { src: item.src, caption: item.altText.trim() },
               ],
             })
-          } else if (lastItem.type === 'flex-images') {
+          } else if (lastItem.type === "flex-images") {
             lastItem.images.push({
               src: item.src,
               caption: item.altText.trim(),
             })
           }
-        } else if (item.type === 'iframe') {
+        } else if (item.type === "iframe") {
           cleanContent.push({
             type: item.type,
             url: item.url,
