@@ -219,11 +219,9 @@ export const mutations = {
     state.moods = moods
   },
   setSenses(state, senses) {
-    console.log(senses)
     state.senses = senses
   },
-  toggleModal(state) {
-    console.log('toggle modal')
-    state.modal = !state.modal
+  setModal(state, payload) {
+    state.modal = payload
   },
 }

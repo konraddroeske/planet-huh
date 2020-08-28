@@ -16,11 +16,6 @@
 
 <script>
 export default {
-  data() {
-    return {
-      isOpen: false,
-    }
-  },
   methods: {
     onClick(event) {
       this.$emit('clicked')
@@ -51,7 +46,7 @@ label[for='menuButton'] {
   cursor: pointer;
 
   &:hover {
-    .menuIcon,
+    // .menuIcon,
     .menuIcon::before,
     .menuIcon::after {
       background: $accent;
@@ -73,35 +68,42 @@ label[for='menuButton'] {
   width: 60%;
   top: 0.92rem;
   left: 0.4rem;
+  background: none;
 }
 
 .menuIcon::before {
   width: 100%;
   bottom: 0.45rem;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  bottom: 0;
 }
 
 .menuIcon::after {
   width: 100%;
   top: 0.45rem;
-}
-
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
-  background: none;
-}
-
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon::before {
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-  bottom: 0;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
-}
-
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon::after {
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
   top: 0;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
 }
+
+// .sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
+//   background: none;
+// }
+
+// .sandwichMenu input[type='checkbox']:checked + label > .menuIcon::before {
+//   -webkit-transform: rotate(45deg);
+//   transform: rotate(45deg);
+//   bottom: 0;
+//   -webkit-transition: all 0.2s ease;
+//   transition: all 0.2s ease;
+// }
+
+// .sandwichMenu input[type='checkbox']:checked + label > .menuIcon::after {
+//   -webkit-transform: rotate(-45deg);
+//   transform: rotate(-45deg);
+//   top: 0;
+//   -webkit-transition: all 0.2s ease;
+//   transition: all 0.2s ease;
+// }
 </style>
