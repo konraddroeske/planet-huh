@@ -5,7 +5,7 @@
       <p>
         {{ text }}
       </p>
-      <Button :to="{ name: 'cities' }">Learn More</Button>
+      <Button to="/">Learn More</Button>
     </Wrapper>
   </div>
 </template>
