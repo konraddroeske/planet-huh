@@ -4,10 +4,18 @@
       <template v-for="(item, index) of organizedContent">
         <p v-if="item.type === 'paragraph'" :key="index">
           <template v-for="(child, idx) of item.children">
-            <template v-if="typeof child === 'string'">{{ child }}</template>
-            <a v-else :key="idx" :href="child.href">
-              {{ child.text }}
-            </a>
+            <a v-if="child.type === 'link'" :key="idx" :href="child.href">{{
+              child.text
+            }}</a>
+            <template v-else>
+              <strong :key="child.text" v-show-but-keep-inner="child.bold">
+                <em :key="child.text" v-show-but-keep-inner="child.italic">
+                  <u :key="child.text" v-show-but-keep-inner="child.underline">
+                    <span>{{ child.text }}</span>
+                  </u>
+                </em>
+              </strong>
+            </template>
           </template>
         </p>
 
@@ -203,7 +211,7 @@ export default {
               href: child.href,
               text: this.childrenToText(child.children),
             }
-          : child.text
+          : child
       )
     },
   },
@@ -234,12 +242,14 @@ p {
   a,
   a:visited {
     color: $black;
-    text-decoration-color: $accent;
+    text-decoration: none;
+    border-bottom: 0.05rem solid $accent;
+    padding-bottom: 0.05rem;
 
     &:hover,
     &:focus {
       color: $accent;
-      text-decoration-color: $black;
+      border-bottom-color: $black;
     }
   }
 }
