@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import Date from '@/components/Date'
+import Date from "@/components/Date"
 export default {
   components: { Date },
   props: {
@@ -81,12 +81,12 @@ export default {
   },
   activated() {
     setTimeout(() => {
-      this.$store.dispatch('setNavContainerSmall')
+      this.$store.dispatch("setNavContainerSmall")
     }, 300)
   },
   methods: {
     onImgLoad() {
-      this.$store.dispatch('setNavContainerSmall')
+      this.$store.dispatch("setNavContainerSmall")
     },
   },
 }
@@ -221,7 +221,7 @@ export default {
   position: relative;
 
   &::before {
-    content: '•';
+    content: "•";
     position: absolute;
     left: -0.75rem;
     top: 0;
@@ -231,7 +231,7 @@ export default {
     margin-right: 1.5rem;
 
     &::before {
-      content: '•';
+      content: "•";
       position: absolute;
       left: -1rem;
       top: 0;
@@ -241,7 +241,7 @@ export default {
 
 .category:first-child {
   &::before {
-    content: '';
+    content: "";
   }
 }
 

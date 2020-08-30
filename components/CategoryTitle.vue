@@ -14,7 +14,7 @@ export default {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark', 'gradient'].includes(value)
+        return ["light", "dark", "gradient"].includes(value)
       },
     },
     to: {
@@ -33,10 +33,10 @@ export default {
   },
   methods: {
     startGradient() {
-      this.$refs.container.classList.add('largeGradient')
+      this.$refs.container.classList.add("largeGradient")
     },
     endGradient() {
-      this.$refs.container.classList.remove('largeGradient')
+      this.$refs.container.classList.remove("largeGradient")
     },
   },
 }
@@ -112,7 +112,7 @@ export default {
   position: relative;
 
   ::before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     height: 2.5rem;

@@ -97,24 +97,24 @@ export default {
     organizedContent() {
       // Note: This filters out empty paragraphs (blank spaces in content)
       const rawContent = this.$props.content.filter(
-        (item) => item.type !== 'paragraph' || item.children[0].text.trim()
+        (item) => item.type !== "paragraph" || item.children[0].text.trim()
       )
 
       const cleanContent = []
       rawContent.forEach((item, index) => {
-        if (item.type === 'paragraph') {
+        if (item.type === "paragraph") {
           cleanContent.push({
             type: item.type,
             children: this.parseChildrenWithLinks(item.children),
           })
         } else if (
           [
-            'heading-one',
-            'heading-two',
-            'heading-three',
-            'heading-four',
-            'heading-five',
-            'heading-six',
+            "heading-one",
+            "heading-two",
+            "heading-three",
+            "heading-four",
+            "heading-five",
+            "heading-six",
           ].includes(item.type)
         ) {
           cleanContent.push({
@@ -122,8 +122,8 @@ export default {
             text: this.childrenToText(item.children),
           })
         } else if (
-          item.type === 'bulleted-list' ||
-          item.type === 'numbered-list'
+          item.type === "bulleted-list" ||
+          item.type === "numbered-list"
         ) {
           const lastItem = cleanContent[cleanContent.length - 1]
 
@@ -139,41 +139,41 @@ export default {
               listItems,
             })
           }
-        } else if (item.type === 'block-quote') {
-          const [text, source] = this.childrenToText(item.children).split('@')
+        } else if (item.type === "block-quote") {
+          const [text, source] = this.childrenToText(item.children).split("@")
           cleanContent.push({
             type: item.type,
             text: text.trim(),
             source: source.trim(),
           })
-        } else if (item.type === 'image') {
+        } else if (item.type === "image") {
           const lastItem = cleanContent[cleanContent.length - 1]
 
           if (
             !lastItem ||
-            (lastItem && !['full-image', 'flex-images'].includes(lastItem.type))
+            (lastItem && !["full-image", "flex-images"].includes(lastItem.type))
           ) {
             cleanContent.push({
-              type: 'full-image',
+              type: "full-image",
               src: item.src,
               caption: item.altText.trim(),
             })
-          } else if (lastItem.type === 'full-image') {
+          } else if (lastItem.type === "full-image") {
             const lastImage = cleanContent.pop()
             cleanContent.push({
-              type: 'flex-images',
+              type: "flex-images",
               images: [
                 { src: lastImage.src, caption: lastImage.caption },
                 { src: item.src, caption: item.altText.trim() },
               ],
             })
-          } else if (lastItem.type === 'flex-images') {
+          } else if (lastItem.type === "flex-images") {
             lastItem.images.push({
               src: item.src,
               caption: item.altText.trim(),
             })
           }
-        } else if (item.type === 'iframe') {
+        } else if (item.type === "iframe") {
           cleanContent.push({
             type: item.type,
             url: item.url,
@@ -188,16 +188,16 @@ export default {
     childrenToText(children) {
       return children
         .map((child) =>
-          child.type === 'link'
+          child.type === "link"
             ? this.childrenToText(child.children)
             : child.text
         )
-        .join('')
+        .join("")
         .trim()
     },
     parseChildrenWithLinks(children) {
       return children.map((child) =>
-        child.type === 'link'
+        child.type === "link"
           ? {
               type: child.type,
               href: child.href,
@@ -302,7 +302,7 @@ ul {
     }
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       width: 0.75rem;
       height: 0.05rem;
@@ -336,7 +336,7 @@ ol {
       position: absolute;
       top: 0;
       left: 0;
-      content: counter(counter) '.';
+      content: counter(counter) ".";
       color: $accent;
       font-family: $font-display;
       font-weight: $medium;

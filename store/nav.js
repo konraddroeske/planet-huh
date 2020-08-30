@@ -1,4 +1,4 @@
-import { fetchContent } from '@/utils/api'
+import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
   cities: [],
@@ -10,7 +10,7 @@ export const state = () => ({
       latitude: 30,
       longitude: 0,
       posts: [],
-      name: 'blue',
+      name: "blue",
     },
     NegativeHigh: {
       r: 255,
@@ -19,7 +19,7 @@ export const state = () => ({
       latitude: 30,
       longitude: -120,
       posts: [],
-      name: 'orange',
+      name: "orange",
     },
     NegativeMedium: {
       r: 209,
@@ -28,7 +28,7 @@ export const state = () => ({
       latitude: 30,
       longitude: 120,
       posts: [],
-      name: 'green',
+      name: "green",
     },
     PositiveMedium: {
       r: 193,
@@ -37,7 +37,7 @@ export const state = () => ({
       latitude: -30,
       longitude: 60,
       posts: [],
-      name: 'magenta',
+      name: "magenta",
     },
     PositiveHigh: {
       r: 255,
@@ -46,7 +46,7 @@ export const state = () => ({
       latitude: -30,
       longitude: -60,
       posts: [],
-      name: 'red',
+      name: "red",
     },
     PositiveLow: {
       r: 255,
@@ -55,7 +55,7 @@ export const state = () => ({
       latitude: -30,
       longitude: 180,
       posts: [],
-      name: 'yellow',
+      name: "yellow",
     },
   },
 })
@@ -73,7 +73,7 @@ export const actions = {
       }`)
 
       const { moods } = data.data
-      commit('setMoods', moods)
+      commit("setMoods", moods)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -94,7 +94,7 @@ export const actions = {
       }`)
 
       const { cities } = data.data
-      commit('setCities', cities)
+      commit("setCities", cities)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)

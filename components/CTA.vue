@@ -5,14 +5,14 @@
       <p>
         {{ text }}
       </p>
-      <Button :to="{ name: 'cities' }">Learn More</Button>
+      <Button to="/">Learn More</Button>
     </Wrapper>
   </div>
 </template>
 
 <script>
-import Wrapper from './Wrapper'
-import Button from './Button'
+import Wrapper from "./Wrapper"
+import Button from "./Button"
 export default {
   components: { Wrapper, Button },
   computed: {
