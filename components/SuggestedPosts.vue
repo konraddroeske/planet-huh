@@ -201,6 +201,12 @@ export default {
   beforeDestroy() {
     window.removeEventListener("resize", this.setSnapPoints)
   },
+  activated() {
+    // window.addEventListener("resize", this.setSnapPoints)
+  },
+  deactivated() {
+    window.removeEventListener("resize", this.setSnapPoints)
+  },
   methods: {
     resetSlider() {
       this.activeSlide = 0
