@@ -102,19 +102,33 @@
 </template>
 
 <script>
+import gsap from "gsap"
 import Logo from "./Logo"
 import CategoryNav from "./CategoryNav"
 import PageNav from "./PageNav"
 import SearchBar from "./SearchBar"
 import SocialLinks from "./SocialLinks"
+
 export default {
   components: { Logo, CategoryNav, PageNav, SearchBar, SocialLinks },
+  mounted() {
+    const tl = gsap.timeline()
+
+    tl.set("#footer", {
+      display: "none",
+      autoAlpha: 0,
+    }).to("#footer", 0.6, {
+      autoAlpha: 1,
+    })
+  },
 }
 </script>
 
 <style lang="scss" scoped>
 footer {
+  // visibility: hidden;
   background: $black;
+  opacity: 0;
 }
 
 .wrapper {
