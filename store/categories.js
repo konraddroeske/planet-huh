@@ -262,17 +262,6 @@ export const actions = {
       dispatch("getCategoryPosts")
     }
   },
-  toggleFilter({ state, dispatch, commit }, filter) {
-    commit("resetFeed")
-
-    state.filters.includes(filter)
-      ? commit("removeFilter", filter)
-      : commit("addFilter", filter)
-  },
-  clearFilters({ state, dispatch, commit }) {
-    commit("resetFeed")
-    commit("resetFilters")
-  },
   updatePosts({ dispatch }) {
     dispatch("checkTitle")
     dispatch("formatFilters")
@@ -329,36 +318,6 @@ export const mutations = {
   setFilters(state, payload) {
     state.filters = payload
   },
-  // addFilter(state, filter) {
-  //   // if category, remove all sub category filters
-  //   if (state.allFilters[filter].hasParent === false) {
-  //     state.filters = state.filters.filter((item) => {
-  //       // account for mood/mood categories types
-  //       if (
-  //         state.allFilters[filter].type === "mood" ||
-  //         state.allFilters[filter].type === "moodCategory"
-  //       ) {
-  //         return (
-  //           state.allFilters[item].type !== "mood" &&
-  //           state.allFilters[item].type !== "moodCategory"
-  //         )
-  //       }
-
-  //       return state.allFilters[item].type !== state.allFilters[filter].type
-  //     })
-  //   } else {
-  //     // search for and remove parent
-  //     state.filters = state.filters.filter(
-  //       (item) => item !== state.allFilters[filter].hasParent
-  //     )
-  //   }
-
-  //   state.filters.push(filter)
-  // },
-  // removeFilter(state, filter) {
-  //   state.filters = state.filters.filter((ele) => ele !== filter)
-  // },
-
   resetFeed(state) {
     state.postsFeed = []
   },

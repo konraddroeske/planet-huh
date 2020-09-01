@@ -176,8 +176,6 @@ export default {
       })
     },
     ...mapActions({
-      toggleFilter: "categories/toggleFilter",
-      clearFilters: "categories/clearFilters",
       getQueries: "categories/getQueries",
     }),
     async routeFilter(filter) {
