@@ -254,7 +254,7 @@ section {
 }
 
 .postTitle {
-  font-weight: $medium;
+  font-weight: $bold;
   font-size: 1.75rem;
   margin: 1rem 0;
 
@@ -278,7 +278,7 @@ section {
 .postTags {
   text-transform: uppercase;
   font-size: 1rem;
-  font-weight: $medium;
+  font-weight: $bold;
   margin: 0;
 
   @media (min-width: $bp-desktop) {
