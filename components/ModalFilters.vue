@@ -22,7 +22,7 @@
             <button
               class="listButton"
               :class="setFiltersClass('senses')"
-              @click="toggleFilter('senses')"
+              @click="routeFilter('senses')"
             >
               All
             </button>
@@ -31,7 +31,7 @@
             <button
               class="listButton"
               :class="setFiltersClass(sense.name)"
-              @click="toggleFilter(sense.name)"
+              @click="routeFilter(sense.name)"
             >
               {{ sense.name }}
             </button>
@@ -52,7 +52,7 @@
             <button
               class="listButton"
               :class="setFiltersClass('moods')"
-              @click="toggleFilter('moods')"
+              @click="routeFilter('moods')"
             >
               All
             </button>
@@ -65,9 +65,9 @@
             <button
               class="listButton"
               :class="setFiltersClass(moodCategory)"
-              @click="toggleFilter(moodCategory)"
+              @click="routeFilter(moodCategory)"
             >
-              {{ moodCategory }}
+              {{ formatMood(moodCategory) }}
             </button>
           </li>
         </ul>
@@ -86,7 +86,7 @@
             <button
               class="listButton"
               :class="setFiltersClass('cities')"
-              @click="toggleFilter('cities')"
+              @click="routeFilter('cities')"
             >
               All
             </button>
@@ -95,7 +95,7 @@
             <button
               class="listButton"
               :class="setFiltersClass(city.name)"
-              @click="toggleFilter(city.name)"
+              @click="routeFilter(city.name)"
             >
               {{ city.name }}
             </button>
@@ -104,7 +104,9 @@
       </div>
     </div>
     <div>
-      <button class="clearButton" @click="clearFilters">Clear Selection</button>
+      <button class="clearButton" @click="routeFilter()">
+        Clear Selection
+      </button>
     </div>
   </div>
 </template>
@@ -174,9 +176,17 @@ export default {
       })
     },
     ...mapActions({
-      toggleFilter: "categories/toggleFilter",
-      clearFilters: "categories/clearFilters",
+      getQueries: "categories/getQueries",
     }),
+    async routeFilter(filter) {
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "categories",
+        query: { filters: queries },
+      })
+    },
     openModal() {
       if (!gsap.isTweening(this.modalRef)) {
         gsap.to(this.modalRef, 0.4, { x: "0%" })
@@ -226,6 +236,9 @@ export default {
       return {
         highlighted: this.filters.includes(name),
       }
+    },
+    formatMood(mood) {
+      return mood.replace(/([a-z])([A-Z])/, "$1 $2")
     },
   },
 }

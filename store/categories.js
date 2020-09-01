@@ -1,5 +1,6 @@
 import set from "lodash.set"
 import isEmpty from "lodash.isempty"
+import isEqual from "lodash.isequal"
 import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
@@ -17,7 +18,7 @@ export const state = () => ({
   moods: [],
   senses: [],
   moodCategories: [],
-  moodCategoriesUnformatted: [],
+  // moodCategoriesUnformatted: [],
 })
 
 export const actions = {
@@ -110,12 +111,19 @@ export const actions = {
     }
   },
   checkTitle({ state, commit }) {
-    state.filters.length === 1
-      ? commit("setTitle", state.filters[0])
-      : commit("setTitle", "All")
+    if (state.filters.length === 1) {
+      if (state.allFilters[state.filters[0]].type === "moodCategory") {
+        commit("setTitle", state.filters[0].replace(/([a-z])([A-Z])/, "$1 $2"))
+      } else {
+        commit("setTitle", state.filters[0])
+      }
+    } else {
+      commit("setTitle", "All")
+    }
   },
   formatFilters({ state, dispatch, commit }, payload) {
     let filters = {}
+    const moodCategories = []
 
     if (state.filters.length > 0) {
       // create city, mood, sense arrays
@@ -170,6 +178,8 @@ export const actions = {
           }
 
           if (state.allFilters[moodFilters[i]].type === "moodCategory") {
+            moodCategories.push(moodFilters[i])
+
             set(moodObj, str, {
               moodCategory: moodFilters[i].replace(/\s+/g, ""),
             })
@@ -216,8 +226,8 @@ export const actions = {
           str = str.replace(keys[i], keys[i].replace(/"/g, ""))
         }
 
-        // iterate through enumerations and replace
-        state.moodCategoriesUnformatted.forEach((category) => {
+        // iterate through enumerations and remove quotes
+        moodCategories.forEach((category) => {
           str = str.replace(`"${category}"`, `"${category}"`.replace(/"/g, ""))
         })
 
@@ -230,25 +240,21 @@ export const actions = {
     commit("setFormattedFilters", format(filters))
   },
   handleRouteQueries({ dispatch, commit, state }, payload) {
-    let params = Object.values(payload)
+    let params = []
 
-    // check if nested or normal array
-    Array.isArray(params[0])
-      ? (params = JSON.parse(JSON.stringify(params[0])))
-      : (params = JSON.parse(JSON.stringify(params)))
+    if (typeof payload === "string") {
+      params.push(payload)
+    } else {
+      params = Object.values(payload)
 
-    let counter = 0
-
-    if (state.filters.length > 0) {
-      for (let i = 0; i < state.filters.length; i++) {
-        if (params[i] !== state.filters[i]) {
-          counter += 1
-        }
-      }
+      // check if nested or normal array
+      Array.isArray(params[0])
+        ? (params = JSON.parse(JSON.stringify(params[0])))
+        : (params = JSON.parse(JSON.stringify(params)))
     }
 
-    // check if page is already loaded
-    if (state.filters.length === 0 || counter > 0) {
+    // check if current filters are already loaded
+    if (state.filters.length === 0 || !isEqual(params, state.filters)) {
       commit("resetFeed")
       commit("setFilters", params)
       dispatch("checkTitle")
@@ -256,25 +262,51 @@ export const actions = {
       dispatch("getCategoryPosts")
     }
   },
-  toggleFilter({ state, dispatch, commit }, filter) {
-    commit("resetFeed")
-
-    state.filters.includes(filter)
-      ? commit("removeFilter", filter)
-      : commit("addFilter", filter)
-
+  updatePosts({ dispatch }) {
     dispatch("checkTitle")
     dispatch("formatFilters")
     dispatch("getCategoryPosts")
   },
-  clearFilters({ state, dispatch, commit }) {
-    commit("resetFeed")
-    commit("resetFilters")
-    dispatch("checkTitle")
-    dispatch("formatFilters")
-    dispatch("getCategoryPosts")
+  getQueries({ state }, newFilter) {
+    let queries = [...state.filters]
+
+    if (state.filters.length === 0) {
+      queries.push(newFilter)
+    } else if (!state.filters.includes(newFilter)) {
+      if (state.allFilters[newFilter].hasParent === false) {
+        queries = state.filters.filter((item) => {
+          // account for mood/mood categories types
+          if (
+            state.allFilters[newFilter].type === "mood" ||
+            state.allFilters[newFilter].type === "moodCategory"
+          ) {
+            return (
+              state.allFilters[item].type !== "mood" &&
+              state.allFilters[item].type !== "moodCategory"
+            )
+          }
+
+          return (
+            state.allFilters[item].type !== state.allFilters[newFilter].type
+          )
+        })
+      } else {
+        // search for and remove parent
+        queries = state.filters.filter(
+          (item) => item !== state.allFilters[newFilter].hasParent
+        )
+      }
+
+      queries.push(newFilter)
+    } else {
+      queries = state.filters.filter((ele) => ele !== newFilter)
+    }
+
+    return queries
   },
 }
+
+export const getters = {}
 
 export const mutations = {
   setTitle(state, payload) {
@@ -286,36 +318,6 @@ export const mutations = {
   setFilters(state, payload) {
     state.filters = payload
   },
-  addFilter(state, filter) {
-    // if category, remove all sub category filters
-    if (state.allFilters[filter].hasParent === false) {
-      state.filters = state.filters.filter((item) => {
-        // account for mood/mood categories types
-        if (
-          state.allFilters[filter].type === "mood" ||
-          state.allFilters[filter].type === "moodCategory"
-        ) {
-          return (
-            state.allFilters[item].type !== "mood" &&
-            state.allFilters[item].type !== "moodCategory"
-          )
-        }
-
-        return state.allFilters[item].type !== state.allFilters[filter].type
-      })
-    } else {
-      // search for and remove parent
-      state.filters = state.filters.filter(
-        (item) => item !== state.allFilters[filter].hasParent
-      )
-    }
-
-    state.filters.push(filter)
-  },
-  removeFilter(state, filter) {
-    state.filters = state.filters.filter((ele) => ele !== filter)
-  },
-
   resetFeed(state) {
     state.postsFeed = []
   },
@@ -339,13 +341,9 @@ export const mutations = {
   setMoods(state, moods) {
     state.moods = moods
 
-    state.moodCategoriesUnformatted = [
+    state.moodCategories = [
       ...new Set(state.moods.map((mood) => mood.moodCategory)),
     ]
-
-    state.moodCategories = state.moodCategoriesUnformatted.map((category) =>
-      category.replace(/([a-z])([A-Z])/, "$1 $2")
-    )
 
     moods.forEach((mood) => {
       state.allFilters[mood.mood] = {
