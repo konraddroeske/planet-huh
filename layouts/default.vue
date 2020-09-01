@@ -2,12 +2,12 @@
   <div id="layout" class="layout">
     <ModalFilters v-if="modal" />
     <Header />
-    <div id="blurrableContent">
+    <div id="blurrableContent" class="burrableContent">
       <Nav />
       <main id="main" class="main">
         <Nuxt keep-alive />
+        <Footer />
       </main>
-      <Footer />
     </div>
   </div>
 </template>
@@ -29,8 +29,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.burrableContent {
+  position: relative;
+}
+
 .main {
   min-height: 100px;
   position: relative;
+  transform: translateY(100vh);
 }
 </style>

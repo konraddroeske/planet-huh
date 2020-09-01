@@ -88,11 +88,15 @@ export const actions = {
         display: "none",
       })
       .to(payload[1], scrollTime, {
-        opacity: 0,
+        autoAlpha: 0,
+        // opacity: 0,
       })
-      .set("#nav3d", {
-        height: "100vh",
+      .set("#main", {
+        y: "100vh",
       })
+    // .set("#nav3d", {
+    //   height: "100vh",
+    // })
   },
   setNavLarge({ state, commit }, el = null) {
     commit("setNavSize", true)
@@ -141,8 +145,8 @@ export const actions = {
     }
   },
   setNavContainerSmall() {
-    gsap.to("#nav3d", 0.6, {
-      height: 0,
+    gsap.to("#main", 0.6, {
+      y: 0,
       ease: "power4.out",
     })
 
@@ -151,8 +155,8 @@ export const actions = {
     })
   },
   setNavContainerLarge() {
-    gsap.to("#nav3d", 0.6, {
-      height: "100vh",
+    gsap.to("#main", 0.6, {
+      y: "100vh",
       ease: "power4.out",
     })
   },
@@ -164,14 +168,36 @@ export const actions = {
       zIndex: 20,
     })
 
-    gsap.set("#nav3d", {
-      height: 0,
+    gsap.set("#main", {
+      y: "0",
     })
 
     gsap.set("#toggleContainer", { autoAlpha: 0 })
     gsap.to("#navFeedContainer", { autoAlpha: 0 })
     gsap.set("#sceneContainer", {
       width: "250%",
+    })
+  },
+  setLeave(context, payload) {
+    const tl = gsap.timeline()
+    const { el, done } = payload
+
+    tl.to(el, 0.4, {
+      autoAlpha: 0,
+      onComplete: () => done(),
+    }).set("#footer", {
+      display: "none",
+    })
+  },
+  setEnter(context, payload) {
+    const tl = gsap.timeline()
+    const { el, done } = payload
+
+    tl.to(el, 0.6, {
+      autoAlpha: 1,
+      // onComplete: () => done(),
+    }).set("#footer", {
+      display: "block",
     })
   },
 }

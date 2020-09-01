@@ -1240,6 +1240,7 @@ export default {
                 ) {
                   setTarget(null)
                   removeTitle()
+                  removeSprites()
                 }
               }
             }
@@ -1381,7 +1382,10 @@ export default {
 
 <style lang="scss" scoped>
 .nav3d {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 100vh;
   // z-index: $z-modal;
 }

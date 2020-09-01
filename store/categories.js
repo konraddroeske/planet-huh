@@ -261,11 +261,6 @@ export const actions = {
       dispatch("getCategoryPosts")
     }
   },
-  updatePosts({ dispatch }) {
-    dispatch("checkTitle")
-    dispatch("formatFilters")
-    dispatch("getCategoryPosts")
-  },
   getQueries({ state }, newFilter) {
     let queries = [...state.filters]
 

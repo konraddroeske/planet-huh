@@ -10,7 +10,7 @@
 
 <script>
 import isEmpty from "lodash.isempty"
-import { mapState, mapActions } from "vuex"
+import { mapState } from "vuex"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CategoryHero from "@/components/CategoryHero"
@@ -30,7 +30,7 @@ const entering = () => {
 }
 
 const leaving = () => {
-  // console.log('leaving categories')
+  // console.log("leaving")
 }
 
 const leavingToIndex = (el) => {
@@ -44,22 +44,22 @@ const leavingToIndex = (el) => {
 
 export default {
   layout: "default",
-  transition(to, from) {
-    if (!from) {
-      return setNav()
-    }
-
-    if (from.path === "/") {
-      entering()
-    }
-
-    // console.log(to.matched[0])
-
-    to.path === "/" ? leavingToIndex(to.matched[0].instances) : leaving()
+  transition: {
+    enter(el, done) {
+      this.$store.dispatch("setEnter", { el, done })
+    },
+    leave(el, done) {
+      this.$store.dispatch("setLeave", { el, done })
+    },
   },
   components: {
     CategoryHero,
     PostsFeed,
+  },
+  data() {
+    return {
+      from: null,
+    }
   },
   computed: mapState({
     title: (state) => state.categories.title,
@@ -67,21 +67,27 @@ export default {
       return state.categories.postsFeed
     },
   }),
-  // mounted() {
-  //   console.log('mounted')
-  //   this.onHeroLoad()
-  //   this.onMount()
-  // },
   // beforeDestroy() {
   //   this.onDestroy()
   // },
   watch: {
     $route(to, from) {
-      this.$store.dispatch(
-        "categories/handleRouteQueries",
-        isEmpty(to.query.filters) ? {} : to.query.filters
-      )
+      if (from.path === "/") {
+        entering()
+      }
+
+      to.path === "/" ? leavingToIndex(to.matched[0].instances) : null
+
+      if (to.name === "categories") {
+        this.$store.dispatch(
+          "categories/handleRouteQueries",
+          isEmpty(to.query.filters) ? {} : to.query.filters
+        )
+      }
     },
+  },
+  mounted() {
+    if (!gsap.isTweening("#navContainer")) setNav()
   },
   activated() {
     this.$store.dispatch(
@@ -95,11 +101,9 @@ export default {
 
     this.onMount()
   },
-
   deactivated() {
     this.onDestroy()
   },
-
   methods: {
     onMount() {
       const nav = document.querySelector("#navContainer")
@@ -119,11 +123,18 @@ export default {
         path: `/`,
       })
     },
-    ...mapActions({
-      updatePosts: "categories/updatePosts",
-    }),
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+</style>
