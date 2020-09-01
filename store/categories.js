@@ -18,7 +18,6 @@ export const state = () => ({
   moods: [],
   senses: [],
   moodCategories: [],
-  // moodCategoriesUnformatted: [],
 })
 
 export const actions = {
@@ -152,7 +151,7 @@ export const actions = {
       let moodObj = null
       let senseObj = null
 
-      // interate through arrs, and create objects
+      // convert categories to query objects
       if (city.length > 0) {
         const cityFilters = city.filter((item) => item !== "cities")
         cityObj = { city_every: { id_not: "null" } }
@@ -226,7 +225,7 @@ export const actions = {
           str = str.replace(keys[i], keys[i].replace(/"/g, ""))
         }
 
-        // iterate through enumerations and remove quotes
+        // remove quotes from enumerations
         moodCategories.forEach((category) => {
           str = str.replace(`"${category}"`, `"${category}"`.replace(/"/g, ""))
         })
