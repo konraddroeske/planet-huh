@@ -178,17 +178,16 @@ export default {
     ...mapActions({
       toggleFilter: "categories/toggleFilter",
       clearFilters: "categories/clearFilters",
-      updatePosts: "categories/updatePosts",
+      getQueries: "categories/getQueries",
     }),
-    routeFilter(filter) {
-      filter ? this.toggleFilter(filter) : this.clearFilters()
+    async routeFilter(filter) {
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
 
       this.$router.push({
         path: "categories",
-        query: { filters: this.filters },
+        query: { filters: queries },
       })
-
-      this.updatePosts()
     },
     openModal() {
       if (!gsap.isTweening(this.modalRef)) {

@@ -9,7 +9,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
+import isEmpty from "lodash.isempty"
+import { mapState, mapActions } from "vuex"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CategoryHero from "@/components/CategoryHero"
@@ -74,10 +75,19 @@ export default {
   // beforeDestroy() {
   //   this.onDestroy()
   // },
+  watch: {
+    $route(to, from) {
+      this.$store.dispatch(
+        "categories/handleRouteQueries",
+        isEmpty(to.query.filters) ? {} : to.query.filters
+      )
+    },
+  },
   activated() {
-    console.log("activated")
-
-    this.$store.dispatch("categories/handleRouteQueries", this.$route.query)
+    this.$store.dispatch(
+      "categories/handleRouteQueries",
+      isEmpty(this.$route.query) ? {} : this.$route.query
+    )
 
     setTimeout(() => {
       this.onHeroLoad()
@@ -85,9 +95,11 @@ export default {
 
     this.onMount()
   },
+
   deactivated() {
     this.onDestroy()
   },
+
   methods: {
     onMount() {
       const nav = document.querySelector("#navContainer")
@@ -107,6 +119,9 @@ export default {
         path: `/`,
       })
     },
+    ...mapActions({
+      updatePosts: "categories/updatePosts",
+    }),
   },
 }
 </script>
