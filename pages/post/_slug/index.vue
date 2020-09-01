@@ -64,16 +64,13 @@ export default {
     SocialShare,
     SuggestedPosts,
   },
-  transition(to, from) {
-    if (!from) {
-      return setNav()
-    }
-
-    if (from.path === "/") {
-      entering()
-    }
-
-    to.path === "/" ? leavingToIndex() : leaving()
+  transition: {
+    enter(el, done) {
+      this.$store.dispatch("setEnter", { el, done })
+    },
+    leave(el, done) {
+      this.$store.dispatch("setLeave", { el, done })
+    },
   },
   data() {
     return {
@@ -85,6 +82,15 @@ export default {
     link() {
       const host = this.req ? this.req.headers.host : window.location.origin
       return `${host}${this.$route.path}`
+    },
+  },
+  watch: {
+    $route(to, from) {
+      if (from.path === "/") {
+        entering()
+      }
+
+      to.path === "/" ? leavingToIndex(to.matched[0].instances) : leaving()
     },
   },
   async created() {
@@ -131,9 +137,9 @@ export default {
       content: content.raw.children,
     }
   },
-  // mounted() {
-  //   this.onMount()
-  // },
+  mounted() {
+    if (!gsap.isTweening("#navContainer")) setNav()
+  },
   // beforeDestroy() {
   //   this.onDestroy()
   // },

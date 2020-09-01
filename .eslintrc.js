@@ -21,5 +21,6 @@ module.exports = {
     "no-unused-vars": "warn",
     "no-lone-blocks": "warn",
     "prefer-const": "warn",
+    "no-unused-expressions": "warn",
   },
 }

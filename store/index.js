@@ -88,7 +88,8 @@ export const actions = {
         display: "none",
       })
       .to(payload[1], scrollTime, {
-        opacity: 0,
+        autoAlpha: 0,
+        // opacity: 0,
       })
       .set("#main", {
         y: "100vh",
@@ -175,6 +176,28 @@ export const actions = {
     gsap.to("#navFeedContainer", { autoAlpha: 0 })
     gsap.set("#sceneContainer", {
       width: "250%",
+    })
+  },
+  setLeave(context, payload) {
+    const tl = gsap.timeline()
+    const { el, done } = payload
+
+    tl.to(el, 0.4, {
+      autoAlpha: 0,
+      onComplete: () => done(),
+    }).set("#footer", {
+      display: "none",
+    })
+  },
+  setEnter(context, payload) {
+    const tl = gsap.timeline()
+    const { el, done } = payload
+
+    tl.to(el, 0.6, {
+      autoAlpha: 1,
+      // onComplete: () => done(),
+    }).set("#footer", {
+      display: "block",
     })
   },
 }
