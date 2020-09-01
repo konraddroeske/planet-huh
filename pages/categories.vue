@@ -75,6 +75,8 @@ export default {
   //   this.onDestroy()
   // },
   activated() {
+    console.log("activated")
+
     this.$store.dispatch("categories/handleRouteQueries", this.$route.query)
 
     setTimeout(() => {

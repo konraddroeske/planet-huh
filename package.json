@@ -24,6 +24,7 @@
     "axios": "^0.19.2",
     "gsap": "file:gsap-bonus.tgz",
     "lodash.isempty": "^4.4.0",
+    "lodash.isequal": "^4.5.0",
     "lodash.set": "^4.3.2",
     "moment": "^2.27.0",
     "nuxt": "^2.13.0",
