@@ -51,11 +51,9 @@ export default {
     //   return state.categories.postsFeed
     // },
     postLimit() {
-      console.log(this.$store.getters["categories/postLimit"])
       return this.$store.getters["categories/postLimit"]
     },
     postsTotal() {
-      console.log(this.$store.getters["categories/postsTotal"])
       return this.$store.getters["categories/postsTotal"]
     },
   }),
