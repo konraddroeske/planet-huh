@@ -14,7 +14,7 @@
       </label>
     </div>
 
-    <section id="modal" class="modal">
+    <section id="modalNav" ref="modalNav" v-scroll-lock="isOpen" class="modal">
       <CategoryNav variant="light" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
@@ -38,23 +38,45 @@ export default {
       isOpen: false,
     }
   },
+  watch: {
+    $route(to, from) {
+      console.log("routing with modal")
+
+      if (this.isOpen) {
+        this.closeNav()
+        document.getElementById("menuButton").checked = false
+      }
+    },
+  },
   methods: {
     toggleModal() {
-      const blurrableContent = document.getElementById("blurrableContent")
       if (this.isOpen) {
-        gsap.to("#modal", 0.4, { autoAlpha: 0 })
-        gsap.to(blurrableContent, 0.8, {
-          filter: "blur(0px)",
-        })
-        document.body.classList.remove("lockScroll")
+        this.closeNav()
       } else {
-        gsap.to("#modal", 0.6, { autoAlpha: 1 })
-
-        gsap.to(blurrableContent, 0.4, {
-          filter: "blur(10px)",
-        })
-        document.body.classList.add("lockScroll")
+        this.openNav()
       }
+    },
+    closeNav() {
+      const blurrableContent = document.getElementById("blurrableContent")
+      const modalNav = this.$refs.modalNav
+
+      gsap.to(modalNav, 0.6, {
+        autoAlpha: 0,
+      })
+
+      blurrableContent.classList.remove("blurContent")
+
+      this.isOpen = !this.isOpen
+    },
+    openNav() {
+      const blurrableContent = document.getElementById("blurrableContent")
+      const modalNav = this.$refs.modalNav
+
+      gsap.to(modalNav, 0.6, {
+        autoAlpha: 1,
+      })
+      blurrableContent.classList.add("blurContent")
+
       this.isOpen = !this.isOpen
     },
   },

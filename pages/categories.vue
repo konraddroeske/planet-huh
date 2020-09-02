@@ -33,13 +33,13 @@ const leaving = () => {
   // console.log("leaving")
 }
 
-const leavingToIndex = (el) => {
+const leavingToIndex = () => {
   const setNavContainerLarge =
     window.$nuxt.$store._actions.setNavContainerLarge[0]
   setNavContainerLarge()
 
   const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-  setNavLarge(el)
+  setNavLarge()
 }
 
 export default {
@@ -76,7 +76,7 @@ export default {
         entering()
       }
 
-      to.path === "/" ? leavingToIndex(to.matched[0].instances) : null
+      if (to.path === "/") leavingToIndex()
 
       if (to.name === "categories") {
         this.$store.dispatch(
@@ -130,14 +130,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-.fade-out {
-  opacity: 0;
-  transition: opacity 0.5s;
-}
-
-.fade-in {
-  opacity: 1;
-  transition: opacity 0.5s;
-}
-</style>
+<style lang="scss" scoped></style>
