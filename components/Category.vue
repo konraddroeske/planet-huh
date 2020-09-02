@@ -8,10 +8,7 @@
         query: { filters: [name.toLowerCase()] },
       }"
       event=""
-      @click.native="
-        navigate('/categories', { filters: [name.toLowerCase()] }),
-          (event) => event.preventDefault()
-      "
+      @click.native="navigate('/categories', { filters: [name.toLowerCase()] })"
       >{{ name }}</nuxt-link
     >
   </div>
