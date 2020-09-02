@@ -8,10 +8,7 @@
         query: { filters: [name.toLowerCase()] },
       }"
       event=""
-      @click.native="
-        navigate('/categories', { filters: [name.toLowerCase()] }),
-          (event) => event.preventDefault()
-      "
+      @click.native="navigate('/categories', { filters: [name.toLowerCase()] })"
       >{{ name }}</nuxt-link
     >
   </div>
@@ -57,7 +54,7 @@ export default {
       this.$refs.container.classList.remove("largeGradient")
     },
     navigate(destination, filters) {
-      if (this.$route.fullPath !== "/") {
+      if (this.$route.fullPath.includes("categories")) {
         const tl = gsap.timeline()
 
         tl.to(window, 0.3, {
