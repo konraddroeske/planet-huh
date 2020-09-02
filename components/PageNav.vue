@@ -1,12 +1,14 @@
 <template>
   <nav>
     <ul :class="`navList-${variant}`">
-      <li :class="`navItem-${variant}`">Sign In</li>
-      <li :class="`navItem-${variant}`">About</li>
-      <li :class="`navItem-${variant}`">Submit</li>
-      <li :class="`navItem-${variant}`">Contact</li>
-      <li :class="`navItem-${variant}`">FAQ</li>
-      <li :class="`navItem-${variant}`">Legal</li>
+      <li :class="`navItem-${variant}`">
+        <nuxt-link :to="'contact'">Contact</nuxt-link>
+      </li>
+      <li v-for="slug in slugs" :key="slug.slug" :class="`navItem-${variant}`">
+        <nuxt-link :to="slug.slug">
+          {{ slug.shortTitle }}
+        </nuxt-link>
+      </li>
     </ul>
   </nav>
 </template>
@@ -22,6 +24,16 @@ export default {
       },
     },
   },
+  computed: {
+    slugs() {
+      return this.$store.state.static.slugs
+    },
+  },
+  async created() {
+    if (this.$store.state.static.slugs.length === 0) {
+      await this.$store.dispatch("static/getStaticSlugs")
+    }
+  },
 }
 </script>
 
@@ -31,6 +43,17 @@ nav {
   @media (min-width: $bp-desktop) {
     grid-area: pageNav;
     align-self: center;
+  }
+}
+
+a,
+a:visited {
+  color: $white;
+  text-decoration: none;
+
+  &:focus,
+  &:hover {
+    color: $accent;
   }
 }
 
