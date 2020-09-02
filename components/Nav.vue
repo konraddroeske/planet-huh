@@ -269,8 +269,7 @@ export default {
       const mouseMove = (e) => {
         // Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1
+        rayMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1
 
@@ -373,9 +372,10 @@ export default {
 
         // Mobile Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-          1
+        // rayMouse.x =
+        //   ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
+        //   1
+        rayMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
@@ -585,7 +585,7 @@ export default {
       {
         const texture = loader.load(globeTexture)
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-        const geometry = new THREE.SphereGeometry(1, 32, 32)
+        const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
@@ -691,7 +691,7 @@ export default {
 
       {
         const radius = 1
-        const geometry = new THREE.SphereBufferGeometry(radius, 32, 32)
+        const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
 
         const vertexShader = `
           precision mediump float;
@@ -1368,7 +1368,6 @@ export default {
 
       const cancelAnimation = () => {
         event.preventDefault()
-        console.log("context lost")
         cancelAnimationFrame(render)
       }
 
@@ -1413,7 +1412,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
+  width: 250%;
 }
 
 .scene {
