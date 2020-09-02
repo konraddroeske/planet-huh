@@ -23,9 +23,9 @@ export const actions = {
     const navTime = 1
 
     navContainerTl
-      .set("#sceneContainer", {
-        width: "250%",
-      })
+      // .set("#sceneContainer", {
+      //   width: "250%",
+      // })
       .to("#navContainer", navTime, {
         y: state.isMobile ? "3rem" : "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
@@ -59,9 +59,9 @@ export const actions = {
       .set("#navContainer", {
         position: "fixed",
       })
-      .set("#sceneContainer", {
-        width: "250%",
-      })
+      // .set("#sceneContainer", {
+      //   width: "250%",
+      // })
       .to("#navContainer", navTime, {
         y: "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
@@ -133,9 +133,9 @@ export const actions = {
         height: "auto",
         overflow: "visible",
       })
-      .set("#sceneContainer", {
-        width: "100%",
-      })
+    // .set("#sceneContainer", {
+    //   width: "250%",
+    // })
 
     gsap.to("#toggleContainer", navTime, { autoAlpha: 1 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 1 })
@@ -170,9 +170,9 @@ export const actions = {
 
     gsap.set("#toggleContainer", { autoAlpha: 0 })
     gsap.to("#navFeedContainer", { autoAlpha: 0 })
-    gsap.set("#sceneContainer", {
-      width: "250%",
-    })
+    // gsap.set("#sceneContainer", {
+    //   width: "250%",
+    // })
   },
   setLeave(context, payload) {
     console.log("leaving")
