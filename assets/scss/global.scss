@@ -88,10 +88,10 @@ img {
   overflow: hidden;
 }
 
-// .blurContent {
-//   filter: blur(10px);
-//   transition: filter 0.8s;
-// }
+.blurContent {
+  filter: blur(10px);
+  transition: filter 0.6s;
+}
 
 .accentText {
   color: $accent;
