@@ -4,15 +4,21 @@
     <nuxt-link
       ref="link"
       :to="{
-        path: 'categories',
+        path: '/categories',
         query: { filters: [name.toLowerCase()] },
       }"
+      event=""
+      @click.native="
+        navigate('/categories', { filters: [name.toLowerCase()] }),
+          (event) => event.preventDefault()
+      "
       >{{ name }}</nuxt-link
     >
   </div>
 </template>
 
 <script>
+import gsap from "gsap"
 export default {
   props: {
     variant: {
@@ -50,8 +56,25 @@ export default {
     endGradient() {
       this.$refs.container.classList.remove("largeGradient")
     },
-    navigate() {
-      console.log("navigating programmatically")
+    navigate(destination, filters) {
+      if (this.$route.fullPath !== "/") {
+        const tl = gsap.timeline()
+
+        tl.to(window, 0.3, {
+          scrollTo: 0,
+          onComplete: () => {
+            this.$router.push({
+              path: destination,
+              query: filters,
+            })
+          },
+        })
+      } else {
+        this.$router.push({
+          path: destination,
+          query: filters,
+        })
+      }
     },
     onMount() {
       this.$refs.link.$el.addEventListener("mouseover", this.startGradient)
