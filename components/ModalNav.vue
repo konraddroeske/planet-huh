@@ -40,8 +40,6 @@ export default {
   },
   watch: {
     $route(to, from) {
-      console.log("routing with modal")
-
       if (this.isOpen) {
         this.closeNav()
         document.getElementById("menuButton").checked = false
