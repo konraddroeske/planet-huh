@@ -257,6 +257,7 @@ export const actions = {
     // check if current filters are already loaded
     if (state.filters.length === 0 || !isEqual(params, state.filters)) {
       commit("resetFeed")
+      commit("resetMaxPosts")
       commit("setFilters", params)
       dispatch("checkTitle")
       dispatch("formatFilters")
