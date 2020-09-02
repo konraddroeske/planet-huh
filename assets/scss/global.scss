@@ -5,7 +5,7 @@ $bp-desktop: 1024px;
 $bp-lg-desktop: 1280px;
 
 // Font
-$font-display: 'Work Sans', sans-serif;
+$font-display: "Work Sans", sans-serif;
 $font-sans: Oswald, sans-serif;
 $font-body: Georgia, sans-serif;
 
@@ -88,9 +88,10 @@ img {
   overflow: hidden;
 }
 
-.blurContent {
-  filter: blur(10px);
-}
+// .blurContent {
+//   filter: blur(10px);
+//   transition: filter 0.8s;
+// }
 
 .accentText {
   color: $accent;

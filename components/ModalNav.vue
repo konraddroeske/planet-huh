@@ -14,7 +14,7 @@
       </label>
     </div>
 
-    <section class="modal" :class="{ visuallyHidden: !isOpen }">
+    <section id="modal" class="modal">
       <CategoryNav variant="light" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import gsap from "gsap"
 import CategoryNav from "./CategoryNav"
 import PageNav from "./PageNav"
 import SocialLinks from "./SocialLinks"
@@ -41,10 +42,17 @@ export default {
     toggleModal() {
       const blurrableContent = document.getElementById("blurrableContent")
       if (this.isOpen) {
-        blurrableContent.classList.remove("blurContent")
+        gsap.to("#modal", 0.4, { autoAlpha: 0 })
+        gsap.to(blurrableContent, 0.8, {
+          filter: "blur(0px)",
+        })
         document.body.classList.remove("lockScroll")
       } else {
-        blurrableContent.classList.add("blurContent")
+        gsap.to("#modal", 0.6, { autoAlpha: 1 })
+
+        gsap.to(blurrableContent, 0.4, {
+          filter: "blur(10px)",
+        })
         document.body.classList.add("lockScroll")
       }
       this.isOpen = !this.isOpen
@@ -63,6 +71,7 @@ export default {
   right: 0;
   padding: 2rem;
   background: rgba(255, 255, 255, 0.3);
+  visibility: hidden;
 
   @media (min-width: $bp-desktop) {
     display: grid;
