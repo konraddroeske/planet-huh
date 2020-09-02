@@ -28,6 +28,7 @@ export default {
   async fetch({ store }) {
     if (store.state.homepage.postsFeed.length === 0) {
       await store.dispatch("homepage/getHomepage")
+      await store.dispatch("homepage/getFeatured")
       await store.dispatch("homepage/getSomePosts", 4)
     }
   },
