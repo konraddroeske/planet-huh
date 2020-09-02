@@ -185,12 +185,16 @@ export const actions = {
     const tl = gsap.timeline()
     const { el, done } = payload
 
-    tl.to(el, 0.6, {
-      autoAlpha: 0,
-      onComplete: () => done(),
-    }).set("#footer", {
-      display: "none",
+    tl.to(window, 0.3, {
+      scrollTo: 0,
     })
+      .to(el, 0.6, {
+        autoAlpha: 0,
+      })
+      .set("#footer", {
+        display: "none",
+        onComplete: () => done(),
+      })
   },
   setEnter(context, payload) {
     const tl = gsap.timeline()

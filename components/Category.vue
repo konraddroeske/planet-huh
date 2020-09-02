@@ -54,7 +54,7 @@ export default {
       this.$refs.container.classList.remove("largeGradient")
     },
     navigate(destination, filters) {
-      if (this.$route.fullPath !== "/") {
+      if (this.$route.fullPath.includes("categories")) {
         const tl = gsap.timeline()
 
         tl.to(window, 0.3, {
