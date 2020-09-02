@@ -104,6 +104,8 @@ export default {
   font-size: 1rem;
   margin-bottom: 0.5rem;
 
+  transition: all 0.4s;
+
   @media (min-width: $bp-desktop) {
     font-size: 1.25rem;
     margin-bottom: 1rem;
@@ -117,10 +119,14 @@ export default {
   font-size: 4rem;
   line-height: 1;
 
+  transition: all 0.4s;
+
   a,
   a:visited {
     color: $white;
     text-decoration: none;
+
+    transition: all 0.4s;
 
     &:hover,
     &:focus {
@@ -136,10 +142,14 @@ export default {
   font-size: 4rem;
   line-height: 1;
 
+  transition: all 0.4s;
+
   a,
   a:visited {
     color: $black;
     text-decoration: none;
+
+    transition: all 0.4s;
 
     &:hover,
     &:focus {
@@ -164,6 +174,8 @@ export default {
   line-height: 1;
   position: relative;
 
+  transition: all 0.4s;
+
   ::before {
     content: "";
     position: absolute;
@@ -177,12 +189,15 @@ export default {
     box-shadow: 0 0 5rem 2rem $accent;
     opacity: 0.2;
     filter: blur(10px);
+
+    transition: all 0.4s;
   }
 
   a,
   a:visited {
     color: $black;
     text-decoration: none;
+    transition: all 0.4s;
 
     &:hover,
     &:focus {
