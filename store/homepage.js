@@ -3,9 +3,8 @@ import { fetchContent } from "@/utils/api"
 export const state = () => ({
   ctaTitle: "",
   ctaText: "",
-  featuredPosts: [],
-  featuredCollabPosts: [],
   postsFeed: [],
+  featured: [],
 })
 
 export const actions = {
@@ -15,46 +14,45 @@ export const actions = {
         homePages {
             ctaTitle
             ctaText
-            featuredPosts {
-              title
-              date
-              slug
-              coverImage {
-                url
-              }
-            }
-            featuredCollabPosts(where: {featured: true}) {
-              title
-              slug
-              date
-              featured
-              headline
-              artist {
-                name
-                location
-              }
-              images {
-                url
-                id
-                fileName
-              }
-            }
           }
       }`)
 
-      const {
-        ctaTitle,
-        ctaText,
-        featuredPosts,
-        featuredCollabPosts,
-      } = data.data.homePages[0]
+      const { ctaTitle, ctaText } = data.data.homePages[0]
 
       commit("setHomepage", {
         ctaTitle,
         ctaText,
-        featuredPosts,
-        featuredCollabPosts,
       })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error) // TODO: error handling
+    }
+  },
+  async getFeatured({ commit }) {
+    try {
+      const { data } = await fetchContent(`{
+          posts(where: {featured: true}, orderBy: date_DESC) {
+          id
+          slug
+          title
+          headline
+          featured
+          featuredImages {
+            id
+            url
+            fileName
+          }
+          artist {
+            name
+            location
+          }
+          date
+        }
+      }`)
+
+      const { posts } = data.data
+
+      commit("setFeatured", posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error) // TODO: error handling
@@ -113,5 +111,8 @@ export const mutations = {
   },
   setSomePosts(state, newPosts) {
     state.postsFeed = state.postsFeed.concat(newPosts)
+  },
+  setFeatured(state, featuredPosts) {
+    state.featured = featuredPosts
   },
 }
