@@ -87,7 +87,10 @@ export default {
     },
   },
   mounted() {
-    if (!gsap.isTweening("#navContainer")) setNav()
+    if (!this.$store.state.isMounted) {
+      setNav()
+      this.$store.commit("toggleMounted")
+    }
   },
   activated() {
     this.$store.dispatch(

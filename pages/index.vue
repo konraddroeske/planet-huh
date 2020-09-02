@@ -72,6 +72,8 @@ export default {
   },
   methods: {
     onMount() {
+      this.$store.commit("toggleMounted")
+
       if (this.isMobile) {
         this.$store.commit("setNavOpen", true)
       }
