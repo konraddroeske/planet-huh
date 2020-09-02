@@ -37,23 +37,6 @@ const setNav = () => {
   setNavStyle(isMobile)
 }
 
-const entering = () => {
-  // console.log('entering post')
-}
-
-const leaving = () => {
-  // console.log('leaving post')
-}
-
-const leavingToIndex = () => {
-  const setNavContainerLarge =
-    window.$nuxt.$store._actions.setNavContainerLarge[0]
-  setNavContainerLarge()
-
-  const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-  setNavLarge()
-}
-
 export default {
   layout: "default",
   components: {
@@ -85,13 +68,7 @@ export default {
     },
   },
   watch: {
-    $route(to, from) {
-      if (from.path === "/") {
-        entering()
-      }
-
-      to.path === "/" ? leavingToIndex(to.matched[0].instances) : leaving()
-    },
+    $route(to, from) {},
   },
   async created() {
     const { data } = await fetchContent(`{

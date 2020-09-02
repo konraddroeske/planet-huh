@@ -74,16 +74,12 @@ export default {
       }
     },
     onMount() {
-      console.log("category mounted")
-
       this.$refs.link.$el.addEventListener("mouseover", this.startGradient)
       this.$refs.link.$el.addEventListener("mouseout", this.endGradient)
       this.$refs.link.$el.addEventListener("focus", this.startGradient)
       this.$refs.link.$el.addEventListener("blur", this.endGradient)
     },
     onDestroy() {
-      console.log("category destroyed")
-
       this.$refs.container.classList.remove("largeGradient")
 
       this.$refs.link.$el.removeEventListener("mouseover", this.startGradient)

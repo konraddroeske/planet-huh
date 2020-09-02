@@ -47,6 +47,14 @@ export default {
         setNavIndexSmall([done, el])
       }
     },
+    enter(el, done) {
+      const setNavContainerLarge =
+        window.$nuxt.$store._actions.setNavContainerLarge[0]
+      setNavContainerLarge()
+
+      const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
+      setNavLarge()
+    },
   },
   computed: {
     isMobile() {
