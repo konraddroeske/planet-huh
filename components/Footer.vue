@@ -114,21 +114,23 @@ export default {
   mounted() {
     const tl = gsap.timeline()
 
-    tl.set("#footer", {
-      display: "none",
-      autoAlpha: 0,
-    }).to("#footer", 0.6, {
-      autoAlpha: 1,
-    })
+    tl.set("#footer", { delay: 0.4, display: "block", autoAlpha: 0 }).to(
+      "#footer",
+      1,
+      {
+        delay: 0.6,
+        autoAlpha: 1,
+      }
+    )
   },
 }
 </script>
 
 <style lang="scss" scoped>
 footer {
-  // visibility: hidden;
   background: $black;
   opacity: 0;
+  display: none;
 }
 
 .wrapper {
