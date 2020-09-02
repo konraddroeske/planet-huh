@@ -4,6 +4,7 @@ export const state = () => ({
   ctaTitle: "",
   ctaText: "",
   postsFeed: [],
+  maxPosts: 0,
   featured: [],
 })
 
@@ -90,6 +91,7 @@ export const actions = {
 
       const { posts } = data.data
       commit("setSomePosts", posts)
+      commit("setMaxPosts", 4)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -97,7 +99,18 @@ export const actions = {
   },
 }
 
-export const getters = {}
+export const getters = {
+  postLimit: (state) => {
+    return state.postsFeed.length - state.maxPosts <= 0
+  },
+  postsTotal: (state) => {
+    if (state.maxPosts >= state.postsFeed.length) {
+      return state.postsFeed
+    } else {
+      return state.postsFeed.slice(0, state.maxPosts)
+    }
+  },
+}
 
 export const mutations = {
   setHomepage(
@@ -114,5 +127,11 @@ export const mutations = {
   },
   setFeatured(state, featuredPosts) {
     state.featured = featuredPosts
+  },
+  setMaxPosts(state, num) {
+    state.maxPosts += num
+  },
+  resetMaxPosts(state) {
+    state.maxPosts = 0
   },
 }

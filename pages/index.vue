@@ -3,7 +3,11 @@
     <CTA />
     <CategoryNav variant="gradient" />
     <FeaturedCollabs />
-    <PostsFeed :posts="posts" get-some-posts-path="homepage/getSomePosts" />
+    <PostsFeed
+      :posts="postsTotal"
+      :post-limit="postLimit"
+      get-some-posts-path="homepage/getSomePosts"
+    />
   </div>
 </template>
 
@@ -29,7 +33,8 @@ export default {
     if (store.state.homepage.postsFeed.length === 0) {
       await store.dispatch("homepage/getHomepage")
       await store.dispatch("homepage/getFeatured")
-      await store.dispatch("homepage/getSomePosts", 4)
+      await store.commit("homepage/resetMaxPosts")
+      await store.dispatch("homepage/getSomePosts", 8)
     }
   },
   transition: {
@@ -63,8 +68,11 @@ export default {
     isOpen() {
       return this.$store.state.isOpen
     },
-    posts() {
-      return this.$store.state.homepage.postsFeed
+    postLimit() {
+      return this.$store.getters["homepage/postLimit"]
+    },
+    postsTotal() {
+      return this.$store.getters["homepage/postsTotal"]
     },
   },
   // mounted() {

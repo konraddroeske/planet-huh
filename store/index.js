@@ -228,7 +228,7 @@ export const actions = {
 
     gsap.fromTo(
       el,
-      { y: "80vh" },
+      { y: "60vh" },
       {
         y: "0",
         ease: "power4.out",

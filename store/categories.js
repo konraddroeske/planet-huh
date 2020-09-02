@@ -14,6 +14,7 @@ export const state = () => ({
     senses: { type: "sense", hasParent: false },
   },
   postsFeed: [],
+  maxPosts: 0,
   cities: [],
   moods: [],
   senses: [],
@@ -51,6 +52,7 @@ export const actions = {
 
       const { posts } = data.data
       commit("setCategoryPosts", posts)
+      commit("setMaxPosts", 4)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -258,7 +260,7 @@ export const actions = {
       commit("setFilters", params)
       dispatch("checkTitle")
       dispatch("formatFilters")
-      dispatch("getCategoryPosts")
+      dispatch("getCategoryPosts", 8)
     }
   },
   getQueries({ state }, newFilter) {
@@ -300,7 +302,18 @@ export const actions = {
   },
 }
 
-export const getters = {}
+export const getters = {
+  postLimit: (state) => {
+    return state.postsFeed.length - state.maxPosts <= 0
+  },
+  postsTotal: (state) => {
+    if (state.maxPosts >= state.postsFeed.length) {
+      return state.postsFeed
+    } else {
+      return state.postsFeed.slice(0, state.maxPosts)
+    }
+  },
+}
 
 export const mutations = {
   setTitle(state, payload) {
@@ -368,5 +381,11 @@ export const mutations = {
   },
   setModal(state, payload) {
     state.modal = payload
+  },
+  setMaxPosts(state, num) {
+    state.maxPosts += num
+  },
+  resetMaxPosts(state) {
+    state.maxPosts = 0
   },
 }

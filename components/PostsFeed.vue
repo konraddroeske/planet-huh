@@ -32,11 +32,7 @@
           </p>
         </li>
       </ul>
-      <Button
-        v-if="!allPostsFetched"
-        ref="load"
-        @clicked="getSomePostsAndUnfocus"
-      >
+      <Button v-if="!postLimit" ref="load" @clicked="getSomePostsAndUnfocus">
         Load More
       </Button>
     </Wrapper>
@@ -56,6 +52,10 @@ export default {
       type: Array,
       required: true,
     },
+    postLimit: {
+      type: Boolean,
+      required: true,
+    },
     getSomePostsPath: {
       type: String,
       required: true,
@@ -72,13 +72,6 @@ export default {
       return this.posts.map((post) => ({
         ...post,
       }))
-    },
-  },
-  watch: {
-    posts(newPosts, oldPosts) {
-      newPosts.length === oldPosts.length
-        ? (this.allPostsFetched = true)
-        : (this.allPostsFetched = false)
     },
   },
   // mounted() {

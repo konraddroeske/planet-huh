@@ -585,7 +585,7 @@ export default {
       {
         const texture = loader.load(globeTexture)
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-        const geometry = new THREE.SphereGeometry(1, 32, 32)
+        const geometry = new THREE.SphereGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
@@ -691,7 +691,7 @@ export default {
 
       {
         const radius = 1
-        const geometry = new THREE.SphereBufferGeometry(radius, 32, 32)
+        const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
 
         const vertexShader = `
           precision mediump float;

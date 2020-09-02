@@ -41,8 +41,10 @@ export default {
   watch: {
     $route(to, from) {
       if (this.isOpen) {
-        this.closeNav()
-        document.getElementById("menuButton").checked = false
+        setTimeout(() => {
+          this.closeNav()
+          document.getElementById("menuButton").checked = false
+        }, 0.4)
       }
     },
   },
