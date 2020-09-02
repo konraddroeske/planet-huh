@@ -208,12 +208,12 @@ section {
     width: calc(27.5% / 0.85);
   }
 
-  .postContainer:nth-child(8n + 3) {
+  .postContainer:nth-child(8n + 7) {
     width: 50%;
     padding-right: 1.5%;
   }
 
-  .postContainer:nth-child(8n + 4) {
+  .postContainer:nth-child(8n + 8) {
     width: 50%;
     padding-left: 1.5%;
   }
