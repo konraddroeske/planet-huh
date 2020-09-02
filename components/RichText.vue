@@ -8,9 +8,9 @@
               child.text
             }}</a>
             <template v-else>
-              <strong :key="child.text" v-show-but-keep-inner="child.bold">
-                <em :key="child.text" v-show-but-keep-inner="child.italic">
-                  <u :key="child.text" v-show-but-keep-inner="child.underline">
+              <strong :key="idx" v-show-but-keep-inner="!!child.bold">
+                <em :key="idx" v-show-but-keep-inner="!!child.italic">
+                  <u :key="idx" v-show-but-keep-inner="!!child.underline">
                     <span>{{ child.text }}</span>
                   </u>
                 </em>
@@ -44,13 +44,13 @@
         </h6>
 
         <ul v-if="item.type === 'bulleted-list'" :key="index">
-          <li v-for="listItem in item.listItems" :key="listItem">
+          <li v-for="(listItem, idx) of item.listItems" :key="idx">
             {{ listItem }}
           </li>
         </ul>
 
         <ol v-if="item.type === 'numbered-list'" :key="index">
-          <li v-for="listItem in item.listItems" :key="listItem">
+          <li v-for="(listItem, idx) of item.listItems" :key="idx">
             {{ listItem }}
           </li>
         </ol>
@@ -71,8 +71,8 @@
 
         <div v-if="item.type === 'flex-images'" :key="index" class="flexImages">
           <div
-            v-for="image in item.images"
-            :key="image.src"
+            v-for="(image, idx) of item.images"
+            :key="idx"
             class="flexImageContainer"
           >
             <img :src="image.src" alt="" />
