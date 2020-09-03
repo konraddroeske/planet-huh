@@ -130,14 +130,10 @@ export const actions = {
     }
 
     const navContainerTl = gsap.timeline()
-    // const scrollTime = 0.3
     const navTime = 1
     const delay = 0
 
     navContainerTl
-      // .to(window, scrollTime, {
-      //   scrollTo: 0,
-      // })
       .set("#layout", {
         height: "calc(100vh + 1px)",
         overflow: "hidden",

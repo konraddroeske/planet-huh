@@ -1,5 +1,6 @@
 <template>
   <div id="nav3d" class="nav3d">
+    <!-- <intersect @enter="inView = true" @leave="inView = false"> -->
     <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
@@ -11,10 +12,12 @@
     <div id="navFeedContainer" class="navFeedContainer">
       <NavFeed @clicked="handleNav()">Planet Huh</NavFeed>
     </div>
+    <!-- </intersect> -->
   </div>
 </template>
 
 <script>
+// import Intersect from "vue-intersect"
 import * as THREE from "three"
 import gsap from "gsap"
 import globeTexture from "@/assets/images/globe.png"
@@ -25,11 +28,13 @@ export default {
   components: {
     NavToggle,
     NavFeed,
+    // Intersect,
   },
   data() {
     return {
       toggle: false,
       currentNav: null,
+      // inView: null,
     }
   },
   computed: {
@@ -538,6 +543,7 @@ export default {
         canvas,
         antialias: true,
         alpha: true,
+        // powerPreference: "high-performance",
       })
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setClearColor(0x000000, 0)
@@ -551,7 +557,7 @@ export default {
 
       // CAMERA
 
-      const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
+      const camera = new THREE.PerspectiveCamera(45, 2, 1, 12)
       pivotCamera.add(camera)
       camera.lookAt(0, 0, this.isMobile ? -6.5 : -4.75)
 
@@ -585,7 +591,7 @@ export default {
       {
         const texture = loader.load(globeTexture)
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-        const geometry = new THREE.SphereGeometry(1, 64, 64)
+        const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
@@ -1050,7 +1056,7 @@ export default {
       // RAYCASTER ARRAYS
 
       const spriteMoodsFlat = Object.values(spriteMoods).flat()
-      const spritesAll = spriteCities.concat(spriteMoodsFlat)
+      // const spritesAll = spriteCities.concat(spriteMoodsFlat)
       const spritesAllAlt = spriteCitiesAlt.concat(
         Object.values(spriteMoodsAlt).flat()
       )
@@ -1150,10 +1156,6 @@ export default {
       }
 
       const removeTitle = (title = null) => {
-        // if (!title) {
-        //   title = null
-        // }
-
         // iterate through all, except object and fade/remove all
         for (let i = 0; i < activeTitles.length; i += 1) {
           if (activeTitles[i] !== title) {
@@ -1183,8 +1185,6 @@ export default {
         }
       }
 
-      // Raycast
-
       // GLOW
 
       // Globe
@@ -1206,7 +1206,148 @@ export default {
       moodGlow.position.set(0, 0, 0)
       pivotMood.add(moodGlow)
 
-      // RENDER
+      // RENDER FUNCTIONS
+
+      const updateTitlePositions = () => {
+        // adds tracking animation to titles
+        if (activeTitles.length > 0) {
+          setActiveTitles()
+        }
+      }
+
+      const updateTitleRaycast = () => {
+        if (currentTarget && this.isMobile) {
+          raycasterTitle.setFromCamera(posRaycast, camera)
+
+          intersectsTitle =
+            this.currentNav === pivotGlobe
+              ? raycasterTitle.intersectObjects(spriteCities)
+              : raycasterTitle.intersectObjects(spriteMoodsFlat)
+
+          if (intersectsTitle.length > 0) {
+            if (
+              intersectsTitle[0].object.name === "globe" ||
+              intersectsTitle[0].object.name === "mood"
+            ) {
+              setTarget(null)
+              removeTitle()
+              removeSprites()
+            }
+          }
+        }
+      }
+
+      const updateGlobeControls = () => {
+        if (this.currentNav === pivotGlobe && isThrowing) {
+          // HORIZONAL ROTATION
+          deltaX =
+            (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
+          pivotGlobe.rotation.y += deltaX
+
+          // VERTICAL ROTATION
+          deltaY =
+            (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
+          if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, "x")) {
+            pivotGlobe.rotation.x += deltaY
+          }
+        }
+      }
+
+      const updateMoodControls = () => {
+        if (this.currentNav === pivotMood && isThrowing) {
+          // HORIZONAL ROTATION
+          deltaX =
+            (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
+          pivotMood.rotation.y += deltaX
+
+          // VERTICAL ROTATION
+          deltaY =
+            (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
+          if (isThrowing && checkMaxAngle(pivotMood, deltaY, "x")) {
+            pivotMood.rotation.x += deltaY
+          }
+        }
+      }
+
+      const updateCameraZoomIn = () => {
+        if (!this.isMobile && isDragging && !currentTarget) {
+          if (camera.position.z >= maxZoom) {
+            zoomPosition *= zoomInSpeed
+            camera.position.z -= zoomPosition
+          }
+        }
+
+        if (isDragging && this.isMobile) {
+          if (camera.position.z >= maxZoom) {
+            zoomPosition *= zoomInSpeed
+            camera.position.z -= zoomPosition
+          }
+        }
+      }
+
+      const updateCameraZoomOut = () => {
+        if (!isDragging && lerpTimerBool) {
+          if (camera.position.z <= minZoom) {
+            camera.position.z += zoomOutSpeed
+          }
+
+          // if momentum is below certain amount, we are not throwing
+          if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
+            isThrowing = false
+          }
+        }
+      }
+
+      const updateGlobeRotation = () => {
+        if (this.currentNav === pivotGlobe) {
+          if (!isDragging && lerpTimerBool) {
+            if (!isThrowing) {
+              targetRotationYGlobe = pivotGlobe.rotation.x
+
+              if (pivotGlobe.rotation.x > 0.01) {
+                pivotGlobe.rotation.x += -0.0015
+              } else if (pivotGlobe.rotation.x < -0.01) {
+                pivotGlobe.rotation.x += 0.0015
+              }
+            }
+            globe.rotateOnAxis(globeAxis, 0.0015)
+          }
+
+          targetRotationYMood = pivotMood.rotation.x
+
+          if (pivotMood.rotation.x > 0.01) {
+            pivotMood.rotation.x += -0.0015
+          } else if (pivotMood.rotation.x < -0.01) {
+            pivotMood.rotation.x += 0.0015
+          }
+          mood.rotateOnAxis(globeAxis, 0.0015)
+        }
+      }
+
+      const updateMoodRotation = () => {
+        if (this.currentNav === pivotMood) {
+          if (!isDragging && lerpTimerBool) {
+            if (!isThrowing) {
+              targetRotationYMood = pivotMood.rotation.x
+              if (pivotMood.rotation.x > 0.01) {
+                pivotMood.rotation.x += -0.0015
+              } else if (pivotMood.rotation.x < -0.01) {
+                pivotMood.rotation.x += 0.0015
+              }
+            }
+            mood.rotateOnAxis(globeAxis, 0.0015)
+          }
+
+          targetRotationYGlobe = pivotGlobe.rotation.x
+
+          if (pivotGlobe.rotation.x > 0.01) {
+            pivotGlobe.rotation.x += -0.0015
+          } else if (pivotGlobe.rotation.x < -0.01) {
+            pivotGlobe.rotation.x += 0.0015
+          }
+          globe.rotateOnAxis(globeAxis, 0.0015)
+        }
+      }
 
       const render = () => {
         // RESIZE
@@ -1217,154 +1358,24 @@ export default {
           camera.updateProjectionMatrix()
         }
 
-        if (this.isIndex) {
-          // adds tracking animation to titles
-          if (activeTitles.length > 0) {
-            setActiveTitles()
-          }
-
-          if (pivotMain && mood && globe) {
-            // Title Raycast (disappear when not in view)
-            if (currentTarget && this.isMobile) {
-              raycasterTitle.setFromCamera(posRaycast, camera)
-
-              intersectsTitle =
-                this.currentNav === pivotGlobe
-                  ? raycasterTitle.intersectObjects(spriteCities)
-                  : raycasterTitle.intersectObjects(spriteMoodsFlat)
-
-              if (intersectsTitle.length > 0) {
-                if (
-                  intersectsTitle[0].object.name === "globe" ||
-                  intersectsTitle[0].object.name === "mood"
-                ) {
-                  setTarget(null)
-                  removeTitle()
-                  removeSprites()
-                }
-              }
-            }
-
-            if (this.currentNav === pivotGlobe && isThrowing) {
-              // HORIZONAL ROTATION
-              deltaX =
-                (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
-              pivotGlobe.rotation.y += deltaX
-
-              // VERTICAL ROTATION
-              deltaY =
-                (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
-              if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, "x")) {
-                pivotGlobe.rotation.x += deltaY
-              }
-            }
-
-            if (this.currentNav === pivotMood && isThrowing) {
-              // HORIZONAL ROTATION
-              deltaX =
-                (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
-              pivotMood.rotation.y += deltaX
-
-              // VERTICAL ROTATION
-              deltaY =
-                (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
-              if (isThrowing && checkMaxAngle(pivotMood, deltaY, "x")) {
-                pivotMood.rotation.x += deltaY
-              }
-            }
-
-            // CAMERA ZOOM IN
-
-            if (
-              !this.isMobile &&
-              isDragging &&
-              !currentTarget &&
-              this.isIndex
-            ) {
-              if (camera.position.z >= maxZoom) {
-                zoomPosition *= zoomInSpeed
-                camera.position.z -= zoomPosition
-              }
-            }
-
-            if (isDragging && this.isMobile && this.isIndex) {
-              if (camera.position.z >= maxZoom) {
-                zoomPosition *= zoomInSpeed
-                camera.position.z -= zoomPosition
-              }
-            }
-
-            // CAMERA ZOOM OUT
-
-            if ((!isDragging && lerpTimerBool) || !this.isIndex) {
-              if (camera.position.z <= minZoom) {
-                camera.position.z += zoomOutSpeed
-              }
-
-              // if momentum is below certain amount, we are not throwing
-              if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
-                isThrowing = false
-              }
-            }
-
-            if (this.currentNav === pivotGlobe) {
-              if (!isDragging && lerpTimerBool) {
-                // OBJECT CORRECTION LERP
-
-                if (!isThrowing) {
-                  targetRotationYGlobe = pivotGlobe.rotation.x
-
-                  if (pivotGlobe.rotation.x > 0.01) {
-                    pivotGlobe.rotation.x += -0.0015
-                  } else if (pivotGlobe.rotation.x < -0.01) {
-                    pivotGlobe.rotation.x += 0.0015
-                  }
-                }
-                globe.rotateOnAxis(globeAxis, 0.0015)
-              }
-
-              targetRotationYMood = pivotMood.rotation.x
-
-              if (pivotMood.rotation.x > 0.01) {
-                pivotMood.rotation.x += -0.0015
-              } else if (pivotMood.rotation.x < -0.01) {
-                pivotMood.rotation.x += 0.0015
-              }
-              mood.rotateOnAxis(globeAxis, 0.0015)
-            }
-
-            if (this.currentNav === pivotMood) {
-              if (!isDragging && lerpTimerBool) {
-                if (!isThrowing) {
-                  targetRotationYMood = pivotMood.rotation.x
-                  if (pivotMood.rotation.x > 0.01) {
-                    pivotMood.rotation.x += -0.0015
-                  } else if (pivotMood.rotation.x < -0.01) {
-                    pivotMood.rotation.x += 0.0015
-                  }
-                }
-                mood.rotateOnAxis(globeAxis, 0.0015)
-              }
-
-              targetRotationYGlobe = pivotGlobe.rotation.x
-
-              if (pivotGlobe.rotation.x > 0.01) {
-                pivotGlobe.rotation.x += -0.0015
-              } else if (pivotGlobe.rotation.x < -0.01) {
-                pivotGlobe.rotation.x += 0.0015
-              }
-              globe.rotateOnAxis(globeAxis, 0.0015)
-            }
-          }
+        if (this.isIndex && pivotMain && mood && globe) {
+          updateTitlePositions()
+          updateTitleRaycast()
+          updateGlobeControls()
+          updateMoodControls()
+          updateCameraZoomIn()
+          updateCameraZoomOut()
+          updateGlobeRotation()
+          updateMoodRotation()
         }
+
+        // console.log(renderer.info.render)
 
         requestAnimationFrame(render)
         renderer.render(scene, camera)
       }
 
       requestAnimationFrame(render)
-
-      // Cancel Animation when WebGL Context Lost
 
       const cancelAnimation = () => {
         event.preventDefault()
@@ -1437,20 +1448,6 @@ export default {
 }
 
 @media (pointer: none), (pointer: coarse) {
-  // .welcome {
-  //   display: block;
-  //   text-align: center;
-  //   text-transform: uppercase;
-  //   font-weight: $medium;
-  //   font-size: 4vw;
-  //   z-index: $z-modal;
-  //   position: absolute;
-  //   left: 50%;
-  //   top: 5rem;
-  //   width: 100%;
-  //   transform: translateX(-50%);
-  // }
-
   .navContainer {
     position: fixed;
     top: 5rem;

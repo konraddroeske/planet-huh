@@ -48,6 +48,7 @@ export default {
     "~plugins/fontAwesome.js",
     "~plugins/v-scroll-lock.js",
     "~/plugins/directives.js",
+    "~/plugins/vue-formulate",
   ],
   /*
    ** Auto import components
