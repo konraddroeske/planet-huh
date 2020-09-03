@@ -156,10 +156,10 @@ export const actions = {
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 1 })
   },
   setNavContainerSmall() {
-    gsap.to("#main", 0.6, {
-      y: 0,
-      ease: "power4.out",
-    })
+    // gsap.to("#main", 0.6, {
+    //   y: 0,
+    //   ease: "power4.out",
+    // })
   },
   setNavContainerLarge(context) {
     gsap.set("#main", {
@@ -179,7 +179,7 @@ export const actions = {
     })
 
     gsap.set("#toggleContainer", { autoAlpha: 0 })
-    gsap.to("#navFeedContainer", { autoAlpha: 0 })
+    gsap.set("#navFeedContainer", { autoAlpha: 0 })
   },
   setLeave(context, payload) {
     const { el, done } = payload
@@ -213,20 +213,30 @@ export const actions = {
     const tl = gsap.timeline()
     const { el } = payload
 
+    gsap.to("#main", 0.6, {
+      y: 0,
+      ease: "power4.out",
+    })
+
     gsap.fromTo(
       el,
       { y: "60vh" },
       {
         y: "0",
         ease: "power4.out",
-        duration: 0.8,
+        duration: 1,
       }
     )
 
-    tl.to(el, 1.2, {
-      autoAlpha: 1,
-      ease: "power4.out",
-    }).set("#footer", {
+    tl.fromTo(
+      el,
+      { autoAlpha: 0 },
+      {
+        autoAlpha: 1,
+        duration: 1.3,
+        ease: "power4.out",
+      }
+    ).set("#footer", {
       display: "block",
       autoAlpha: 1,
       y: 0,

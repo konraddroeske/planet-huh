@@ -60,9 +60,6 @@ export default {
       return `${host}${this.$route.path}`
     },
   },
-  watch: {
-    $route(to, from) {},
-  },
   async created() {
     const { data } = await fetchContent(`{
       post(where: {slug: "${this.slug}"}) {
@@ -101,11 +98,7 @@ export default {
 
     const { coverImage, content } = data.data.post
 
-    this.post = {
-      ...data.data.post,
-      imageSrc: coverImage.url,
-      content: content.raw.children,
-    }
+    this.setData(data, coverImage, content)
   },
   activated() {
     this.onMount()
@@ -114,6 +107,13 @@ export default {
     this.onDestroy()
   },
   methods: {
+    setData(data, coverImage, content) {
+      this.post = {
+        ...data.data.post,
+        imageSrc: coverImage.url,
+        content: content.raw.children,
+      }
+    },
     onMount() {
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.route, false)

@@ -1,3 +1,5 @@
+if (process.env.NODE_ENV !== "production") require("dotenv").config()
+
 export default {
   /*
    ** Nuxt rendering mode
@@ -99,6 +101,7 @@ export default {
   server: {
     host: "0", // default: localhost
   },
+  env: {},
   // router: {
   //   middleware: 'isMobile',
   // },

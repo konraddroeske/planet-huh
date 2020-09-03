@@ -53,7 +53,7 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.fullPath !== "/") {
+    if (!this.isIndex) {
       const isMobile = window.$nuxt.$device.isMobile
       this.$store.dispatch("transitions/setNavStyle", isMobile)
     }
