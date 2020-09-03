@@ -30,13 +30,6 @@ import SuggestedPosts from "@/components/SuggestedPosts"
 
 gsap.registerPlugin(ScrollToPlugin)
 
-const setNav = () => {
-  const isMobile = window.$nuxt.$device.isMobile
-
-  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
-  setNavStyle(isMobile)
-}
-
 export default {
   layout: "default",
   components: {
@@ -49,10 +42,10 @@ export default {
   },
   transition: {
     enter(el, done) {
-      this.$store.dispatch("setEnter", { el, done })
+      this.$store.dispatch("transitions/setEnter", { el, done })
     },
     leave(el, done) {
-      this.$store.dispatch("setLeave", { el, done })
+      this.$store.dispatch("transitions/setLeave", { el, done })
     },
   },
   data() {
@@ -114,15 +107,6 @@ export default {
       content: content.raw.children,
     }
   },
-  mounted() {
-    if (!this.$store.state.isMounted) {
-      setNav()
-      this.$store.commit("toggleMounted")
-    }
-  },
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   activated() {
     this.onMount()
   },

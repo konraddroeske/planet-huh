@@ -25,13 +25,11 @@ export default {
   components: {
     NavToggle,
     NavFeed,
-    // Intersect,
   },
   data() {
     return {
       toggle: false,
       currentNav: null,
-      // inView: null,
     }
   },
   computed: {
@@ -55,19 +53,17 @@ export default {
     },
   },
   mounted() {
+    if (this.$route.fullPath !== "/") {
+      const isMobile = window.$nuxt.$device.isMobile
+      this.$store.dispatch("transitions/setNavStyle", isMobile)
+    }
+
     this.initThree()
   },
   beforeDestroy() {
     this.onDestroy()
   },
-  // activated() {
-  //   this.initThree()
-  // },
-  // deactivated() {
-  //   this.onDestroy()
-  // },
   methods: {
-    onMount() {},
     onDestroy() {
       if (!this.isNavLarge) {
         const nav = document.querySelector("#navContainer")
@@ -1050,7 +1046,6 @@ export default {
       // RAYCASTER ARRAYS
 
       const spriteMoodsFlat = Object.values(spriteMoods).flat()
-      // const spritesAll = spriteCities.concat(spriteMoodsFlat)
       const spritesAllAlt = spriteCitiesAlt.concat(
         Object.values(spriteMoodsAlt).flat()
       )

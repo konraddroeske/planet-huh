@@ -119,12 +119,12 @@ export default {
   },
   activated() {
     setTimeout(() => {
-      this.$store.dispatch("setNavContainerSmall")
+      this.$store.dispatch("transitions/setNavContainerSmall")
     }, 300)
   },
   methods: {
     onImgLoad() {
-      this.$store.dispatch("setNavContainerSmall")
+      this.$store.dispatch("transitions/setNavContainerSmall")
     },
   },
 }

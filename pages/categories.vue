@@ -19,22 +19,15 @@ import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
 
-const setNav = () => {
-  const isMobile = window.$nuxt.$device.isMobile
-
-  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
-  setNavStyle(isMobile)
-}
-
 export default {
   layout: "default",
   transition: {
     enter(el, done) {
-      this.$store.dispatch("setEnter", { el, done })
-      this.$store.dispatch("setNavContainerSmall")
+      this.$store.dispatch("transitions/setEnter", { el, done })
+      this.$store.dispatch("transitions/setNavContainerSmall")
     },
     leave(el, done) {
-      this.$store.dispatch("setLeave", { el, done })
+      this.$store.dispatch("transitions/setLeave", { el, done })
     },
   },
   components: {
@@ -58,7 +51,6 @@ export default {
   watch: {
     $route(to, from) {
       if (to.name === "categories") {
-        this.$store.commit("categories/resetMaxPosts")
         this.$store.dispatch(
           "categories/handleRouteQueries",
           isEmpty(to.query.filters) ? {} : to.query.filters
@@ -66,14 +58,7 @@ export default {
       }
     },
   },
-  mounted() {
-    if (!this.$store.state.isMounted) {
-      setNav()
-      this.$store.commit("toggleMounted")
-    }
-  },
   activated() {
-    this.$store.commit("categories/resetMaxPosts")
     this.$store.dispatch(
       "categories/handleRouteQueries",
       isEmpty(this.$route.query) ? {} : this.$route.query

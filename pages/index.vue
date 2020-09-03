@@ -39,26 +39,19 @@ export default {
   },
   transition: {
     leave(el, done) {
-      const isNavLarge = window.$nuxt.$store.state.isNavLarge
+      const isNavLarge = this.$store.state.transitions.isNavLarge
 
       if (isNavLarge) {
-        const setNavIndex = window.$nuxt.$store._actions.setNavIndex[0]
-        setNavIndex(done)
+        this.$store.dispatch("transitions/setNavIndex", done)
       }
 
       if (!isNavLarge) {
-        const setNavIndexSmall =
-          window.$nuxt.$store._actions.setNavIndexSmall[0]
-        setNavIndexSmall([done, el])
+        this.$store.dispatch("transitions/setNavIndexSmall", { done, el })
       }
     },
     enter(el, done) {
-      const setNavContainerLarge =
-        window.$nuxt.$store._actions.setNavContainerLarge[0]
-      setNavContainerLarge()
-
-      const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-      setNavLarge()
+      this.$store.dispatch("transitions/setNavContainerLarge")
+      this.$store.dispatch("transitions/setNavLarge")
     },
   },
   computed: {
@@ -75,12 +68,6 @@ export default {
       return this.$store.getters["homepage/postsTotal"]
     },
   },
-  // mounted() {
-  //   this.onMount()
-  // },
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   activated() {
     this.onMount()
   },
@@ -89,16 +76,14 @@ export default {
   },
   methods: {
     onMount() {
-      this.$store.commit("toggleMounted")
-
       if (this.isMobile) {
-        this.$store.commit("setNavOpen", true)
+        this.$store.commit("transitions/setNavOpen", true)
       }
     },
     onDestroy() {
       if (this.isMobile && this.isOpen) {
         // and scroll is locked
-        this.$store.commit("setNavOpen", false)
+        this.$store.commit("transitions/setNavOpen", false)
       }
     },
   },
