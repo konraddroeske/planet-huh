@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="contactContainer">
     <Wrapper>
       <div class="content">
         <h1>{{ title }}</h1>
@@ -138,116 +138,118 @@ export default {
 </script>
 
 <style lang="scss">
-.container {
+.contactContainer {
   padding-top: 4rem;
   padding-bottom: 2rem;
 
   @media (min-width: $bp-desktop) {
     padding-bottom: 2rem;
   }
-}
 
-.content {
-  margin-bottom: 2rem;
+  .content {
+    margin-bottom: 2rem;
 
-  h1 {
-    text-align: center;
-    text-transform: uppercase;
-    font-weight: $extrabold;
-    font-size: 2.25rem;
-    margin-top: 2rem;
+    h1 {
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: $extrabold;
+      font-size: 2.25rem;
+      margin-top: 2rem;
 
-    @media (min-width: $bp-desktop) {
-      font-size: 3.5rem;
-      margin-top: 6rem;
+      @media (min-width: $bp-desktop) {
+        font-size: 3.5rem;
+        margin-top: 6rem;
+      }
+    }
+
+    p {
+      // font-size: $font-sm;
+      margin: 0;
     }
   }
 
-  p {
-    // font-size: $font-sm;
-    margin: 0;
-  }
-}
+  .formulate-form {
+    .formulate-input {
+      margin-bottom: 1.5rem;
+    }
 
-.formulate-form {
-  .formulate-input {
-    margin-bottom: 1.5rem;
-  }
+    .formulate-input-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
 
-  .formulate-input-wrapper {
-    display: flex;
-    flex-direction: column;
-  }
+    .formulate-input-label {
+      font-family: $font-sans;
+      text-transform: uppercase;
+      font-weight: $bold;
+      font-size: $font-x-sm;
+      padding-bottom: 0.3rem;
+    }
 
-  .formulate-input-label {
-    font-family: $font-sans;
-    text-transform: uppercase;
-    font-weight: $bold;
-    font-size: $font-x-sm;
-    padding-bottom: 0.3rem;
-  }
+    .inputSmall,
+    .inputLarge {
+      border: 2px solid $accent;
+      border-radius: 8px;
+      width: 100%;
+      padding: 0.6rem;
+      font-family: $font-display;
+      font-size: $font-sm;
+    }
 
-  .inputSmall,
-  .inputLarge {
-    border: 2px solid $accent;
-    border-radius: 8px;
-    width: 100%;
-    padding: 0.6rem;
-    font-family: $font-display;
-    font-size: $font-sm;
-  }
+    .inputLarge {
+      min-height: 8rem;
+    }
 
-  .inputLarge {
-    min-height: 8rem;
-  }
+    .formulate-input-errors {
+      font-size: $font-x-sm;
+    }
 
-  .formulate-input-errors {
-    font-size: $font-x-sm;
-  }
+    .formulate-input-element--submit {
+      display: flex;
+      justify-content: center;
+    }
 
-  .formulate-input-element--submit {
-    display: flex;
-    justify-content: center;
-  }
+    .submitButton {
+      margin: 0;
+      padding: 3rem 0;
+    }
 
-  .submitButton {
-    margin: 0;
-    padding: 3rem 0;
-  }
+    button {
+      border: 2px solid $accent;
+      border-radius: 180px;
+      padding: 1rem 3rem;
+      background: transparent;
+      cursor: pointer;
+      text-transform: uppercase;
+      font-weight: $bold;
+      font-size: 1.25rem;
 
-  button {
-    border: 2px solid $accent;
-    border-radius: 180px;
-    padding: 1rem 3rem;
-    background: transparent;
-    cursor: pointer;
-    text-transform: uppercase;
-    font-weight: $bold;
-    font-size: 1.25rem;
-
-    &:hover,
-    &:focus {
-      color: $white;
-      background: $accent;
+      &:hover,
+      &:focus {
+        color: $white;
+        background: $accent;
+      }
     }
   }
 }
 
 @media (min-width: $bp-tablet) {
-  .wrapper {
-    max-width: 1000px;
-  }
+  .contactContainer {
+    .wrapper {
+      max-width: 1000px;
+    }
 
-  .content {
-    margin-bottom: 3rem;
-  }
+    .content {
+      margin-bottom: 3rem;
+    }
 
-  .upperForm {
-    display: flex;
-    justify-content: space-between;
+    .upperForm {
+      display: flex;
+      justify-content: space-between;
 
-    .formulate-input {
-      width: calc(50% - 1rem);
+      .formulate-input {
+        width: calc(50% - 1rem);
+      }
     }
   }
 }
