@@ -5,14 +5,14 @@
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
       </div>
-      <div class="form">
-        <FormulateForm
-          v-model="formValues"
+      <div class="formContainer">
+        <form
           method="post"
           name="contact"
-          action=""
+          action
           data-netlify="true"
           netlify-honeypot="bot-field"
+          @submit.prevent="handleSubmit"
         >
           <input type="hidden" name="form-name" value="contact" />
           <p class="visuallyHidden">
@@ -20,6 +20,7 @@
           </p>
           <div class="upperForm">
             <FormulateInput
+              v-model="name"
               type="text"
               name="name"
               label="Name"
@@ -27,6 +28,7 @@
               input-class="inputSmall"
             />
             <FormulateInput
+              v-model="email"
               type="email"
               name="email"
               label="Email"
@@ -35,6 +37,7 @@
             />
           </div>
           <FormulateInput
+            v-model="message"
             type="textarea"
             name="message"
             label="Your Message"
@@ -42,14 +45,14 @@
             input-class="inputLarge"
           />
           <FormulateInput type="submit" label="Submit" class="submitButton" />
-        </FormulateForm>
+        </form>
       </div>
     </Wrapper>
   </div>
 </template>
 
 <script>
-// import axios from "axios"
+import axios from "axios"
 import { fetchContent } from "@/utils/api"
 import Wrapper from "@/components/Wrapper"
 
@@ -78,7 +81,9 @@ export default {
     return {
       title: null,
       description: null,
-      formValues: {},
+      name: "",
+      email: "",
+      message: "",
     }
   },
   transition: {
@@ -96,28 +101,32 @@ export default {
     this.onDestroy()
   },
   methods: {
-    // encode(data) {
-    //   return Object.keys(data)
-    //     .map(
-    //       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
-    //     )
-    //     .join("&")
-    // },
-    // handleSubmit() {
-    //   console.log(this.formValues)
+    encode(data) {
+      return Object.keys(data)
+        .map(
+          (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
+        )
+        .join("&")
+    },
+    handleSubmit() {
+      const formValues = {
+        name: this.name,
+        email: this.email,
+        message: this.message,
+      }
 
-    //   const axiosConfig = {
-    //     header: { "Content-Type": "application/x-www-form-urlencoded" },
-    //   }
-    //   axios.post(
-    //     "/",
-    //     this.encode({
-    //       "form-name": "contact",
-    //       ...this.formValues,
-    //     }),
-    //     axiosConfig
-    //   )
-    // },
+      const axiosConfig = {
+        header: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+      axios.post(
+        "/",
+        this.encode({
+          "form-name": "contact",
+          ...formValues,
+        }),
+        axiosConfig
+      )
+    },
     onMount() {
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.route, false)
@@ -168,7 +177,7 @@ export default {
     }
   }
 
-  .formulate-form {
+  .formContainer {
     .formulate-input {
       margin-bottom: 1.5rem;
     }
