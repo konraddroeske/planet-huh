@@ -8,12 +8,11 @@
       <div class="form">
         <FormulateForm
           v-model="formValues"
-          method="POST"
+          method="post"
           name="contact"
           action=""
           data-netlify="true"
           netlify-honeypot="bot-field"
-          @submit="handleSubmit"
         >
           <input type="hidden" name="form-name" value="contact" />
           <p class="visuallyHidden">
@@ -50,7 +49,7 @@
 </template>
 
 <script>
-import axios from "axios"
+// import axios from "axios"
 import { fetchContent } from "@/utils/api"
 import Wrapper from "@/components/Wrapper"
 
@@ -97,28 +96,28 @@ export default {
     this.onDestroy()
   },
   methods: {
-    encode(data) {
-      return Object.keys(data)
-        .map(
-          (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
-        )
-        .join("&")
-    },
-    handleSubmit() {
-      console.log(this.formValues)
+    // encode(data) {
+    //   return Object.keys(data)
+    //     .map(
+    //       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
+    //     )
+    //     .join("&")
+    // },
+    // handleSubmit() {
+    //   console.log(this.formValues)
 
-      const axiosConfig = {
-        header: { "Content-Type": "application/x-www-form-urlencoded" },
-      }
-      axios.post(
-        "/",
-        this.encode({
-          "form-name": "contact",
-          ...this.formValues,
-        }),
-        axiosConfig
-      )
-    },
+    //   const axiosConfig = {
+    //     header: { "Content-Type": "application/x-www-form-urlencoded" },
+    //   }
+    //   axios.post(
+    //     "/",
+    //     this.encode({
+    //       "form-name": "contact",
+    //       ...this.formValues,
+    //     }),
+    //     axiosConfig
+    //   )
+    // },
     onMount() {
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.route, false)
