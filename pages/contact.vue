@@ -5,7 +5,7 @@
         <h1>{{ title }}</h1>
         <p>{{ description }}</p>
       </div>
-      <div class="formContainer">
+      <div v-if="!isSubmitted" class="formContainer">
         <form
           method="post"
           name="contact"
@@ -47,6 +47,21 @@
           <FormulateInput type="submit" label="Submit" class="submitButton" />
         </form>
       </div>
+      <div v-else class="response">
+        <div v-if="isSuccess" class="success">
+          <h2>
+            Thanks for getting in touch!
+          </h2>
+        </div>
+        <div v-else class="fail">
+          <h2>
+            Sorry, that didn't work. Please try again.
+          </h2>
+        </div>
+        <div class="linkContainer">
+          <nuxt-link class="mainLink" to="/">Back To Main</nuxt-link>
+        </div>
+      </div>
     </Wrapper>
   </div>
 </template>
@@ -84,6 +99,8 @@ export default {
       name: "",
       email: "",
       message: "",
+      isSubmitted: false,
+      isSuccess: true,
     }
   },
   transition: {
@@ -96,9 +113,11 @@ export default {
   },
   activated() {
     this.onMount()
+    this.resetForm()
   },
   deactivated() {
     this.onDestroy()
+    this.resetForm()
   },
   methods: {
     encode(data) {
@@ -107,6 +126,10 @@ export default {
           (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`
         )
         .join("&")
+    },
+    resetForm() {
+      this.isSubmitted = false
+      this.isSuccess = true
     },
     handleSubmit() {
       const formValues = {
@@ -118,14 +141,22 @@ export default {
       const axiosConfig = {
         header: { "Content-Type": "application/x-www-form-urlencoded" },
       }
-      axios.post(
-        "/",
-        this.encode({
-          "form-name": "contact",
-          ...formValues,
-        }),
-        axiosConfig
-      )
+
+      axios
+        .post(
+          "/",
+          this.encode({
+            "form-name": "contact",
+            ...formValues,
+          }),
+          axiosConfig
+        )
+        .then(() => {
+          this.isSuccess = true
+        })
+        .catch(() => {
+          this.isSuccess = false
+        })
     },
     onMount() {
       const nav = document.querySelector("#navContainer")
@@ -239,6 +270,24 @@ export default {
         background: $accent;
       }
     }
+  }
+
+  .response {
+    padding: 3rem 0 5rem 0;
+  }
+
+  .success,
+  .fail {
+    h2 {
+      text-align: center;
+      font-size: $font-lg;
+      margin-top: 0;
+    }
+  }
+
+  .linkContainer {
+    display: flex;
+    justify-content: center;
   }
 }
 
