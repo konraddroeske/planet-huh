@@ -31,6 +31,7 @@ export default {
   transition: {
     enter(el, done) {
       this.$store.dispatch("setEnter", { el, done })
+      this.$store.dispatch("setNavContainerSmall")
     },
     leave(el, done) {
       this.$store.dispatch("setLeave", { el, done })
@@ -57,9 +58,6 @@ export default {
       return this.$store.getters["categories/postsTotal"]
     },
   }),
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   watch: {
     $route(to, from) {
       if (to.name === "categories") {
@@ -82,10 +80,6 @@ export default {
       isEmpty(this.$route.query) ? {} : this.$route.query
     )
 
-    setTimeout(() => {
-      this.onHeroLoad()
-    }, 300)
-
     this.onMount()
   },
   deactivated() {
@@ -101,9 +95,6 @@ export default {
       const nav = document.querySelector("#navContainer")
       nav.removeEventListener("click", this.route, false)
       nav.removeEventListener("touchstart", this.route, false)
-    },
-    onHeroLoad() {
-      this.$store.dispatch("setNavContainerSmall")
     },
     route() {
       this.$router.push({

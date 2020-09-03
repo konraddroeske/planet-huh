@@ -188,7 +188,6 @@ export const actions = {
     gsap.to("#navFeedContainer", { autoAlpha: 0 })
   },
   setLeave(context, payload) {
-    const tl = gsap.timeline()
     const { el, done } = payload
 
     gsap.to(el, 0.6, {
@@ -205,6 +204,8 @@ export const actions = {
       y: "60vh",
       ease: "power4.out",
     })
+
+    const tl = gsap.timeline()
 
     tl.to("#footer", 0.6, {
       autoAlpha: 0,

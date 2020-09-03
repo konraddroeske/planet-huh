@@ -1,6 +1,5 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <!-- <intersect @enter="inView = true" @leave="inView = false"> -->
     <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
@@ -12,12 +11,10 @@
     <div id="navFeedContainer" class="navFeedContainer">
       <NavFeed @clicked="handleNav()">Planet Huh</NavFeed>
     </div>
-    <!-- </intersect> -->
   </div>
 </template>
 
 <script>
-// import Intersect from "vue-intersect"
 import * as THREE from "three"
 import gsap from "gsap"
 import globeTexture from "@/assets/images/globe.png"
@@ -588,10 +585,11 @@ export default {
       let globe
       const loader = new THREE.TextureLoader()
 
+      const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
+
       {
         const texture = loader.load(globeTexture)
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-        const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
@@ -696,9 +694,6 @@ export default {
       let mood
 
       {
-        const radius = 1
-        const geometry = new THREE.SphereBufferGeometry(radius, 64, 64)
-
         const vertexShader = `
           precision mediump float;
           precision mediump int;
