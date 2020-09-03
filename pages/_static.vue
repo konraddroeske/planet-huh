@@ -9,36 +9,9 @@
 
 <script>
 import { mapState } from "vuex"
-import gsap from "gsap"
-import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import RichText from "@/components/RichText"
 import Wrapper from "@/components/Wrapper"
 
-gsap.registerPlugin(ScrollToPlugin)
-
-const setNav = () => {
-  const isMobile = window.$nuxt.$device.isMobile
-
-  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
-  setNavStyle(isMobile)
-}
-
-const entering = () => {
-  // console.log('entering post')
-}
-
-const leaving = () => {
-  // console.log('leaving post')
-}
-
-const leavingToIndex = () => {
-  const setNavContainerLarge =
-    window.$nuxt.$store._actions.setNavContainerLarge[0]
-  setNavContainerLarge()
-
-  const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-  setNavLarge()
-}
 export default {
   layout: "default",
   components: {
@@ -73,28 +46,15 @@ export default {
       )
       if (slugNotFound) return this.$nuxt.error({ statusCode: 404 })
     },
-    $route(to, from) {
-      if (from.path === "/") {
-        entering()
-      }
-
-      to.path === "/" ? leavingToIndex(to.matched[0].instances) : leaving()
-    },
   },
   transition: {
     enter(el, done) {
-      this.$store.dispatch("setEnter", { el, done })
-      this.$store.dispatch("setNavContainerSmall")
+      this.$store.dispatch("transitions/setEnter", { el, done })
+      this.$store.dispatch("transitions/setNavContainerSmall")
     },
     leave(el, done) {
-      this.$store.dispatch("setLeave", { el, done })
+      this.$store.dispatch("transitions/setLeave", { el, done })
     },
-  },
-  mounted() {
-    if (!this.$store.state.isMounted) {
-      setNav()
-      this.$store.commit("toggleMounted")
-    }
   },
   activated() {
     this.onMount()

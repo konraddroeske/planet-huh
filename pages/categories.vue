@@ -19,21 +19,15 @@ import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
 
-const setNav = () => {
-  const isMobile = window.$nuxt.$device.isMobile
-
-  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
-  setNavStyle(isMobile)
-}
-
 export default {
   layout: "default",
   transition: {
     enter(el, done) {
-      this.$store.dispatch("setEnter", { el, done })
+      this.$store.dispatch("transitions/setEnter", { el, done })
+      this.$store.dispatch("transitions/setNavContainerSmall")
     },
     leave(el, done) {
-      this.$store.dispatch("setLeave", { el, done })
+      this.$store.dispatch("transitions/setLeave", { el, done })
     },
   },
   components: {
@@ -47,9 +41,6 @@ export default {
   },
   computed: mapState({
     title: (state) => state.categories.title,
-    // posts: (state) => {
-    //   return state.categories.postsFeed
-    // },
     postLimit() {
       return this.$store.getters["categories/postLimit"]
     },
@@ -57,9 +48,6 @@ export default {
       return this.$store.getters["categories/postsTotal"]
     },
   }),
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   watch: {
     $route(to, from) {
       if (to.name === "categories") {
@@ -70,21 +58,11 @@ export default {
       }
     },
   },
-  mounted() {
-    if (!this.$store.state.isMounted) {
-      setNav()
-      this.$store.commit("toggleMounted")
-    }
-  },
   activated() {
     this.$store.dispatch(
       "categories/handleRouteQueries",
       isEmpty(this.$route.query) ? {} : this.$route.query
     )
-
-    setTimeout(() => {
-      this.onHeroLoad()
-    }, 300)
 
     this.onMount()
   },
@@ -101,9 +79,6 @@ export default {
       const nav = document.querySelector("#navContainer")
       nav.removeEventListener("click", this.route, false)
       nav.removeEventListener("touchstart", this.route, false)
-    },
-    onHeroLoad() {
-      this.$store.dispatch("setNavContainerSmall")
     },
     route() {
       this.$router.push({

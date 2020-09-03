@@ -30,13 +30,6 @@ import SuggestedPosts from "@/components/SuggestedPosts"
 
 gsap.registerPlugin(ScrollToPlugin)
 
-const setNav = () => {
-  const isMobile = window.$nuxt.$device.isMobile
-
-  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
-  setNavStyle(isMobile)
-}
-
 export default {
   layout: "default",
   components: {
@@ -49,10 +42,10 @@ export default {
   },
   transition: {
     enter(el, done) {
-      this.$store.dispatch("setEnter", { el, done })
+      this.$store.dispatch("transitions/setEnter", { el, done })
     },
     leave(el, done) {
-      this.$store.dispatch("setLeave", { el, done })
+      this.$store.dispatch("transitions/setLeave", { el, done })
     },
   },
   data() {
@@ -66,9 +59,6 @@ export default {
       const host = this.req ? this.req.headers.host : window.location.origin
       return `${host}${this.$route.path}`
     },
-  },
-  watch: {
-    $route(to, from) {},
   },
   async created() {
     const { data } = await fetchContent(`{
@@ -108,21 +98,8 @@ export default {
 
     const { coverImage, content } = data.data.post
 
-    this.post = {
-      ...data.data.post,
-      imageSrc: coverImage.url,
-      content: content.raw.children,
-    }
+    this.setData(data, coverImage, content)
   },
-  mounted() {
-    if (!this.$store.state.isMounted) {
-      setNav()
-      this.$store.commit("toggleMounted")
-    }
-  },
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   activated() {
     this.onMount()
   },
@@ -130,6 +107,13 @@ export default {
     this.onDestroy()
   },
   methods: {
+    setData(data, coverImage, content) {
+      this.post = {
+        ...data.data.post,
+        imageSrc: coverImage.url,
+        content: content.raw.children,
+      }
+    },
     onMount() {
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.route, false)

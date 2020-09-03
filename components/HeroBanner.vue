@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <img class="bannerImage" :src="imageSrc" alt="" @load="onImgLoad" />
+        <img class="bannerImage" :src="imageSrc" alt="" />
         <div class="bannerText">
           <h1 class="title">{{ title }}</h1>
           <p class="excerpt">{{ excerpt }}</p>
@@ -77,16 +77,6 @@ export default {
     },
     nameFormatted() {
       return this.city.length > 0 ? `${this.city[0].name}` : null
-    },
-  },
-  activated() {
-    setTimeout(() => {
-      this.$store.dispatch("setNavContainerSmall")
-    }, 300)
-  },
-  methods: {
-    onImgLoad() {
-      this.$store.dispatch("setNavContainerSmall")
     },
   },
 }

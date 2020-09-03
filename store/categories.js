@@ -23,8 +23,6 @@ export const state = () => ({
 
 export const actions = {
   async getCategoryPosts({ commit, state }, numPosts = 4) {
-    // console.log(state.formattedFilters)
-
     try {
       const { data } = await fetchContent(`{
         posts(where: ${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
@@ -156,8 +154,8 @@ export const actions = {
       // convert categories to query objects
       if (city.length > 0) {
         const cityFilters = city.filter((item) => item !== "cities")
-        cityObj = { city_every: { id_not: "null" } }
-        let str = "city_every.AND"
+        cityObj = { city_some: { id_not: "null" } }
+        let str = "city_some.AND"
 
         for (let i = 0; i < cityFilters.length; i++) {
           set(cityObj, str, { name: cityFilters[i] })
@@ -194,8 +192,8 @@ export const actions = {
 
       if (sense.length > 0) {
         const senseFilters = sense.filter((item) => item !== "senses")
-        senseObj = { sense_every: { id_not: "null" } }
-        let str = "sense_every.AND"
+        senseObj = { sense_some: { id_not: "null" } }
+        let str = "sense_some.AND"
 
         for (let i = 0; i < senseFilters.length; i++) {
           set(senseObj, str, { name: senseFilters[i] })

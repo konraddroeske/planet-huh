@@ -1,3 +1,5 @@
+if (process.env.NODE_ENV !== "production") require("dotenv").config()
+
 export default {
   /*
    ** Nuxt rendering mode
@@ -48,6 +50,7 @@ export default {
     "~plugins/fontAwesome.js",
     "~plugins/v-scroll-lock.js",
     "~/plugins/directives.js",
+    "~/plugins/vue-formulate",
   ],
   /*
    ** Auto import components
@@ -98,6 +101,7 @@ export default {
   server: {
     host: "0", // default: localhost
   },
+  env: {},
   // router: {
   //   middleware: 'isMobile',
   // },

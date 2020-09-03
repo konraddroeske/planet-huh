@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <img class="bannerImage" :src="imageSrc" alt="" @load="onImgLoad" />
+        <img class="bannerImage" :src="imageSrc" alt="" />
         <h1 class="titleText postTitle">
           <span class="miniTitle">{{ titleArray[0] }}</span>
           {{ titleArray.slice(1).join(" ") }}
@@ -115,16 +115,6 @@ export default {
     },
     titleArray() {
       return this.title.split(/\s+/)
-    },
-  },
-  activated() {
-    setTimeout(() => {
-      this.$store.dispatch("setNavContainerSmall")
-    }, 300)
-  },
-  methods: {
-    onImgLoad() {
-      this.$store.dispatch("setNavContainerSmall")
     },
   },
 }
