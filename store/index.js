@@ -166,10 +166,6 @@ export const actions = {
       y: 0,
       ease: "power4.out",
     })
-
-    gsap.set("#footer", {
-      display: "block",
-    })
   },
   setNavContainerLarge(context) {
     gsap.set("#main", {
