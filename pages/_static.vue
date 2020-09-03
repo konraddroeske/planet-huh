@@ -1,5 +1,5 @@
 <template>
-  <div class="container" v-if="page">
+  <div v-if="page" class="container">
     <Wrapper>
       <h1>{{ page.title }}</h1>
     </Wrapper>
@@ -84,6 +84,7 @@ export default {
   transition: {
     enter(el, done) {
       this.$store.dispatch("setEnter", { el, done })
+      this.$store.dispatch("setNavContainerSmall")
     },
     leave(el, done) {
       this.$store.dispatch("setLeave", { el, done })
@@ -95,9 +96,6 @@ export default {
       this.$store.commit("toggleMounted")
     }
   },
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   activated() {
     this.onMount()
   },
