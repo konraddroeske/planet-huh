@@ -49,12 +49,6 @@ export const actions = {
   },
 }
 
-export const getters = () => ({
-  selectStaticPage: (slug) => (state) => {
-    return state.staticPages[slug]
-  },
-})
-
 export const mutations = {
   setStaticSlugs(state, slugs) {
     state.slugs = slugs

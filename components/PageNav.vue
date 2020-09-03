@@ -29,7 +29,7 @@ export default {
       return this.$store.state.static.slugs
     },
   },
-  async created() {
+  async mounted() {
     if (this.$store.state.static.slugs.length === 0) {
       await this.$store.dispatch("static/getStaticSlugs")
     }

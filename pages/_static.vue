@@ -1,14 +1,18 @@
 <template>
-  <div>
-    <h1 v-if="page">{{ page.title }}</h1>
-    <RichText v-if="page" :content="page.content" />
+  <div class="container" v-if="page">
+    <Wrapper>
+      <h1>{{ page.title }}</h1>
+    </Wrapper>
+    <RichText :content="page.content" />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import RichText from "@/components/RichText"
+import Wrapper from "@/components/Wrapper"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -39,10 +43,10 @@ export default {
   layout: "default",
   components: {
     RichText,
+    Wrapper,
   },
   async fetch() {
     const staticSlug = this.$route.params.static
-    console.log("fetching", staticSlug)
     if (!this.$store.state.static.staticPages[staticSlug]) {
       await this.$store.dispatch("static/getStaticPage", staticSlug)
     }
@@ -54,11 +58,21 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      validSlugs: (state) => state.static.slugs,
+    }),
     page() {
       return this.$store.state.static.staticPages[this.staticSlug]
     },
   },
   watch: {
+    // Redirects to error page if static page not found (fallback behaviour)
+    validSlugs(newSlugs) {
+      const slugNotFound = !newSlugs.some(
+        (slug) => slug.slug === this.staticSlug
+      )
+      if (slugNotFound) return this.$nuxt.error({ statusCode: 404 })
+    },
     $route(to, from) {
       if (from.path === "/") {
         entering()
@@ -110,4 +124,25 @@ export default {
 }
 </script>
 
-<style></style>
+<style lang="scss" scoped>
+.container {
+  padding-top: 4rem;
+  padding-bottom: 2rem;
+
+  @media (min-width: $bp-desktop) {
+    padding-bottom: 2rem;
+  }
+}
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: $extrabold;
+  font-size: 2.25rem;
+  margin-top: 2rem;
+
+  @media (min-width: $bp-desktop) {
+    font-size: 3.5rem;
+    margin-top: 6rem;
+  }
+}
+</style>
