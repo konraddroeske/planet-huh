@@ -30,8 +30,6 @@ export const actions = {
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
   },
   setNavIndex({ state }, startRouting) {
-    console.log("set nav index")
-
     const navContainerTl = gsap.timeline()
     const scrollTime = 0.4
     const navTime = 1
@@ -221,11 +219,11 @@ export const actions = {
       {
         y: "0",
         ease: "power4.out",
-        duration: 0.6,
+        duration: 0.8,
       }
     )
 
-    tl.to(el, 0.8, {
+    tl.to(el, 1.2, {
       autoAlpha: 1,
       ease: "power4.out",
     }).set("#footer", {

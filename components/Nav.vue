@@ -40,10 +40,10 @@ export default {
       return this.$device.isMobile
     },
     isNavLarge() {
-      return this.$store.state.isNavLarge
+      return this.$store.state.transitions.isNavLarge
     },
     isOpen() {
-      return this.$store.state.isOpen
+      return this.$store.state.transitions.isOpen
     },
     cities() {
       return this.$store.state.nav.cities
@@ -72,15 +72,15 @@ export default {
       }
     },
     setNavSmall() {
-      this.$store.dispatch("setNavSmall")
-      this.$store.dispatch("setNavContainerSmall")
+      this.$store.dispatch("transitions/setNavSmall")
+      this.$store.dispatch("transitions/setNavContainerSmall")
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.handleNav, false)
       nav.addEventListener("touchstart", this.handleNav, false)
     },
     setNavLarge() {
-      this.$store.dispatch("setNavLarge")
-      this.$store.dispatch("setNavContainerLarge")
+      this.$store.dispatch("transitions/setNavLarge")
+      this.$store.dispatch("transitions/setNavContainerLarge")
       const nav = document.querySelector("#navContainer")
       nav.removeEventListener("click", this.handleNav, false)
       nav.removeEventListener("touchstart", this.handleNav, false)
