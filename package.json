@@ -32,6 +32,7 @@
     "three": "^0.118.3",
     "v-scroll-lock": "^1.2.0",
     "vue-debounce": "^2.5.7",
+    "vue-formulate": "^0.12.1",
     "vue-resize": "^0.5.0"
   },
   "devDependencies": {
