@@ -138,6 +138,8 @@ export default {
         message: this.message,
       }
 
+      this.isSubmitted = true
+
       const axiosConfig = {
         header: { "Content-Type": "application/x-www-form-urlencoded" },
       }
