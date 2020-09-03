@@ -1,6 +1,7 @@
 <template>
-  <div v-if="page">
-    <RichText :content="page.content" />
+  <div>
+    <h1 v-if="page">{{ page.title }}</h1>
+    <RichText v-if="page" :content="page.content" />
   </div>
 </template>
 
@@ -39,17 +40,17 @@ export default {
   components: {
     RichText,
   },
-  transition: {
-    enter(el, done) {
-      this.$store.dispatch("setEnter", { el, done })
-    },
-    leave(el, done) {
-      this.$store.dispatch("setLeave", { el, done })
-    },
+  async fetch() {
+    const staticSlug = this.$route.params.static
+    console.log("fetching", staticSlug)
+    if (!this.$store.state.static.staticPages[staticSlug]) {
+      await this.$store.dispatch("static/getStaticPage", staticSlug)
+    }
   },
   data() {
     return {
       staticSlug: this.$route.params.static,
+      increment: 0,
     }
   },
   computed: {
@@ -66,10 +67,13 @@ export default {
       to.path === "/" ? leavingToIndex(to.matched[0].instances) : leaving()
     },
   },
-  async created() {
-    if (!this.$store.state.static.staticPages[this.staticSlug]) {
-      await this.$store.dispatch("static/getStaticPage", this.staticSlug)
-    }
+  transition: {
+    enter(el, done) {
+      this.$store.dispatch("setEnter", { el, done })
+    },
+    leave(el, done) {
+      this.$store.dispatch("setLeave", { el, done })
+    },
   },
   mounted() {
     if (!this.$store.state.isMounted) {
