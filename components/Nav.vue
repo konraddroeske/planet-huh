@@ -584,7 +584,6 @@ export default {
 
       let globe
       const loader = new THREE.TextureLoader()
-
       const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
 
       {
@@ -1363,8 +1362,6 @@ export default {
           updateGlobeRotation()
           updateMoodRotation()
         }
-
-        // console.log(renderer.info.render)
 
         requestAnimationFrame(render)
         renderer.render(scene, camera)

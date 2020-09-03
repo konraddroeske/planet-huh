@@ -48,15 +48,6 @@ export default {
   },
   computed: mapState({
     title: (state) => state.categories.title,
-    // posts: (state) => {
-    //   return state.categories.postsFeed
-    // },
-    postLimit() {
-      return this.$store.getters["categories/postLimit"]
-    },
-    postsTotal() {
-      return this.$store.getters["categories/postsTotal"]
-    },
     postLimit() {
       return this.$store.getters["categories/postLimit"]
     },

@@ -9,12 +9,8 @@
 
 <script>
 import { mapState } from "vuex"
-import gsap from "gsap"
-import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import RichText from "@/components/RichText"
 import Wrapper from "@/components/Wrapper"
-
-gsap.registerPlugin(ScrollToPlugin)
 
 const setNav = () => {
   const isMobile = window.$nuxt.$device.isMobile
