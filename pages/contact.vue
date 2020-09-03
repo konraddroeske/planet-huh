@@ -16,7 +16,7 @@
           netlify-honeypot="bot-field"
           @submit.prevent="handleSubmit"
         >
-          <!-- <input type="hidden" name="form-name" value="contact" /> -->
+          <input type="hidden" name="form-name" value="contact" />
           <p class="visuallyHidden">
             <label>Don’t fill this out: <input name="bot-field" /></label>
           </p>
