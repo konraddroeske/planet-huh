@@ -2,7 +2,8 @@
   <div class="categories">
     <CategoryHero :title="title" />
     <PostsFeed
-      :posts="posts"
+      :posts="postsTotal"
+      :post-limit="postLimit"
       get-some-posts-path="categories/getCategoryPosts"
     />
   </div>
@@ -23,23 +24,6 @@ const setNav = () => {
 
   const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
   setNavStyle(isMobile)
-}
-
-const entering = () => {
-  // console.log('entering categories')
-}
-
-const leaving = () => {
-  // console.log("leaving")
-}
-
-const leavingToIndex = () => {
-  const setNavContainerLarge =
-    window.$nuxt.$store._actions.setNavContainerLarge[0]
-  setNavContainerLarge()
-
-  const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-  setNavLarge()
 }
 
 export default {
@@ -63,8 +47,14 @@ export default {
   },
   computed: mapState({
     title: (state) => state.categories.title,
-    posts: (state) => {
-      return state.categories.postsFeed
+    // posts: (state) => {
+    //   return state.categories.postsFeed
+    // },
+    postLimit() {
+      return this.$store.getters["categories/postLimit"]
+    },
+    postsTotal() {
+      return this.$store.getters["categories/postsTotal"]
     },
   }),
   // beforeDestroy() {
@@ -72,12 +62,6 @@ export default {
   // },
   watch: {
     $route(to, from) {
-      if (from.path === "/") {
-        entering()
-      }
-
-      if (to.path === "/") leavingToIndex()
-
       if (to.name === "categories") {
         this.$store.dispatch(
           "categories/handleRouteQueries",

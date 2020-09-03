@@ -23,9 +23,6 @@ export const actions = {
     const navTime = 1
 
     navContainerTl
-      .set("#sceneContainer", {
-        width: "250%",
-      })
       .to("#navContainer", navTime, {
         y: state.isMobile ? "3rem" : "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
@@ -42,12 +39,13 @@ export const actions = {
   },
   setNavIndex({ state }, startRouting) {
     const navContainerTl = gsap.timeline()
-    const scrollTime = 0.3
+    const scrollTime = 0.4
     const navTime = 1
 
     navContainerTl
       .to(window, scrollTime, {
         scrollTo: 0,
+        ease: "power4.out",
         onComplete: () => {
           startRouting()
         },
@@ -59,9 +57,6 @@ export const actions = {
       .set("#navContainer", {
         position: "fixed",
       })
-      .set("#sceneContainer", {
-        width: "250%",
-      })
       .to("#navContainer", navTime, {
         y: "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
@@ -72,8 +67,23 @@ export const actions = {
         overflow: "visible",
       })
 
+    const footerTl = gsap.timeline()
+
+    gsap.to("#footer", 0.6, {
+      y: "60vh",
+      ease: "power4.out",
+    })
+
+    footerTl
+      .to("#footer", 0.6, {
+        autoAlpha: 0,
+        ease: "power4.out",
+      })
+      .set("#footer", {
+        display: "none",
+      })
+
     gsap.to("#toggleContainer", navTime, { autoAlpha: 0 })
-    // gsap.to('#welcome', navTime, { autoAlpha: 0 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
   },
   setNavIndexSmall({ state }, payload) {
@@ -82,7 +92,7 @@ export const actions = {
         payload[0]()
       },
     })
-    const scrollTime = 0.3
+    const scrollTime = 0.4
 
     navContainerTl
       .set("#footer", {
@@ -90,14 +100,27 @@ export const actions = {
       })
       .to(payload[1], scrollTime, {
         autoAlpha: 0,
-        // opacity: 0,
+        ease: "power4.out",
       })
       .set("#main", {
         y: "100vh",
       })
-    // .set("#nav3d", {
-    //   height: "100vh",
-    // })
+
+    const footerTl = gsap.timeline()
+
+    gsap.to("#footer", 0.6, {
+      y: "60vh",
+      ease: "power4.out",
+    })
+
+    footerTl
+      .to("#footer", 0.6, {
+        autoAlpha: 0,
+        ease: "power4.out",
+      })
+      .set("#footer", {
+        display: "none",
+      })
   },
   setNavLarge({ state, commit }) {
     commit("setNavSize", true)
@@ -107,14 +130,14 @@ export const actions = {
     }
 
     const navContainerTl = gsap.timeline()
-    const scrollTime = 0.3
+    // const scrollTime = 0.3
     const navTime = 1
     const delay = 0
 
     navContainerTl
-      .to(window, scrollTime, {
-        scrollTo: 0,
-      })
+      // .to(window, scrollTime, {
+      //   scrollTo: 0,
+      // })
       .set("#layout", {
         height: "calc(100vh + 1px)",
         overflow: "hidden",
@@ -133,8 +156,10 @@ export const actions = {
         height: "auto",
         overflow: "visible",
       })
-      .set("#sceneContainer", {
-        width: "100%",
+      .set("#footer", {
+        display: "block",
+        autoAlpha: 1,
+        y: 0,
       })
 
     gsap.to("#toggleContainer", navTime, { autoAlpha: 1 })
@@ -151,9 +176,8 @@ export const actions = {
     })
   },
   setNavContainerLarge(context) {
-    gsap.to("#main", 0.6, {
+    gsap.set("#main", {
       y: "100vh",
-      ease: "power4.out",
     })
   },
   setNavStyle({ state }, isMobile) {
@@ -170,36 +194,55 @@ export const actions = {
 
     gsap.set("#toggleContainer", { autoAlpha: 0 })
     gsap.to("#navFeedContainer", { autoAlpha: 0 })
-    gsap.set("#sceneContainer", {
-      width: "250%",
-    })
   },
   setLeave(context, payload) {
-    console.log("leaving")
-
     const tl = gsap.timeline()
     const { el, done } = payload
 
-    tl.to(window, 0.3, {
-      scrollTo: 0,
+    gsap.to(el, 0.6, {
+      y: "60vh",
+      ease: "power4.out",
     })
-      .to(el, 0.6, {
-        autoAlpha: 0,
-      })
-      .set("#footer", {
-        display: "none",
-        onComplete: () => done(),
-      })
+
+    gsap.to(el, 0.6, {
+      autoAlpha: 0,
+      ease: "power4.out",
+    })
+
+    gsap.to("#footer", 0.6, {
+      y: "60vh",
+      ease: "power4.out",
+    })
+
+    tl.to("#footer", 0.6, {
+      autoAlpha: 0,
+      ease: "power4.out",
+    }).set("#footer", {
+      display: "none",
+      onComplete: () => done(),
+    })
   },
   setEnter(context, payload) {
     const tl = gsap.timeline()
-    const { el, done } = payload
+    const { el } = payload
 
-    tl.to(el, 0.6, {
+    gsap.fromTo(
+      el,
+      { y: "60vh" },
+      {
+        y: "0",
+        ease: "power4.out",
+        duration: 0.6,
+      }
+    )
+
+    tl.to(el, 0.8, {
       autoAlpha: 1,
-      // onComplete: () => done(),
+      ease: "power4.out",
     }).set("#footer", {
       display: "block",
+      autoAlpha: 1,
+      y: 0,
     })
   },
 }

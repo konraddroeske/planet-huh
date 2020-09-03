@@ -19,14 +19,14 @@
           <div class="leftImage">
             <img
               class="postImage"
-              :src="post.images[0].url"
+              :src="post.featuredImages[0].url"
               :alt="post.title"
             />
           </div>
           <div class="rightImage">
             <img
               class="postImage"
-              :src="post.images[1].url"
+              :src="post.featuredImages[1].url"
               :alt="post.title"
             />
           </div>
@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     ...mapState({
-      posts: (state) => state.homepage.featuredCollabPosts,
+      posts: (state) => state.homepage.featured,
     }),
     wrap() {
       return this.wrapPartial(-100, (this.posts.length - 1) * 100)

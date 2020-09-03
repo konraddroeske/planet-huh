@@ -3,7 +3,11 @@
     <CTA />
     <CategoryNav variant="gradient" />
     <FeaturedCollabs />
-    <PostsFeed :posts="posts" get-some-posts-path="homepage/getSomePosts" />
+    <PostsFeed
+      :posts="postsTotal"
+      :post-limit="postLimit"
+      get-some-posts-path="homepage/getSomePosts"
+    />
   </div>
 </template>
 
@@ -28,7 +32,9 @@ export default {
   async fetch({ store }) {
     if (store.state.homepage.postsFeed.length === 0) {
       await store.dispatch("homepage/getHomepage")
-      await store.dispatch("homepage/getSomePosts", 4)
+      await store.dispatch("homepage/getFeatured")
+      await store.commit("homepage/resetMaxPosts")
+      await store.dispatch("homepage/getSomePosts", 8)
     }
   },
   transition: {
@@ -46,6 +52,14 @@ export default {
         setNavIndexSmall([done, el])
       }
     },
+    enter(el, done) {
+      const setNavContainerLarge =
+        window.$nuxt.$store._actions.setNavContainerLarge[0]
+      setNavContainerLarge()
+
+      const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
+      setNavLarge()
+    },
   },
   computed: {
     isMobile() {
@@ -54,8 +68,11 @@ export default {
     isOpen() {
       return this.$store.state.isOpen
     },
-    posts() {
-      return this.$store.state.homepage.postsFeed
+    postLimit() {
+      return this.$store.getters["homepage/postLimit"]
+    },
+    postsTotal() {
+      return this.$store.getters["homepage/postsTotal"]
     },
   },
   // mounted() {
