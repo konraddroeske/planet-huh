@@ -105,6 +105,8 @@ export default {
         .join("&")
     },
     handleSubmit() {
+      console.log(this.formValues)
+
       const axiosConfig = {
         header: { "Content-Type": "application/x-www-form-urlencoded" },
       }
