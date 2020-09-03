@@ -130,10 +130,20 @@ export const actions = {
     }
 
     const navContainerTl = gsap.timeline()
+<<<<<<< HEAD
+=======
+    // const scrollTime = 0.3
+>>>>>>> 297040208fec118238fb0641b312653a0e0c2334
     const navTime = 1
     const delay = 0
 
     navContainerTl
+<<<<<<< HEAD
+=======
+      // .to(window, scrollTime, {
+      //   scrollTo: 0,
+      // })
+>>>>>>> 297040208fec118238fb0641b312653a0e0c2334
       .set("#layout", {
         height: "calc(100vh + 1px)",
         overflow: "hidden",
@@ -188,7 +198,8 @@ export const actions = {
     gsap.to("#navFeedContainer", { autoAlpha: 0 })
   },
   setLeave(context, payload) {
-    const { el, done } = payload
+
+     const { el, done } = payload
 
     gsap.to(el, 0.6, {
       y: "60vh",
@@ -204,7 +215,7 @@ export const actions = {
       y: "60vh",
       ease: "power4.out",
     })
-
+    
     const tl = gsap.timeline()
 
     tl.to("#footer", 0.6, {

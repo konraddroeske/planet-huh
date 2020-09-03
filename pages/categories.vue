@@ -48,8 +48,14 @@ export default {
   },
   computed: mapState({
     title: (state) => state.categories.title,
-    posts: (state) => {
-      return state.categories.postsFeed
+    // posts: (state) => {
+    //   return state.categories.postsFeed
+    // },
+    postLimit() {
+      return this.$store.getters["categories/postLimit"]
+    },
+    postsTotal() {
+      return this.$store.getters["categories/postsTotal"]
     },
     postLimit() {
       return this.$store.getters["categories/postLimit"]
@@ -61,6 +67,7 @@ export default {
   watch: {
     $route(to, from) {
       if (to.name === "categories") {
+        this.$store.commit("categories/resetMaxPosts")
         this.$store.dispatch(
           "categories/handleRouteQueries",
           isEmpty(to.query.filters) ? {} : to.query.filters
@@ -75,6 +82,7 @@ export default {
     }
   },
   activated() {
+    this.$store.commit("categories/resetMaxPosts")
     this.$store.dispatch(
       "categories/handleRouteQueries",
       isEmpty(this.$route.query) ? {} : this.$route.query
