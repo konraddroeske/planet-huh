@@ -46,17 +46,6 @@ nav {
   }
 }
 
-a,
-a:visited {
-  color: $white;
-  text-decoration: none;
-
-  &:focus,
-  &:hover {
-    color: $accent;
-  }
-}
-
 .navList-dark {
   list-style: none;
   padding-left: 0;
@@ -74,6 +63,17 @@ a:visited {
 
 .navItem-dark {
   font-size: 1.5rem;
+
+  a,
+  a:visited {
+    color: $white;
+    text-decoration: none;
+
+    &:focus,
+    &:hover {
+      color: $accent;
+    }
+  }
 }
 
 .navList-light {
@@ -96,6 +96,17 @@ a:visited {
 
   @media (min-width: $bp-desktop) {
     font-size: 1.25rem;
+  }
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:focus,
+    &:hover {
+      color: $accent;
+    }
   }
 }
 </style>
