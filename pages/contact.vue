@@ -7,14 +7,13 @@
       </div>
       <div class="form">
         <FormulateForm
-          ref="contactForm"
           v-model="formValues"
           method="POST"
           name="contact"
           action=""
-          netlify
+          data-netlify="true"
           netlify-honeypot="bot-field"
-          @submit.prevent="handleSubmit"
+          @submit="handleSubmit"
         >
           <input type="hidden" name="form-name" value="contact" />
           <p class="visuallyHidden">
@@ -106,6 +105,8 @@ export default {
         .join("&")
     },
     handleSubmit() {
+      console.log(this.formValues)
+
       const axiosConfig = {
         header: { "Content-Type": "application/x-www-form-urlencoded" },
       }
