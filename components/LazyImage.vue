@@ -1,5 +1,9 @@
 <template>
-  <v-lazy-image :src="computedSrc" :src-placeholder="srcPlaceholder" />
+  <v-lazy-image
+    :src="computedSrc"
+    :src-placeholder="srcPlaceholder"
+    :alt="alt"
+  />
 </template>
 
 <script>
