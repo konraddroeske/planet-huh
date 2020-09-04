@@ -31,7 +31,7 @@
             class="post"
           >
             <nuxt-link :to="`/post/${post.slug}`">
-              <img
+              <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"

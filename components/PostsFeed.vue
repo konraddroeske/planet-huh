@@ -11,7 +11,7 @@
         >
           <nuxt-link :to="`/post/${post.slug}`">
             <div class="postImageContainer">
-              <img
+              <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"

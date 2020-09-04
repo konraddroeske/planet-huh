@@ -51,6 +51,8 @@ export default {
     "~plugins/v-scroll-lock.js",
     "~/plugins/directives.js",
     "~/plugins/vue-formulate",
+    "~/plugins/v-lazy-image.js",
+    "~/plugins/globalComponents.js",
   ],
   /*
    ** Auto import components

@@ -30,6 +30,7 @@
     "moment": "^2.27.0",
     "nuxt": "^2.13.0",
     "three": "^0.118.3",
+    "v-lazy-image": "^1.4.0",
     "v-scroll-lock": "^1.2.0",
     "vue-debounce": "^2.5.7",
     "vue-formulate": "^0.12.1",
