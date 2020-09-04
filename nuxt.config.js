@@ -76,7 +76,19 @@ export default {
     "@nuxtjs/style-resources",
     "@nuxtjs/svg",
     "@nuxtjs/device",
+    "nuxt-polyfill",
   ],
+  /*
+   ** Polyfills for older browser
+   */
+  polyfill: {
+    features: [
+      {
+        require: "intersection-observer",
+        detect: () => "IntersectionObserver" in window,
+      },
+    ],
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
