@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <img class="bannerImage" :src="imageSrc" alt="" />
+        <LazyImage class="bannerImage" :src="imageSrc" alt="" />
         <div class="bannerText">
           <h1 class="title">{{ title }}</h1>
           <p class="excerpt">{{ excerpt }}</p>

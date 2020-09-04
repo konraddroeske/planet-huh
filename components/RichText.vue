@@ -65,7 +65,7 @@
           :key="index"
           class="fullImageContainer"
         >
-          <img :src="item.src" alt="" />
+          <LazyImage :src="item.src" alt="" />
           <div class="accentText caption">{{ item.caption }}</div>
         </div>
 
@@ -75,7 +75,7 @@
             :key="idx"
             class="flexImageContainer"
           >
-            <img :src="image.src" alt="" />
+            <LazyImage :src="image.src" alt="" />
             <div class="accentText caption">{{ image.caption }}</div>
           </div>
         </div>
