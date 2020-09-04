@@ -17,14 +17,14 @@
           class="collab"
         >
           <div class="leftImage">
-            <img
+            <LazyImage
               class="postImage"
               :src="post.featuredImages[0].url"
               :alt="post.title"
             />
           </div>
           <div class="rightImage">
-            <img
+            <LazyImage
               class="postImage"
               :src="post.featuredImages[1].url"
               :alt="post.title"
