@@ -134,7 +134,7 @@ export const actions = {
         display: "none",
       })
   },
-  setNavLarge({ state, commit }) {
+  setNavLarge({ state, commit }, el) {
     commit("setNavSize", true)
 
     if (state.isMobile) {
@@ -177,14 +177,18 @@ export const actions = {
         y: 0,
       })
 
+    if (el) {
+      gsap.to(el, navTime, { autoAlpha: 1 })
+    }
+
     gsap.to("#toggleContainer", navTime, { autoAlpha: 1 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 1 })
   },
   setNavContainerSmall() {
-    // gsap.to("#main", 0.6, {
-    //   y: 0,
-    //   ease: "power4.out",
-    // })
+    gsap.to("#main", 0.6, {
+      y: 0,
+      ease: "power4.out",
+    })
   },
   setNavContainerLarge(context) {
     gsap.set("#main", {

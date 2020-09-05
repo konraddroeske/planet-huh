@@ -99,14 +99,21 @@ export default {
       nav.addEventListener("touchstart", this.handleNav, false)
     },
     setNavLarge() {
-      this.$store.dispatch("transitions/setNavLarge")
-      this.$store.dispatch("transitions/setNavContainerLarge")
+      if (this.isIndex) {
+        this.$store.dispatch("transitions/setNavLarge")
+        this.$store.dispatch("transitions/setNavContainerLarge")
+      }
+
       const nav = document.querySelector("#navContainer")
       nav.removeEventListener("click", this.handleNav, false)
       nav.removeEventListener("touchstart", this.handleNav, false)
     },
     handleNav() {
-      this.isNavLarge ? this.setNavSmall() : this.setNavLarge()
+      if (this.isNavLarge) {
+        this.setNavSmall()
+      } else {
+        this.setNavLarge()
+      }
     },
     initThree() {
       // Render Controls
@@ -219,9 +226,7 @@ export default {
       const navRouterMobile = (e) => {
         // Update Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-          1
+        rayMouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
@@ -404,10 +409,7 @@ export default {
 
         // Mobile Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        // rayMouse.x =
-        //   ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-        //   1
-        rayMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        rayMouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
