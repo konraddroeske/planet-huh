@@ -1,6 +1,11 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
+    <div
+      id="navContainer"
+      ref="navContainer"
+      v-scroll-lock="isOpen"
+      class="navContainer"
+    >
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
@@ -30,6 +35,8 @@ export default {
     return {
       toggle: false,
       currentNav: null,
+      observer: null,
+      intersected: false,
     }
   },
 
@@ -54,6 +61,17 @@ export default {
     },
   },
   mounted() {
+    this.observer = new IntersectionObserver((entries) => {
+      const nav = entries[0]
+      if (nav.isIntersecting) {
+        this.$store.state.transitions.play()
+      } else {
+        this.$store.state.transitions.pause()
+      }
+    })
+
+    this.observer.observe(this.$refs.navContainer)
+
     if (!this.isIndex) {
       const isMobile = window.$nuxt.$device.isMobile
       this.$store.dispatch("transitions/setNavStyle", isMobile)
@@ -63,6 +81,7 @@ export default {
   },
   beforeDestroy() {
     this.onDestroy()
+    this.observer.disconnect()
   },
   methods: {
     onDestroy() {
@@ -93,7 +112,9 @@ export default {
       // Render Controls
 
       const pauseAnimation = () => {
-        this.$store.commit("transitions/setIsPlay", false)
+        setTimeout(() => {
+          this.$store.commit("transitions/setIsPlay", false)
+        }, 400)
       }
 
       const playAnimation = () => {
@@ -867,7 +888,9 @@ export default {
           sceneContainer.removeEventListener("click", checkToggleHover)
         }
 
-        addNavClick()
+        if (this.isIndex) {
+          addNavClick()
+        }
 
         this.$store.commit("transitions/setAddNavClick", addNavClick)
         this.$store.commit("transitions/setRemoveNavClick", removeNavClick)
@@ -1365,8 +1388,6 @@ export default {
           globe.rotateOnAxis(globeAxis, 0.0015)
         }
       }
-
-      // const canvas = renderer.domElement
 
       const render = () => {
         if (

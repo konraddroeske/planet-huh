@@ -24,6 +24,7 @@ export const actions = {
       onComplete: () => {
         state.pause()
         state.addResize()
+        state.removeNavClick()
       },
     })
     const navTime = 1
@@ -56,6 +57,7 @@ export const actions = {
           startRouting()
           state.pause()
           state.addResize()
+          state.removeNavClick()
         },
       })
       .set("#layout", {
@@ -143,6 +145,7 @@ export const actions = {
       onComplete: () => {
         state.play()
         state.removeResize()
+        state.addNavClick()
         commit("clearResizeTimer")
       },
     })
