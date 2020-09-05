@@ -4,6 +4,15 @@ export const state = () => ({
   isMobile: null,
   isNavLarge: true,
   isOpen: false,
+  isPlay: true,
+  pause: null,
+  play: null,
+  addNavClick: null,
+  removeNavClick: null,
+  isResize: false,
+  resizeTimer: null,
+  addResize: null,
+  removeResize: null,
 })
 
 export const actions = {
@@ -11,7 +20,13 @@ export const actions = {
     commit("setNavSize", false)
     commit("setNavOpen", false)
 
-    const navContainerTl = gsap.timeline()
+    const navContainerTl = gsap.timeline({
+      onComplete: () => {
+        state.pause()
+        state.addResize()
+        state.removeNavClick()
+      },
+    })
     const navTime = 1
 
     navContainerTl
@@ -40,6 +55,9 @@ export const actions = {
         ease: "power4.out",
         onComplete: () => {
           startRouting()
+          state.pause()
+          state.addResize()
+          state.removeNavClick()
         },
       })
       .set("#layout", {
@@ -116,14 +134,21 @@ export const actions = {
         display: "none",
       })
   },
-  setNavLarge({ state, commit }) {
+  setNavLarge({ state, commit }, el) {
     commit("setNavSize", true)
 
     if (state.isMobile) {
       commit("setNavOpen", true)
     }
 
-    const navContainerTl = gsap.timeline()
+    const navContainerTl = gsap.timeline({
+      onComplete: () => {
+        state.play()
+        state.removeResize()
+        state.addNavClick()
+        commit("clearResizeTimer")
+      },
+    })
     const navTime = 1
     const delay = 0
 
@@ -152,14 +177,18 @@ export const actions = {
         y: 0,
       })
 
+    if (el) {
+      gsap.to(el, navTime, { autoAlpha: 1 })
+    }
+
     gsap.to("#toggleContainer", navTime, { autoAlpha: 1 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 1 })
   },
   setNavContainerSmall() {
-    // gsap.to("#main", 0.6, {
-    //   y: 0,
-    //   ease: "power4.out",
-    // })
+    gsap.to("#main", 0.6, {
+      y: 0,
+      ease: "power4.out",
+    })
   },
   setNavContainerLarge(context) {
     gsap.set("#main", {
@@ -253,5 +282,36 @@ export const mutations = {
   },
   setNavOpen(state, openStatus) {
     state.isOpen = openStatus
+  },
+  setIsPlay(state, payload) {
+    state.isPlay = payload
+  },
+  setPause(state, fn) {
+    state.pause = fn
+  },
+  setPlay(state, fn) {
+    state.play = fn
+  },
+  setAddNavClick(state, fn) {
+    state.addNavClick = fn
+  },
+  setRemoveNavClick(state, fn) {
+    state.removeNavClick = fn
+  },
+  setIsResize(state, payload) {
+    state.isResize = payload
+  },
+  setResizeTimer(state, payload) {
+    state.resizeTimer = payload
+  },
+  clearResizeTimer(state) {
+    const clearedTimer = clearInterval(state.resizeTimer)
+    state.resizeTimer = clearedTimer
+  },
+  setAddResize(state, fn) {
+    state.addResize = fn
+  },
+  setRemoveResize(state, fn) {
+    state.removeResize = fn
   },
 }
