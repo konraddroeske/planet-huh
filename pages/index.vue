@@ -41,8 +41,6 @@ export default {
     leave(el, done) {
       const isNavLarge = this.$store.state.transitions.isNavLarge
 
-      console.log(isNavLarge)
-
       if (isNavLarge) {
         this.$store.dispatch("transitions/setNavIndex", done)
       }
