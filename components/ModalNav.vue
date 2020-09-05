@@ -14,7 +14,12 @@
       </label>
     </div>
 
-    <section id="modalNav" ref="modalNav" v-scroll-lock="isOpen" class="modal">
+    <section
+      id="modalNav"
+      ref="modalNav"
+      v-scroll-lock="isOpen"
+      class="modal backdrop-blur"
+    >
       <CategoryNav variant="light" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
@@ -57,25 +62,20 @@ export default {
       }
     },
     closeNav() {
-      const blurrableContent = document.getElementById("blurrableContent")
       const modalNav = this.$refs.modalNav
 
       gsap.to(modalNav, 0.6, {
         autoAlpha: 0,
       })
 
-      blurrableContent.classList.remove("blurContent")
-
       this.isOpen = !this.isOpen
     },
     openNav() {
-      const blurrableContent = document.getElementById("blurrableContent")
       const modalNav = this.$refs.modalNav
 
       gsap.to(modalNav, 0.6, {
         autoAlpha: 1,
       })
-      blurrableContent.classList.add("blurContent")
 
       this.isOpen = !this.isOpen
     },
@@ -92,7 +92,6 @@ export default {
   left: 0;
   right: 0;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.3);
   visibility: hidden;
 
   @media (min-width: $bp-desktop) {

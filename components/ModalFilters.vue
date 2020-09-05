@@ -1,5 +1,5 @@
 <template>
-  <div ref="modalFilters" class="modalFilters">
+  <div ref="modalFilters" class="modalFilters backdrop-blur">
     <resize-observer @notify="handleResize()" />
     <div class="filtersTop">
       <div class="topBar">
@@ -254,9 +254,9 @@ export default {
   width: 100;
   z-index: $z-filters;
 
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
-  background-color: rgba(255, 255, 255, 0.5);
+  // -webkit-backdrop-filter: blur(10px);
+  // backdrop-filter: blur(10px);
+  // background-color: rgba(255, 255, 255, 0.5);
 
   display: flex;
   flex-direction: column;

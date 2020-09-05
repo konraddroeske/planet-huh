@@ -32,6 +32,7 @@ export default {
       currentNav: null,
     }
   },
+
   computed: {
     isIndex() {
       return this.$route.fullPath === "/"
@@ -89,7 +90,19 @@ export default {
       this.isNavLarge ? this.setNavSmall() : this.setNavLarge()
     },
     initThree() {
-      // CHECK DEVICE
+      // Render Controls
+
+      const pauseAnimation = () => {
+        this.$store.commit("transitions/setIsPlay", false)
+      }
+
+      const playAnimation = () => {
+        this.$store.commit("transitions/setIsPlay", true)
+        render()
+      }
+
+      this.$store.commit("transitions/setPause", pauseAnimation)
+      this.$store.commit("transitions/setPlay", playAnimation)
 
       const sceneContainer = document.querySelector("#navContainer")
 
@@ -581,9 +594,12 @@ export default {
       let globe
       const loader = new THREE.TextureLoader()
       const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
+      let textureLoaded = false
 
       {
-        const texture = loader.load(globeTexture)
+        const texture = loader.load(globeTexture, (texture) => {
+          textureLoaded = true
+        })
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
         const material = new THREE.MeshPhongMaterial({
           map: texture,
@@ -768,7 +784,7 @@ export default {
         windowHalfX = window.innerWidth / 2
         windowHalfY = window.innerHeight / 2
 
-        const canvas = renderer.domElement
+        // const canvas = renderer.domElement
         const width = canvas.clientWidth
         const height = canvas.clientHeight
         const needResize = canvas.width !== width || canvas.height !== height
@@ -841,8 +857,20 @@ export default {
           }
         }
 
-        sceneContainer.addEventListener("mousedown", checkToggleClick)
-        sceneContainer.addEventListener("click", checkToggleHover)
+        const addNavClick = () => {
+          sceneContainer.addEventListener("mousedown", checkToggleClick)
+          sceneContainer.addEventListener("click", checkToggleHover)
+        }
+
+        const removeNavClick = () => {
+          sceneContainer.removeEventListener("mousedown", checkToggleClick)
+          sceneContainer.removeEventListener("click", checkToggleHover)
+        }
+
+        addNavClick()
+
+        this.$store.commit("transitions/setAddNavClick", addNavClick)
+        this.$store.commit("transitions/setRemoveNavClick", removeNavClick)
       }
 
       // SET ROTATION AXIS
@@ -1338,40 +1366,79 @@ export default {
         }
       }
 
+      // const canvas = renderer.domElement
+
       const render = () => {
-        // RESIZE
+        if (
+          !this.$store.state.transitions.isPlay &&
+          !this.$store.state.transitions.isResize
+        )
+          return
 
         if (resizeRendererToDisplaySize(renderer)) {
-          const canvas = renderer.domElement
           camera.aspect = canvas.clientWidth / canvas.clientHeight
           camera.updateProjectionMatrix()
         }
 
-        if (this.isIndex && pivotMain && mood && globe) {
-          updateTitlePositions()
-          updateTitleRaycast()
-          updateGlobeControls()
-          updateMoodControls()
-          updateCameraZoomIn()
-          updateCameraZoomOut()
-          updateGlobeRotation()
-          updateMoodRotation()
+        if (pivotMain && mood && globe) {
+          if (!this.isIndex && textureLoaded) {
+            pauseAnimation()
+            addResizeListener()
+          }
+
+          if (this.isIndex) {
+            updateTitlePositions()
+            updateTitleRaycast()
+            updateGlobeControls()
+            updateMoodControls()
+            updateCameraZoomIn()
+            updateCameraZoomOut()
+            updateGlobeRotation()
+            updateMoodRotation()
+          }
         }
 
         requestAnimationFrame(render)
         renderer.render(scene, camera)
       }
 
-      requestAnimationFrame(render)
+      render()
 
-      const cancelAnimation = () => {
-        event.preventDefault()
-        cancelAnimationFrame(render)
+      // RENDER ON RESIZE
+
+      const resizeTimerFn = () => {
+        this.$store.commit("transitions/clearResizeTimer")
+        this.$store.commit("transitions/setIsResize", false)
+        this.$store.state.transitions.pause()
       }
+
+      const resizingRender = () => {
+        if (!this.$store.state.transitions.isResize) {
+          this.$store.commit("transitions/setIsResize", true)
+          render()
+        }
+
+        this.$store.commit("transitions/clearResizeTimer")
+        this.$store.commit(
+          "transitions/setResizeTimer",
+          setInterval(resizeTimerFn, 2200)
+        )
+      }
+
+      const addResizeListener = () => {
+        window.addEventListener("resize", resizingRender, false)
+      }
+
+      const removeResizeListener = () => {
+        window.removeEventListener("resize", resizingRender, false)
+      }
+
+      this.$store.commit("transitions/setAddResize", addResizeListener)
+      this.$store.commit("transitions/setRemoveResize", removeResizeListener)
 
       renderer
         .getContext()
-        .canvas.addEventListener("webglcontextlost", cancelAnimation, false)
+        .canvas.addEventListener("webglcontextlost", pauseAnimation, false)
     },
   },
 }
