@@ -8,6 +8,21 @@
           <ModalNavButton @clicked="closeModal()" />
         </div>
       </div>
+      <div class="filtersSearch">
+        <SearchBar variant="light" @onSubmit="handleSearch" />
+        <ul class="tags">
+          <li v-for="(filter, index) in filters" :key="index">
+            <button
+              class="listButton tagButton"
+              :class="setFiltersClass(filter)"
+              @click="routeFilter(filter)"
+            >
+              {{ formatMood(filter) }}
+              <span class="tagClose"></span>
+            </button>
+          </li>
+        </ul>
+      </div>
       <div class="filtersCategory">
         <button
           ref="sense"
@@ -117,6 +132,7 @@ import VueResize from "vue-resize"
 import gsap from "gsap"
 import { mapState, mapActions } from "vuex"
 import ModalNavButton from "@/components/ModalNavButton"
+import SearchBar from "@/components/SearchBar"
 import "vue-resize/dist/vue-resize.css"
 
 Vue.use(VueResize)
@@ -124,6 +140,7 @@ Vue.use(VueResize)
 export default {
   components: {
     ModalNavButton,
+    SearchBar,
   },
   data() {
     return {
@@ -228,7 +245,7 @@ export default {
       return {
         bolded: this.filters.some(
           (filter) =>
-            this.allFilters[filter].hasParent === name || filter === name
+            this.allFilters[filter]?.hasParent === name || filter === name
         ),
       }
     },
@@ -239,6 +256,9 @@ export default {
     },
     formatMood(mood) {
       return mood.replace(/([a-z])([A-Z])/, "$1 $2")
+    },
+    handleSearch(input) {
+      this.routeFilter(input)
     },
   },
 }
@@ -253,14 +273,10 @@ export default {
   left: 0;
   width: 100;
   z-index: $z-filters;
-
-  // -webkit-backdrop-filter: blur(10px);
-  // backdrop-filter: blur(10px);
-  // background-color: rgba(255, 255, 255, 0.5);
-
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow-y: auto;
 
   padding: 1rem 1rem 4.4rem 1rem;
 
@@ -276,6 +292,7 @@ export default {
     align-items: center;
   }
 
+  .filtersSearch,
   .filtersCategory {
     padding: 1rem 0;
     border-bottom: 1px solid $black;
@@ -283,6 +300,10 @@ export default {
 
   .filtersCategory:last-child {
     border-bottom: none;
+  }
+
+  .tags {
+    padding-top: 0.6rem;
   }
 
   h2,
@@ -317,8 +338,43 @@ export default {
     padding: 0.6rem 1rem;
   }
 
+  .tagButton {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .tagClose {
+    width: 1rem;
+    position: relative;
+    left: 0.5rem;
+
+    &::before,
+    &::after {
+      content: "";
+      display: block;
+      height: 0.06rem;
+      background: $black;
+      position: absolute;
+      width: 0.8rem;
+    }
+
+    &::before {
+      -webkit-transform: rotate(45deg);
+      transform: rotate(45deg);
+      bottom: -0.025rem;
+      background-color: $black;
+    }
+
+    &::after {
+      -webkit-transform: rotate(-45deg);
+      transform: rotate(-45deg);
+      top: -0.025rem;
+      background-color: $black;
+    }
+  }
+
   .listButton:hover,
-  // .listButton:focus,
   .listButton:active {
     background-color: $accentTransparent;
   }
@@ -361,6 +417,7 @@ export default {
     left: auto;
     max-width: $bp-mobile;
 
+    .filtersSearch,
     .filtersCategory {
       padding: 2rem 0;
     }

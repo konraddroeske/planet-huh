@@ -1,14 +1,15 @@
 <template>
-  <div :class="`container-${variant}`">
+  <form :class="`container-${variant}`" @submit.prevent="onSubmit">
     <input
+      v-model="input"
       :class="`searchInput-${variant}`"
       type="text"
       placeholder="Start typing..."
     />
-    <button :class="`searchButton-${variant}`">
+    <button type="submit" :class="`searchButton-${variant}`">
       Go!
     </button>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -20,6 +21,17 @@ export default {
       validator(value) {
         return ["light", "dark"].includes(value)
       },
+    },
+  },
+  data() {
+    return {
+      input: null,
+    }
+  },
+  methods: {
+    onSubmit() {
+      this.$emit("onSubmit", this.input)
+      this.input = null
     },
   },
 }
@@ -80,8 +92,10 @@ export default {
   justify-content: center;
 
   @media (min-width: $bp-desktop) {
-    display: block;
-    flex: 1 1 auto;
+    // display: block;
+    // flex: 1 1 auto;
+    display: flex;
+    justify-content: space-between;
   }
 }
 .searchInput-light {
@@ -93,6 +107,7 @@ export default {
   padding: 0.75rem 1.25rem;
   margin-right: 0.5rem;
   color: $black;
+  flex-grow: 1;
 
   &::placeholder {
     color: $black;
