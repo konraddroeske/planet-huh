@@ -24,18 +24,20 @@
       <PageNav variant="light" />
       <div class="searchBarSocial">
         <SocialLinks variant="light" />
-        <SearchBar variant="light" />
+        <SearchBar variant="light" @onSubmit="routeFilter" />
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import { mapActions, mapMutations } from "vuex"
 import gsap from "gsap"
 import CategoryNav from "./CategoryNav"
 import PageNav from "./PageNav"
 import SocialLinks from "./SocialLinks"
 import SearchBar from "./SearchBar"
+
 export default {
   components: { CategoryNav, PageNav, SocialLinks, SearchBar },
   data() {
@@ -78,6 +80,20 @@ export default {
       })
 
       this.isOpen = !this.isOpen
+    },
+    ...mapActions({
+      getQueries: "categories/getQueries",
+    }),
+    async routeFilter(filter) {
+      // clear filters
+
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "/categories",
+        query: { filters: queries },
+      })
     },
   },
 }

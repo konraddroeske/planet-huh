@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="filtersSearch">
-        <SearchBar variant="light" @onSubmit="handleSearch" />
+        <SearchBar variant="light" @onSubmit="routeFilter" />
         <ul class="tags">
           <li v-for="(filter, index) in filters" :key="index">
             <button
@@ -200,7 +200,7 @@ export default {
       filter ? (queries = await this.getQueries(filter)) : (queries = [])
 
       this.$router.push({
-        path: "categories",
+        path: "/categories",
         query: { filters: queries },
       })
     },
@@ -256,9 +256,6 @@ export default {
     },
     formatMood(mood) {
       return mood.replace(/([a-z])([A-Z])/, "$1 $2")
-    },
-    handleSearch(input) {
-      this.routeFilter(input)
     },
   },
 }

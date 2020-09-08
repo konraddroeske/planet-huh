@@ -284,10 +284,10 @@ export const actions = {
     if (state.filters.length === 0) {
       queries.push(newFilter)
     } else if (!state.filters.includes(newFilter)) {
-      // check if it exists (user search)
       if (!state.allFilters[newFilter]) {
-        // check if it has a parent
+        // if it doesn't exist, do nothing
       } else if (state.allFilters[newFilter].hasParent === false) {
+        // check if it has a parent
         queries = state.filters.filter((item) => {
           // account for mood/mood categories types
           if (
