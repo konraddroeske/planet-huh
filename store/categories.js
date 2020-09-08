@@ -64,6 +64,11 @@ export const actions = {
             mood
             moodCategory
             createdAt
+            post {
+              id
+              title
+              slug
+            }
         }
       }`)
 
@@ -81,6 +86,11 @@ export const actions = {
             id
             name
             createdAt
+            post {
+              id
+              title
+              slug
+            }
         }
       }`)
 
@@ -98,6 +108,11 @@ export const actions = {
             id
             name
             createdAt
+            post {
+              id
+              title
+              slug
+            }
         }
       }`)
 
@@ -111,7 +126,7 @@ export const actions = {
   },
   checkTitle({ state, commit }) {
     if (state.filters.length === 1) {
-      if (state.allFilters[state.filters[0]].type === "moodCategory") {
+      if (state.allFilters[state.filters[0]]?.type === "moodCategory") {
         commit("setTitle", state.filters[0].replace(/([a-z])([A-Z])/, "$1 $2"))
       } else {
         commit("setTitle", state.filters[0])
@@ -129,19 +144,20 @@ export const actions = {
       const city = []
       const mood = []
       const sense = []
+      const search = []
 
       // separate into categories
       state.filters.forEach((item) => {
-        if (state.allFilters[item].type === "city") {
+        if (!state.allFilters[item]) {
+          search.push(item)
+        } else if (state.allFilters[item].type === "city") {
           city.push(item)
-        }
-        if (
+        } else if (
           state.allFilters[item].type === "mood" ||
           state.allFilters[item].type === "moodCategory"
         ) {
           mood.push(item)
-        }
-        if (state.allFilters[item].type === "sense") {
+        } else if (state.allFilters[item].type === "sense") {
           sense.push(item)
         }
       })
@@ -150,6 +166,7 @@ export const actions = {
       let cityObj = null
       let moodObj = null
       let senseObj = null
+      let searchObj = null
 
       // convert categories to query objects
       if (city.length > 0) {
@@ -201,6 +218,20 @@ export const actions = {
         }
 
         filtersArr.push(senseObj)
+      }
+
+      if (search.length > 0) {
+        let str = "AND"
+        for (let i = 0; i < search.length; i++) {
+          if (i === 0) {
+            searchObj = { _search: search[i] }
+          } else {
+            set(searchObj, str, { _search: search[i] })
+            str += ".AND"
+          }
+        }
+
+        filtersArr.push(searchObj)
       }
 
       let finalStr = "AND"
@@ -268,7 +299,10 @@ export const actions = {
     if (state.filters.length === 0) {
       queries.push(newFilter)
     } else if (!state.filters.includes(newFilter)) {
-      if (state.allFilters[newFilter].hasParent === false) {
+      if (!state.allFilters[newFilter]) {
+        // if it doesn't exist, do nothing
+      } else if (state.allFilters[newFilter].hasParent === false) {
+        // check if it has a parent
         queries = state.filters.filter((item) => {
           // account for mood/mood categories types
           if (
@@ -276,13 +310,13 @@ export const actions = {
             state.allFilters[newFilter].type === "moodCategory"
           ) {
             return (
-              state.allFilters[item].type !== "mood" &&
-              state.allFilters[item].type !== "moodCategory"
+              state.allFilters[item]?.type !== "mood" &&
+              state.allFilters[item]?.type !== "moodCategory"
             )
           }
 
           return (
-            state.allFilters[item].type !== state.allFilters[newFilter].type
+            state.allFilters[item]?.type !== state.allFilters[newFilter].type
           )
         })
       } else {

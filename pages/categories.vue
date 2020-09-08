@@ -1,6 +1,7 @@
 <template>
   <div class="categories">
     <CategoryHero :title="title" />
+    <CategoryList v-if="isParentCategory" :categories="categories" />
     <PostsFeed
       :posts="postsTotal"
       :post-limit="postLimit"
@@ -15,6 +16,7 @@ import { mapState } from "vuex"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CategoryHero from "@/components/CategoryHero"
+import CategoryList from "@/components/CategoryList"
 import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
@@ -33,21 +35,44 @@ export default {
   components: {
     CategoryHero,
     PostsFeed,
+    CategoryList,
   },
   data() {
     return {
       from: null,
     }
   },
-  computed: mapState({
-    title: (state) => state.categories.title,
-    postLimit() {
-      return this.$store.getters["categories/postLimit"]
+  computed: {
+    ...mapState({
+      title: (state) => state.categories.title,
+      postLimit() {
+        return this.$store.getters["categories/postLimit"]
+      },
+      postsTotal() {
+        return this.$store.getters["categories/postsTotal"]
+      },
+      allFilters: (state) => state.categories.allFilters,
+    }),
+    isParentCategory() {
+      if (this.title) {
+        return this.allFilters[this.title]?.hasParent === false
+      }
+
+      return false
     },
-    postsTotal() {
-      return this.$store.getters["categories/postsTotal"]
+    categories() {
+      if (this.isParentCategory) {
+        return [...this.$store.state.categories[this.title]]
+          .sort((a, b) => b.post.length - a.post.length)
+          .slice(0, 6)
+          .map((item) => {
+            return this.title === "moods" ? item.mood : item.name
+          })
+      }
+
+      return null
     },
-  }),
+  },
   watch: {
     $route(to, from) {
       if (to.name === "categories") {
