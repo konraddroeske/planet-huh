@@ -84,8 +84,12 @@ export default {
     ...mapActions({
       getQueries: "categories/getQueries",
     }),
+    ...mapMutations({
+      resetFilters: "categories/resetFilters",
+    }),
     async routeFilter(filter) {
       // clear filters
+      this.resetFilters()
 
       let queries = []
       filter ? (queries = await this.getQueries(filter)) : (queries = [])

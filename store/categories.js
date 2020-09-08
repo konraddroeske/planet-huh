@@ -64,6 +64,11 @@ export const actions = {
             mood
             moodCategory
             createdAt
+            post {
+              id
+              title
+              slug
+            }
         }
       }`)
 
@@ -81,6 +86,11 @@ export const actions = {
             id
             name
             createdAt
+            post {
+              id
+              title
+              slug
+            }
         }
       }`)
 
@@ -98,6 +108,11 @@ export const actions = {
             id
             name
             createdAt
+            post {
+              id
+              title
+              slug
+            }
         }
       }`)
 

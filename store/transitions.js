@@ -136,6 +136,8 @@ export const actions = {
   },
   setNavLarge({ state, commit }, el) {
     commit("setNavSize", true)
+    commit("clearResizeTimer")
+    state.removeResize()
 
     if (state.isMobile) {
       commit("setNavOpen", true)
@@ -144,9 +146,7 @@ export const actions = {
     const navContainerTl = gsap.timeline({
       onComplete: () => {
         state.play()
-        state.removeResize()
         state.addNavClick()
-        commit("clearResizeTimer")
       },
     })
     const navTime = 1
@@ -305,8 +305,8 @@ export const mutations = {
     state.resizeTimer = payload
   },
   clearResizeTimer(state) {
-    const clearedTimer = clearInterval(state.resizeTimer)
-    state.resizeTimer = clearedTimer
+    clearInterval(state.resizeTimer)
+    state.resizeTimer = null
   },
   setAddResize(state, fn) {
     state.addResize = fn
