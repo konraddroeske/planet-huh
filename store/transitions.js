@@ -22,7 +22,7 @@ export const actions = {
 
     const navContainerTl = gsap.timeline({
       onComplete: () => {
-        state.pause()
+        state.pause(400)
         state.addResize()
         state.removeNavClick()
       },
@@ -57,7 +57,7 @@ export const actions = {
         ease: "power4.out",
         onComplete: () => {
           startRouting()
-          state.pause()
+          state.pause(400)
           state.addResize()
           state.removeNavClick()
         },
