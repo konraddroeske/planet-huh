@@ -66,7 +66,7 @@ export default {
       if (nav.isIntersecting) {
         this.$store.state.transitions.play()
       } else {
-        this.$store.state.transitions.pause()
+        this.$store.state.transitions.pause(0)
       }
     })
 
@@ -118,10 +118,10 @@ export default {
     initThree() {
       // Render Controls
 
-      const pauseAnimation = () => {
+      const pauseAnimation = (timeout) => {
         setTimeout(() => {
           this.$store.commit("transitions/setIsPlay", false)
-        }, 400)
+        }, timeout)
       }
 
       const playAnimation = () => {
@@ -1412,7 +1412,7 @@ export default {
 
         if (pivotMain && mood && globe) {
           if (!this.isIndex && textureLoaded) {
-            pauseAnimation()
+            pauseAnimation(400)
             addResizeListener()
           }
 
@@ -1439,7 +1439,7 @@ export default {
       const resizeTimerFn = () => {
         this.$store.commit("transitions/clearResizeTimer")
         this.$store.commit("transitions/setIsResize", false)
-        this.$store.state.transitions.pause()
+        this.$store.state.transitions.pause(0)
       }
 
       const resizingRender = () => {
