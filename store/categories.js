@@ -19,6 +19,7 @@ export const state = () => ({
   moods: [],
   senses: [],
   moodCategories: [],
+  isFetching: false,
 })
 
 export const actions = {
@@ -51,6 +52,7 @@ export const actions = {
       const { posts } = data.data
       commit("setCategoryPosts", posts)
       commit("setMaxPosts", 4)
+      commit("setIsFetching", false)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -285,6 +287,7 @@ export const actions = {
 
     // check if current filters are already loaded
     if (state.filters.length === 0 || !isEqual(params, state.filters)) {
+      commit("setIsFetching", true)
       commit("resetFeed")
       commit("resetMaxPosts")
       commit("setFilters", params)
@@ -420,5 +423,8 @@ export const mutations = {
   },
   resetMaxPosts(state) {
     state.maxPosts = 0
+  },
+  setIsFetching(state, payload) {
+    state.isFetching = payload
   },
 }

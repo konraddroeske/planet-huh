@@ -27,7 +27,7 @@ export default {
       },
     ],
     link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/x-icon", href: "/Huh_Logo_White.png" },
       {
         rel: "stylesheet",
         href:
