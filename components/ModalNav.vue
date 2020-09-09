@@ -14,23 +14,30 @@
       </label>
     </div>
 
-    <section id="modalNav" ref="modalNav" v-scroll-lock="isOpen" class="modal">
+    <section
+      id="modalNav"
+      ref="modalNav"
+      v-scroll-lock="isOpen"
+      class="modal backdrop-blur"
+    >
       <CategoryNav variant="light" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
         <SocialLinks variant="light" />
-        <SearchBar variant="light" />
+        <SearchBar variant="light" @onSubmit="routeFilter" />
       </div>
     </section>
   </div>
 </template>
 
 <script>
+import { mapActions, mapMutations } from "vuex"
 import gsap from "gsap"
 import CategoryNav from "./CategoryNav"
 import PageNav from "./PageNav"
 import SocialLinks from "./SocialLinks"
 import SearchBar from "./SearchBar"
+
 export default {
   components: { CategoryNav, PageNav, SocialLinks, SearchBar },
   data() {
@@ -57,27 +64,40 @@ export default {
       }
     },
     closeNav() {
-      const blurrableContent = document.getElementById("blurrableContent")
       const modalNav = this.$refs.modalNav
 
       gsap.to(modalNav, 0.6, {
         autoAlpha: 0,
       })
 
-      blurrableContent.classList.remove("blurContent")
-
       this.isOpen = !this.isOpen
     },
     openNav() {
-      const blurrableContent = document.getElementById("blurrableContent")
       const modalNav = this.$refs.modalNav
 
       gsap.to(modalNav, 0.6, {
         autoAlpha: 1,
       })
-      blurrableContent.classList.add("blurContent")
 
       this.isOpen = !this.isOpen
+    },
+    ...mapActions({
+      getQueries: "categories/getQueries",
+    }),
+    ...mapMutations({
+      resetFilters: "categories/resetFilters",
+    }),
+    async routeFilter(filter) {
+      // clear filters
+      this.resetFilters()
+
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "/categories",
+        query: { filters: queries },
+      })
     },
   },
 }
@@ -92,7 +112,6 @@ export default {
   left: 0;
   right: 0;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.3);
   visibility: hidden;
 
   @media (min-width: $bp-desktop) {

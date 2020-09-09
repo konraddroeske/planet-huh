@@ -3,6 +3,7 @@
     :src="computedSrc"
     :src-placeholder="srcPlaceholder"
     :alt="alt"
+    @load="onLoaded"
   />
 </template>
 
@@ -36,6 +37,9 @@ export default {
     },
   },
   methods: {
+    onLoaded(event) {
+      this.$emit("loaded")
+    },
     removeTrailingSlash(str) {
       return str.replace(/\/$/, "")
     },

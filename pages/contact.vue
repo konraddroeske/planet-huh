@@ -130,6 +130,9 @@ export default {
     resetForm() {
       this.isSubmitted = false
       this.isSuccess = true
+      this.name = ""
+      this.email = ""
+      this.message = ""
     },
     handleSubmit() {
       const formValues = {

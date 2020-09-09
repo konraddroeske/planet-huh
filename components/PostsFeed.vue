@@ -15,7 +15,7 @@
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
-                @load="onLoad"
+                @loaded="onLoaded"
               />
             </div>
           </nuxt-link>
@@ -74,12 +74,6 @@ export default {
       }))
     },
   },
-  // mounted() {
-  //   this.onMount()
-  // },
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   activated() {
     this.onMount()
   },
@@ -95,7 +89,7 @@ export default {
     onDestroy() {
       this.width.removeListener(this.setPadding)
     },
-    onLoad() {
+    onLoaded() {
       if (this.width.matches) {
         this.onResize()
       }

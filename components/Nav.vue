@@ -1,6 +1,11 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
+    <div
+      id="navContainer"
+      ref="navContainer"
+      v-scroll-lock="isOpen"
+      class="navContainer"
+    >
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
@@ -30,8 +35,11 @@ export default {
     return {
       toggle: false,
       currentNav: null,
+      observer: null,
+      intersected: false,
     }
   },
+
   computed: {
     isIndex() {
       return this.$route.fullPath === "/"
@@ -53,6 +61,17 @@ export default {
     },
   },
   mounted() {
+    this.observer = new IntersectionObserver((entries) => {
+      const nav = entries[0]
+      if (nav.isIntersecting) {
+        this.$store.state.transitions.play()
+      } else {
+        this.$store.state.transitions.pause()
+      }
+    })
+
+    this.observer.observe(this.$refs.navContainer)
+
     if (!this.isIndex) {
       const isMobile = window.$nuxt.$device.isMobile
       this.$store.dispatch("transitions/setNavStyle", isMobile)
@@ -62,6 +81,7 @@ export default {
   },
   beforeDestroy() {
     this.onDestroy()
+    this.observer.disconnect()
   },
   methods: {
     onDestroy() {
@@ -79,17 +99,38 @@ export default {
       nav.addEventListener("touchstart", this.handleNav, false)
     },
     setNavLarge() {
-      this.$store.dispatch("transitions/setNavLarge")
-      this.$store.dispatch("transitions/setNavContainerLarge")
+      if (this.isIndex) {
+        this.$store.dispatch("transitions/setNavLarge")
+        this.$store.dispatch("transitions/setNavContainerLarge")
+      }
+
       const nav = document.querySelector("#navContainer")
       nav.removeEventListener("click", this.handleNav, false)
       nav.removeEventListener("touchstart", this.handleNav, false)
     },
     handleNav() {
-      this.isNavLarge ? this.setNavSmall() : this.setNavLarge()
+      if (this.isNavLarge) {
+        this.setNavSmall()
+      } else {
+        this.setNavLarge()
+      }
     },
     initThree() {
-      // CHECK DEVICE
+      // Render Controls
+
+      const pauseAnimation = () => {
+        setTimeout(() => {
+          this.$store.commit("transitions/setIsPlay", false)
+        }, 400)
+      }
+
+      const playAnimation = () => {
+        this.$store.commit("transitions/setIsPlay", true)
+        render()
+      }
+
+      this.$store.commit("transitions/setPause", pauseAnimation)
+      this.$store.commit("transitions/setPlay", playAnimation)
 
       const sceneContainer = document.querySelector("#navContainer")
 
@@ -185,9 +226,7 @@ export default {
       const navRouterMobile = (e) => {
         // Update Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-          1
+        rayMouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
@@ -370,10 +409,7 @@ export default {
 
         // Mobile Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        // rayMouse.x =
-        //   ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-        //   1
-        rayMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+        rayMouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
@@ -581,9 +617,12 @@ export default {
       let globe
       const loader = new THREE.TextureLoader()
       const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
+      let textureLoaded = false
 
       {
-        const texture = loader.load(globeTexture)
+        const texture = loader.load(globeTexture, (texture) => {
+          textureLoaded = true
+        })
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
         const material = new THREE.MeshPhongMaterial({
           map: texture,
@@ -768,7 +807,7 @@ export default {
         windowHalfX = window.innerWidth / 2
         windowHalfY = window.innerHeight / 2
 
-        const canvas = renderer.domElement
+        // const canvas = renderer.domElement
         const width = canvas.clientWidth
         const height = canvas.clientHeight
         const needResize = canvas.width !== width || canvas.height !== height
@@ -841,8 +880,22 @@ export default {
           }
         }
 
-        sceneContainer.addEventListener("mousedown", checkToggleClick)
-        sceneContainer.addEventListener("click", checkToggleHover)
+        const addNavClick = () => {
+          sceneContainer.addEventListener("mousedown", checkToggleClick)
+          sceneContainer.addEventListener("click", checkToggleHover)
+        }
+
+        const removeNavClick = () => {
+          sceneContainer.removeEventListener("mousedown", checkToggleClick)
+          sceneContainer.removeEventListener("click", checkToggleHover)
+        }
+
+        if (this.isIndex) {
+          addNavClick()
+        }
+
+        this.$store.commit("transitions/setAddNavClick", addNavClick)
+        this.$store.commit("transitions/setRemoveNavClick", removeNavClick)
       }
 
       // SET ROTATION AXIS
@@ -1339,39 +1392,76 @@ export default {
       }
 
       const render = () => {
-        // RESIZE
+        if (
+          !this.$store.state.transitions.isPlay &&
+          !this.$store.state.transitions.isResize
+        )
+          return
 
         if (resizeRendererToDisplaySize(renderer)) {
-          const canvas = renderer.domElement
           camera.aspect = canvas.clientWidth / canvas.clientHeight
           camera.updateProjectionMatrix()
         }
 
-        if (this.isIndex && pivotMain && mood && globe) {
-          updateTitlePositions()
-          updateTitleRaycast()
-          updateGlobeControls()
-          updateMoodControls()
-          updateCameraZoomIn()
-          updateCameraZoomOut()
-          updateGlobeRotation()
-          updateMoodRotation()
+        if (pivotMain && mood && globe) {
+          if (!this.isIndex && textureLoaded) {
+            pauseAnimation()
+            addResizeListener()
+          }
+
+          if (this.isIndex) {
+            updateTitlePositions()
+            updateTitleRaycast()
+            updateGlobeControls()
+            updateMoodControls()
+            updateCameraZoomIn()
+            updateCameraZoomOut()
+            updateGlobeRotation()
+            updateMoodRotation()
+          }
         }
 
         requestAnimationFrame(render)
         renderer.render(scene, camera)
       }
 
-      requestAnimationFrame(render)
+      render()
 
-      const cancelAnimation = () => {
-        event.preventDefault()
-        cancelAnimationFrame(render)
+      // RENDER ON RESIZE
+
+      const resizeTimerFn = () => {
+        this.$store.commit("transitions/clearResizeTimer")
+        this.$store.commit("transitions/setIsResize", false)
+        this.$store.state.transitions.pause()
       }
+
+      const resizingRender = () => {
+        if (!this.$store.state.transitions.isResize) {
+          this.$store.commit("transitions/setIsResize", true)
+          render()
+        }
+
+        this.$store.commit("transitions/clearResizeTimer")
+        this.$store.commit(
+          "transitions/setResizeTimer",
+          setInterval(resizeTimerFn, 2200)
+        )
+      }
+
+      const addResizeListener = () => {
+        window.addEventListener("resize", resizingRender, false)
+      }
+
+      const removeResizeListener = () => {
+        window.removeEventListener("resize", resizingRender, false)
+      }
+
+      this.$store.commit("transitions/setAddResize", addResizeListener)
+      this.$store.commit("transitions/setRemoveResize", removeResizeListener)
 
       renderer
         .getContext()
-        .canvas.addEventListener("webglcontextlost", cancelAnimation, false)
+        .canvas.addEventListener("webglcontextlost", pauseAnimation, false)
     },
   },
 }

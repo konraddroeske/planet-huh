@@ -50,8 +50,8 @@ export default {
       }
     },
     enter(el, done) {
-      this.$store.dispatch("transitions/setNavContainerLarge")
-      this.$store.dispatch("transitions/setNavLarge")
+      this.$store.dispatch("transitions/setNavContainerLarge", el)
+      this.$store.dispatch("transitions/setNavLarge", el)
     },
   },
   computed: {
