@@ -2,7 +2,7 @@
   <div class="categoryHero">
     <CategoryTitle
       :name="title"
-      :disabled="disabled"
+      :disabled="true"
       :to="{ name: '' }"
       :variant="variant"
     />

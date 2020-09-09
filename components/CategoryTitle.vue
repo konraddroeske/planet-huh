@@ -68,6 +68,7 @@ export default {
   a:visited {
     color: $white;
     text-decoration: none;
+    text-align: center;
 
     &:hover,
     &:focus {
@@ -87,6 +88,7 @@ export default {
   a:visited {
     color: $black;
     text-decoration: none;
+    text-align: center;
 
     &:hover,
     &:focus {
@@ -110,6 +112,9 @@ export default {
   font-size: 4rem;
   line-height: 1;
   position: relative;
+
+  display: flex;
+  flex-direction: column;
 
   ::before {
     content: "";
@@ -138,6 +143,7 @@ export default {
   a:visited {
     color: $black;
     text-decoration: none;
+    text-align: center;
   }
 
   @media (min-width: $bp-tablet) {
