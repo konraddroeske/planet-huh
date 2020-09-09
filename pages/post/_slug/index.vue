@@ -48,26 +48,9 @@ export default {
       this.$store.dispatch("transitions/setLeave", { el, done })
     },
   },
-  data() {
-    return {
-      slug: this.$route.params.slug,
-      post: null,
-    }
-  },
-
-  computed: {
-    link() {
-      const host = this.req ? this.req.headers.host : window.location.origin
-      return `${host}${this.$route.path}`
-    },
-    title() {
-      return this.post?.title
-    },
-  },
-
-  async created() {
+  async asyncData({ params }) {
     const { data } = await fetchContent(`{
-      post(where: {slug: "${this.slug}"}) {
+      post(where: {slug: "${params.slug}"}) {
         title
         excerpt
         date
@@ -103,24 +86,38 @@ export default {
 
     const { coverImage, content } = data.data.post
 
-    this.setData(data, coverImage, content)
+    return {
+      post: {
+        ...data.data.post,
+        imageSrc: coverImage.url,
+        content: content.raw.children,
+      },
+    }
+  },
+  data() {
+    return {
+      slug: this.$route.params.slug,
+      post: null,
+    }
   },
 
+  computed: {
+    link() {
+      const host = this.req ? this.req.headers.host : window.location.origin
+      return `${host}${this.$route.path}`
+    },
+    title() {
+      return this.post?.title
+    },
+  },
   activated() {
     this.onMount()
   },
   deactivated() {
     this.onDestroy()
   },
-
   methods: {
-    setData(data, coverImage, content) {
-      this.post = {
-        ...data.data.post,
-        imageSrc: coverImage.url,
-        content: content.raw.children,
-      }
-    },
+    setData(data, coverImage, content) {},
     onMount() {
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.route, false)
