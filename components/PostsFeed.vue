@@ -9,7 +9,7 @@
           class="postContainer"
           :class="`postContainer${index}`"
         >
-          <nuxt-link :to="`/post/${post.slug}`">
+          <nuxt-link :to="`/post/${post.slug}`" class="imageLink">
             <div class="postImageContainer">
               <img
                 class="postImage"
@@ -238,6 +238,15 @@ section {
 
   @media (min-width: $bp-desktop) {
     object-fit: cover;
+  }
+}
+
+.imageLink {
+  &:hover,
+  &:focus {
+    .postImage {
+      box-shadow: 0 0 0 0.1rem $accent;
+    }
   }
 }
 
