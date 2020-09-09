@@ -37,23 +37,6 @@ export default {
       await store.dispatch("homepage/getSomePosts", 8)
     }
   },
-  transition: {
-    leave(el, done) {
-      const isNavLarge = this.$store.state.transitions.isNavLarge
-
-      if (isNavLarge) {
-        this.$store.dispatch("transitions/setNavIndex", done)
-      }
-
-      if (!isNavLarge) {
-        this.$store.dispatch("transitions/setNavIndexSmall", { done, el })
-      }
-    },
-    enter(el, done) {
-      this.$store.dispatch("transitions/setNavContainerLarge", el)
-      this.$store.dispatch("transitions/setNavLarge", el)
-    },
-  },
   computed: {
     isMobile() {
       return this.$device.isMobile
@@ -85,6 +68,24 @@ export default {
         // and scroll is locked
         this.$store.commit("transitions/setNavOpen", false)
       }
+    },
+  },
+
+  transition: {
+    leave(el, done) {
+      const isNavLarge = this.$store.state.transitions.isNavLarge
+
+      if (isNavLarge) {
+        this.$store.dispatch("transitions/setNavIndex", done)
+      }
+
+      if (!isNavLarge) {
+        this.$store.dispatch("transitions/setNavIndexSmall", { done, el })
+      }
+    },
+    enter(el, done) {
+      this.$store.dispatch("transitions/setNavContainerLarge", el)
+      this.$store.dispatch("transitions/setNavLarge", el)
     },
   },
 }

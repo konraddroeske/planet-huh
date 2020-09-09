@@ -16,18 +16,58 @@ export default {
    ** See https://nuxtjs.org/api/configuration-head
    */
   head: {
-    title: process.env.npm_package_name || "",
+    title: "Planet Huh",
+    description:
+      "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde eveniet veritatis possimus ab obcaecati, a excepturi quaerat distinctio atque pariatur tenetur voluptatibus nisi alias, est aspernatur? Sed quas magnam a?",
+    img: "/banner.jpg",
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
         hid: "description",
         name: "description",
-        content: process.env.npm_package_description || "",
+        content:
+          "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde eveniet veritatis possimus ab obcaecati, a excepturi quaerat distinctio atque pariatur tenetur voluptatibus nisi alias, est aspernatur? Sed quas magnam a?",
+      },
+      {
+        hid: "twitter:card",
+        name: "twitter:card",
+        content: "summary_large_image",
+      },
+      {
+        hid: "twitter:title",
+        name: "twitter:title",
+        content: this.title,
+      },
+      {
+        hid: "twitter:description",
+        name: "twitter:description",
+        content: this.description,
+      },
+      {
+        hid: "twitter:image",
+        name: "twitter:image",
+        content: this.img,
+      },
+      {
+        hid: "og:image",
+        property: "og:image",
+        content: this.img,
+      },
+      {
+        hid: "og:site_name",
+        property: "og:site_name",
+        content: this.title,
+      },
+      { hid: "og:title", property: "og:title", content: this.title },
+      {
+        hid: "og:description",
+        property: "og:description",
+        content: this.description,
       },
     ],
     link: [
-      { rel: "icon", type: "image/x-icon", href: "/Huh_Logo_White.png" },
+      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
       {
         rel: "stylesheet",
         href:

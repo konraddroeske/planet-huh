@@ -103,6 +103,11 @@ export default {
       isSuccess: true,
     }
   },
+  computed: {
+    titleLoaded() {
+      return this.title
+    },
+  },
   transition: {
     enter(el, done) {
       this.$store.dispatch("transitions/setEnter", { el, done })
@@ -178,6 +183,18 @@ export default {
         path: `/`,
       })
     },
+  },
+  head() {
+    return {
+      title: `Planet Huh${this.titleLoaded ? " | " + this.titleLoaded : ""}`,
+      meta: [
+        {
+          hid: "og:title",
+          property: "og:title",
+          content: this.titleLoaded,
+        },
+      ],
+    }
   },
 }
 </script>

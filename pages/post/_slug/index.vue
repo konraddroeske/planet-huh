@@ -54,12 +54,17 @@ export default {
       post: null,
     }
   },
+
   computed: {
     link() {
       const host = this.req ? this.req.headers.host : window.location.origin
       return `${host}${this.$route.path}`
     },
+    title() {
+      return this.post?.title
+    },
   },
+
   async created() {
     const { data } = await fetchContent(`{
       post(where: {slug: "${this.slug}"}) {
@@ -100,12 +105,14 @@ export default {
 
     this.setData(data, coverImage, content)
   },
+
   activated() {
     this.onMount()
   },
   deactivated() {
     this.onDestroy()
   },
+
   methods: {
     setData(data, coverImage, content) {
       this.post = {
@@ -129,6 +136,18 @@ export default {
         path: `/`,
       })
     },
+  },
+  head() {
+    return {
+      title: `Planet Huh${this.title ? " | " + this.title : ""}`,
+      meta: [
+        {
+          hid: "og:title",
+          property: "og:title",
+          content: this.title,
+        },
+      ],
+    }
   },
 }
 </script>
