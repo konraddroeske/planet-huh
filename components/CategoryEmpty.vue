@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import Wrapper from "@/components/wrapper"
+import Wrapper from "@/components/Wrapper"
 
 export default {
   components: {
