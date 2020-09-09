@@ -102,8 +102,6 @@ export default {
   justify-content: center;
 
   @media (min-width: $bp-desktop) {
-    // display: block;
-    // flex: 1 1 auto;
     display: flex;
     justify-content: space-between;
   }
@@ -117,12 +115,7 @@ export default {
   padding: 0.75rem 1.25rem;
   margin-right: 0.5rem;
   color: $black;
-<<<<<<< HEAD
-  flex: 1 0 auto;
-  max-width: 22rem;
-=======
   flex-grow: 1;
->>>>>>> 02ee9a02fcdcd6a817b0857b838a6d075d3a9e7c
 
   &::placeholder {
     color: $black;
