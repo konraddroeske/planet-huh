@@ -44,10 +44,12 @@ export const actions = {
     gsap.to("#toggleContainer", navTime, { autoAlpha: 0 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
   },
-  setNavIndex({ state }, startRouting) {
+  setNavIndex({ state, commit }, startRouting) {
     const navContainerTl = gsap.timeline()
     const scrollTime = 0.4
     const navTime = 1
+
+    if (state.isMobile) commit("setNavOpen", false)
 
     navContainerTl
       .to(window, scrollTime, {
@@ -68,7 +70,7 @@ export const actions = {
         position: "fixed",
       })
       .to("#navContainer", navTime, {
-        y: "-2rem",
+        y: state.isMobile ? "3rem" : "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
         ease: "power4.out",
       })

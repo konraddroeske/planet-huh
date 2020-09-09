@@ -242,6 +242,8 @@ export default {
             path: "categories",
             query: { filters: currentTarget.name },
           })
+          removeTitle()
+          removeSprites()
         }
       }
 
@@ -1160,6 +1162,9 @@ export default {
             path: "categories",
             query: { filters: currentTarget.name },
           })
+
+          removeTitle()
+          removeSprites()
         }
       }
 
@@ -1425,7 +1430,7 @@ export default {
         renderer.render(scene, camera)
       }
 
-      render()
+      requestAnimationFrame(render)
 
       // RENDER ON RESIZE
 
@@ -1438,7 +1443,7 @@ export default {
       const resizingRender = () => {
         if (!this.$store.state.transitions.isResize) {
           this.$store.commit("transitions/setIsResize", true)
-          render()
+          requestAnimationFrame(render)
         }
 
         this.$store.commit("transitions/clearResizeTimer")
