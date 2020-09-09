@@ -2,6 +2,7 @@
   <div class="categories">
     <CategoryHero :title="title" />
     <CategoryList v-if="isParentCategory" :categories="categories" />
+    <CategoryEmpty v-if="postsTotal.length === 0 && !isFetching" />
     <PostsFeed
       :posts="postsTotal"
       :post-limit="postLimit"
@@ -17,6 +18,7 @@ import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CategoryHero from "@/components/CategoryHero"
 import CategoryList from "@/components/CategoryList"
+import CategoryEmpty from "@/components/CategoryEmpty"
 import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
@@ -36,6 +38,7 @@ export default {
     CategoryHero,
     PostsFeed,
     CategoryList,
+    CategoryEmpty,
   },
   data() {
     return {
@@ -52,6 +55,7 @@ export default {
         return this.$store.getters["categories/postsTotal"]
       },
       allFilters: (state) => state.categories.allFilters,
+      isFetching: (state) => state.categories.isFetching,
     }),
     isParentCategory() {
       if (this.title) {

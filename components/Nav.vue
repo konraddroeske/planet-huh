@@ -1397,6 +1397,8 @@ export default {
       }
 
       const render = () => {
+        console.log("rendering")
+
         if (
           !this.$store.state.transitions.isPlay &&
           !this.$store.state.transitions.isResize
