@@ -4,12 +4,17 @@ if (process.env.NODE_ENV !== "production") require("dotenv").config()
 
 const dynamicRoutes = async () => {
   const { data } = await fetchContent(`{
-        posts(orderBy: date_DESC) {
+        staticPages {
+          slug
+        }
+        posts {
           slug
         }
       }`)
 
-  return data.data.posts.map((post) => `/post/${post.slug}`)
+  return data.data.posts
+    .map((post) => `/post/${post.slug}`)
+    .concat(data.data.staticPages.map((page) => `/${page.slug}`))
 }
 
 export default {

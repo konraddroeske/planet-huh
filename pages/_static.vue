@@ -18,33 +18,23 @@ export default {
     RichText,
     Wrapper,
   },
-  async fetch() {
-    const staticSlug = this.$route.params.static
-    if (!this.$store.state.static.staticPages[staticSlug]) {
-      await this.$store.dispatch("static/getStaticPage", staticSlug)
-    }
-  },
   data() {
     return {
-      staticSlug: this.$route.params.static,
-      increment: 0,
+      slug: this.$route.params.static,
     }
   },
   computed: {
     ...mapState({
-      validSlugs: (state) => state.static.slugs,
+      pages: (state) => state.static.pages,
     }),
     page() {
-      return this.$store.state.static.staticPages[this.staticSlug]
-    },
-  },
-  watch: {
-    // Redirects to error page if static page not found (fallback behaviour)
-    validSlugs(newSlugs) {
-      const slugNotFound = !newSlugs.some(
-        (slug) => slug.slug === this.staticSlug
-      )
-      if (slugNotFound) return this.$nuxt.error({ statusCode: 404 })
+      const page = this.pages.find((el) => el.slug === this.slug)
+      const { content } = page
+
+      return {
+        ...page,
+        content: content.raw.children,
+      }
     },
   },
   transition: {
