@@ -5,7 +5,7 @@ export const state = () => ({
 })
 
 export const actions = {
-  async getPosts({ commit, state }, numPosts = 4) {
+  async getPosts({ commit, state }) {
     try {
       const { data } = await fetchContent(`{
         posts(orderBy: date_DESC) {

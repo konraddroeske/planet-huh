@@ -3,6 +3,7 @@ import { fetchContent } from "@/utils/api"
 export const state = () => ({
   staticPages: {},
   slugs: [],
+  pages: [],
 })
 
 export const actions = {
@@ -47,6 +48,28 @@ export const actions = {
       console.log(error) // TODO: error handling
     }
   },
+  async getStaticPages({ commit, state }) {
+    try {
+      const { data } = await fetchContent(`{
+        staticPages {
+          title
+          slug
+          id
+          content {
+            raw
+          }
+          shortTitle
+        }
+      }`)
+
+      const { staticPages } = data.data
+
+      commit("setPages", staticPages)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  },
 }
 
 export const mutations = {
@@ -58,5 +81,8 @@ export const mutations = {
       ...state.staticPages,
       [slug]: staticPage,
     }
+  },
+  setPages(state, payload) {
+    state.pages = payload
   },
 }
