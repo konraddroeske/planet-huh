@@ -1,4 +1,16 @@
+import { fetchContent } from "./utils/api.js"
+
 if (process.env.NODE_ENV !== "production") require("dotenv").config()
+
+const dynamicRoutes = async () => {
+  const { data } = await fetchContent(`{
+        posts(orderBy: date_DESC) {
+          slug
+        }
+      }`)
+
+  return data.data.posts.map((post) => post.slug)
+}
 
 export default {
   /*
@@ -156,6 +168,9 @@ export default {
     host: "0", // default: localhost
   },
   env: {},
+  generate: {
+    routes: dynamicRoutes,
+  },
   // router: {
   //   middleware: 'isMobile',
   // },
