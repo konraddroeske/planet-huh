@@ -15,6 +15,7 @@
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
+                :max-width="1000"
                 @loaded="onLoaded"
               />
             </div>

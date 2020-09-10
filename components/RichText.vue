@@ -65,7 +65,7 @@
           :key="index"
           class="fullImageContainer"
         >
-          <LazyImage :src="item.src" alt="" />
+          <LazyImage :src="item.src" alt="" :max-width="2000" />
           <div class="accentText caption">{{ item.caption }}</div>
         </div>
 
@@ -75,7 +75,7 @@
             :key="idx"
             class="flexImageContainer"
           >
-            <LazyImage :src="image.src" alt="" />
+            <LazyImage :src="image.src" alt="" :max-width="1000" />
             <div class="accentText caption">{{ image.caption }}</div>
           </div>
         </div>
@@ -237,8 +237,6 @@ p {
 
   @media (min-width: $bp-desktop) {
     font-size: 1.15rem;
-<<<<<<< HEAD
-=======
   }
 
   a,
@@ -353,7 +351,6 @@ ol {
       font-family: $font-display;
       font-weight: $medium;
     }
->>>>>>> master
   }
 }
 

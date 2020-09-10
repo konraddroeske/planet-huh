@@ -30,11 +30,12 @@
             :ref="'post' + index"
             class="post"
           >
-            <nuxt-link :to="`/post/${post.slug}`">
+            <nuxt-link :to="`/post/${post.slug}`" class="imageLink">
               <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
+                :max-width="667"
               />
             </nuxt-link>
             <p class="postDate"><Date :input="post.date" /></p>
@@ -304,13 +305,14 @@ export default {
   width: 85vw;
   text-align: center;
   margin-bottom: 4rem;
+  padding: 0.1rem;
 
   &:not(:last-child) {
     margin-right: 1rem;
   }
 
   @media (min-width: $bp-desktop) {
-    width: calc(28.3vw - 1.3rem);
+    width: calc(28.3vw - 1.6rem);
     text-align: left;
     margin-bottom: 6rem;
 
@@ -329,6 +331,15 @@ export default {
   @media (min-width: $bp-desktop) {
     height: auto;
     object-fit: fill;
+  }
+}
+
+.imageLink {
+  &:hover,
+  &:focus {
+    .postImage {
+      box-shadow: 0 0 0 0.1rem $accent;
+    }
   }
 }
 
