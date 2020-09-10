@@ -9,7 +9,9 @@ const dynamicRoutes = async () => {
         }
       }`)
 
-  return data.data.posts.map((post) => post.slug)
+  // console.log(data.data.posts.map((post) => `/post/${post.slug}`))
+
+  return data.data.posts.map((post) => `/post/${post.slug}`)
 }
 
 export default {
