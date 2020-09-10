@@ -31,7 +31,7 @@
             class="post"
           >
             <nuxt-link :to="`/post/${post.slug}`">
-              <img
+              <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
@@ -55,13 +55,13 @@
 </template>
 
 <script>
-import gsap from 'gsap'
-import { Draggable, InertiaPlugin } from 'gsap/all'
-import { fetchContent } from '@/utils/api'
-import ButtonArrow from '@/components/ButtonArrow'
-import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
-import RightArrow from '~/assets/icons/rightArrow.svg?inline'
-import Wrapper from '@/components/Wrapper'
+import gsap from "gsap"
+import { Draggable, InertiaPlugin } from "gsap/all"
+import { fetchContent } from "@/utils/api"
+import ButtonArrow from "@/components/ButtonArrow"
+import LeftArrow from "~/assets/icons/leftArrow.svg?inline"
+import RightArrow from "~/assets/icons/rightArrow.svg?inline"
+import Wrapper from "@/components/Wrapper"
 
 export default {
   components: {
@@ -76,8 +76,8 @@ export default {
       required: true,
       validator(obj) {
         return (
-          typeof obj.name === 'string' &&
-          ['include', 'exclude'].includes(obj.filterType)
+          typeof obj.name === "string" &&
+          ["include", "exclude"].includes(obj.filterType)
         )
       },
     },
@@ -86,8 +86,8 @@ export default {
       required: true,
       validator(obj) {
         return (
-          typeof obj.name === 'string' &&
-          ['include', 'exclude'].includes(obj.filterType)
+          typeof obj.name === "string" &&
+          ["include", "exclude"].includes(obj.filterType)
         )
       },
     },
@@ -96,8 +96,8 @@ export default {
       required: true,
       validator(obj) {
         return (
-          typeof obj.name === 'string' &&
-          ['include', 'exclude'].includes(obj.filterType)
+          typeof obj.name === "string" &&
+          ["include", "exclude"].includes(obj.filterType)
         )
       },
     },
@@ -118,10 +118,10 @@ export default {
       const { city, sense, mood } = this.$props
 
       const cityFilter =
-        city.filterType === 'include' ? 'city_some' : 'city_none'
+        city.filterType === "include" ? "city_some" : "city_none"
       const senseFilter =
-        sense.filterType === 'include' ? 'sense_some' : 'sense_none'
-      const moodFilter = mood.filterType === 'include' ? 'mood' : 'mood_not'
+        sense.filterType === "include" ? "sense_some" : "sense_none"
+      const moodFilter = mood.filterType === "include" ? "mood" : "mood_not"
 
       const cityWhere = `${cityFilter}: {name: "${city.name}"}`
       const senseWhere = `${senseFilter}: {name: "${sense.name}"}`
@@ -132,25 +132,7 @@ export default {
   },
   async created() {
     const { data } = await fetchContent(`{
-      posts(orderBy: date_DESC, first: 6, ${this.computedWhere}) {
-        title
-        slug
-        coverImage {
-          url
-        }
-        date
-        excerpt
-        city {
-          name
-        }
-        sense {
-          name
-        }
-        mood {
-          mood
-        }
-      }
-      collabPosts(orderBy: date_DESC, first: 6, ${this.computedWhere}) {
+      posts(orderBy: date_DESC, first: 12, ${this.computedWhere}) {
         title
         slug
         coverImage {
@@ -170,11 +152,9 @@ export default {
       }
     }`)
 
-    const { posts, collabPosts } = data.data
+    const { posts } = data.data
 
-    const randomizedPosts = posts
-      .concat(collabPosts)
-      .sort((a, b) => 0.5 - Math.random())
+    const randomizedPosts = posts.sort((a, b) => 0.5 - Math.random())
 
     // Remove current post if the user is on a post page
     const currentSlug = this.$route.params.slug
@@ -196,10 +176,16 @@ export default {
   },
   mounted() {
     gsap.registerPlugin(Draggable, InertiaPlugin)
-    window.addEventListener('resize', this.setSnapPoints)
+    window.addEventListener("resize", this.setSnapPoints)
   },
   beforeDestroy() {
-    window.removeEventListener('resize', this.setSnapPoints)
+    window.removeEventListener("resize", this.setSnapPoints)
+  },
+  activated() {
+    // window.addEventListener("resize", this.setSnapPoints)
+  },
+  deactivated() {
+    window.removeEventListener("resize", this.setSnapPoints)
   },
   methods: {
     resetSlider() {
@@ -221,9 +207,9 @@ export default {
     },
     setDraggable() {
       const that = this
-      Draggable.create('.postList', {
-        type: 'x',
-        bounds: '#suggestedSlider',
+      Draggable.create(".postList", {
+        type: "x",
+        bounds: "#suggestedSlider",
         inertia: true,
         snap: that.offsets,
         onDragEnd() {
@@ -233,10 +219,10 @@ export default {
     },
     handleSlide(direction) {
       const increment = this.isDesktop ? 3 : 1
-      if (direction === 'left') {
+      if (direction === "left") {
         const isBeforeFirstPost = this.activeSlide - increment < 0
         this.activeSlide = isBeforeFirstPost ? 0 : this.activeSlide - increment
-      } else if (direction === 'right') {
+      } else if (direction === "right") {
         const isAfterLastPost = this.activeSlide + increment >= this.numSlides
         this.activeSlide = isAfterLastPost
           ? this.numSlides - 1

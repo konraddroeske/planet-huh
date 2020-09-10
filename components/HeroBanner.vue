@@ -2,7 +2,7 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <img class="bannerImage" :src="imageSrc" alt="" @load="onImgLoad" />
+        <LazyImage class="bannerImage" :src="imageSrc" alt="" />
         <div class="bannerText">
           <h1 class="title">{{ title }}</h1>
           <p class="excerpt">{{ excerpt }}</p>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import Date from '@/components/Date'
+import Date from "@/components/Date"
 export default {
   components: { Date },
   props: {
@@ -77,16 +77,6 @@ export default {
     },
     nameFormatted() {
       return this.city.length > 0 ? `${this.city[0].name}` : null
-    },
-  },
-  activated() {
-    setTimeout(() => {
-      this.$store.dispatch('setNavContainerSmall')
-    }, 300)
-  },
-  methods: {
-    onImgLoad() {
-      this.$store.dispatch('setNavContainerSmall')
     },
   },
 }
@@ -221,7 +211,7 @@ export default {
   position: relative;
 
   &::before {
-    content: '•';
+    content: "•";
     position: absolute;
     left: -0.75rem;
     top: 0;
@@ -231,7 +221,7 @@ export default {
     margin-right: 1.5rem;
 
     &::before {
-      content: '•';
+      content: "•";
       position: absolute;
       left: -1rem;
       top: 0;
@@ -241,7 +231,7 @@ export default {
 
 .category:first-child {
   &::before {
-    content: '';
+    content: "";
   }
 }
 

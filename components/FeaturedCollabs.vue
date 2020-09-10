@@ -17,16 +17,16 @@
           class="collab"
         >
           <div class="leftImage">
-            <img
+            <LazyImage
               class="postImage"
-              :src="post.images[0].url"
+              :src="post.featuredImages[0].url"
               :alt="post.title"
             />
           </div>
           <div class="rightImage">
-            <img
+            <LazyImage
               class="postImage"
-              :src="post.images[1].url"
+              :src="post.featuredImages[1].url"
               :alt="post.title"
             />
           </div>
@@ -55,14 +55,14 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import gsap from 'gsap'
-import { Draggable, InertiaPlugin } from 'gsap/all'
-import { debounce } from 'vue-debounce'
-import Button from '@/components/Button'
-import ButtonArrow from '@/components/ButtonArrow'
-import LeftArrow from '~/assets/icons/leftArrow.svg?inline'
-import RightArrow from '~/assets/icons/rightArrow.svg?inline'
+import { mapState } from "vuex"
+import gsap from "gsap"
+import { Draggable, InertiaPlugin } from "gsap/all"
+import { debounce } from "vue-debounce"
+import Button from "@/components/Button"
+import ButtonArrow from "@/components/ButtonArrow"
+import LeftArrow from "~/assets/icons/leftArrow.svg?inline"
+import RightArrow from "~/assets/icons/rightArrow.svg?inline"
 
 export default {
   components: {
@@ -87,7 +87,7 @@ export default {
   },
   computed: {
     ...mapState({
-      posts: (state) => state.homepage.featuredCollabPosts,
+      posts: (state) => state.homepage.featured,
     }),
     wrap() {
       return this.wrapPartial(-100, (this.posts.length - 1) * 100)
@@ -105,25 +105,25 @@ export default {
       return this.numChars.indexOf(Math.max(...this.numChars))
     },
   },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    window.removeEventListener('resize', this.resize)
-  },
+  // mounted() {
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   window.removeEventListener('resize', this.resize)
+  // },
   activated() {
     this.onMount()
   },
   deactivated() {
-    window.removeEventListener('resize', this.resize)
+    window.removeEventListener("resize", this.resize)
   },
   methods: {
     onMount() {
       gsap.registerPlugin(Draggable, InertiaPlugin)
 
-      this.proxyRef = document.createElement('div')
+      this.proxyRef = document.createElement("div")
       gsap.set(this.proxyRef, {
-        x: '+=0',
+        x: "+=0",
       })
       this.transform = this.proxyRef._gsap
 
@@ -135,8 +135,8 @@ export default {
       const that = this
 
       this.dragInstance = Draggable.create(this.proxyRef, {
-        trigger: '.collabsList',
-        type: 'x',
+        trigger: ".collabsList",
+        type: "x",
         // edgeResistance: 0.65,
         inertia: true,
         onPress() {
@@ -150,9 +150,9 @@ export default {
         },
       })
 
-      this.animation = gsap.to('.collab', 0.8, {
-        xPercent: '+=' + this.numSlides * 100,
-        ease: 'none',
+      this.animation = gsap.to(".collab", 0.8, {
+        xPercent: "+=" + this.numSlides * 100,
+        ease: "none",
         paused: true,
         repeat: -1,
         modifiers: {
@@ -162,7 +162,7 @@ export default {
 
       this.resize()
 
-      window.addEventListener('resize', this.resize)
+      window.addEventListener("resize", this.resize)
     },
     onClick(slug) {
       this.$router.push(`/post/${slug}`)
@@ -243,13 +243,13 @@ export default {
 
         const maxHeight = Math.max(...this.slideHeights)
 
-        gsap.set('.collabsList', {
+        gsap.set(".collabsList", {
           height: maxHeight,
         })
 
         // Content Height
 
-        const textElements = Array.from(document.querySelectorAll('.content'))
+        const textElements = Array.from(document.querySelectorAll(".content"))
         const textHeight = textElements[this.maxCharIndex].offsetHeight
 
         for (let i = 0; i < this.posts.length; i += 1) {
@@ -276,9 +276,9 @@ export default {
       this.animateSlides(-direction)
     },
     updateAnimation() {
-      this.animation = gsap.to('.collab', 0.8, {
-        xPercent: '+=' + this.numSlides * 100,
-        ease: 'none',
+      this.animation = gsap.to(".collab", 0.8, {
+        xPercent: "+=" + this.numSlides * 100,
+        ease: "none",
         paused: true,
         repeat: -1,
         modifiers: {

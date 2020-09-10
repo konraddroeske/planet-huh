@@ -1,14 +1,15 @@
 <template>
-  <div :class="`container-${variant}`">
+  <form :class="`container-${variant}`" @submit.prevent="onSubmit">
     <input
+      v-model="input"
       :class="`searchInput-${variant}`"
       type="text"
       placeholder="Start typing..."
     />
-    <button :class="`searchButton-${variant}`">
+    <button type="submit" :class="`searchButton-${variant}`">
       Go!
     </button>
-  </div>
+  </form>
 </template>
 
 <script>
@@ -18,8 +19,19 @@ export default {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark'].includes(value)
+        return ["light", "dark"].includes(value)
       },
+    },
+  },
+  data() {
+    return {
+      input: null,
+    }
+  },
+  methods: {
+    onSubmit() {
+      this.$emit("onSubmit", this.input)
+      this.input = null
     },
   },
 }
@@ -31,7 +43,9 @@ export default {
   flex-direction: column;
 
   @media (min-width: $bp-desktop) {
-    display: block;
+    flex-direction: row;
+    justify-content: flex-end;
+    width: 50%;
   }
 }
 .searchInput-dark {
@@ -50,7 +64,10 @@ export default {
 
   @media (min-width: $bp-desktop) {
     margin-bottom: 0;
-    margin-right: 0.5rem;
+    margin-right: 1rem;
+    width: 3.15rem;
+    max-width: 28.15rem;
+    flex: 1 0 auto;
   }
 }
 
@@ -73,6 +90,11 @@ export default {
     background: $accent;
     color: $white;
   }
+
+  @media (min-width: $bp-desktop) {
+    margin-left: 0;
+    margin-right: 0;
+  }
 }
 
 .container-light {
@@ -80,8 +102,8 @@ export default {
   justify-content: center;
 
   @media (min-width: $bp-desktop) {
-    display: block;
-    flex: 1 1 auto;
+    display: flex;
+    justify-content: space-between;
   }
 }
 .searchInput-light {
@@ -93,14 +115,14 @@ export default {
   padding: 0.75rem 1.25rem;
   margin-right: 0.5rem;
   color: $black;
+  flex-grow: 1;
 
   &::placeholder {
     color: $black;
   }
 
   @media (min-width: $bp-desktop) {
-    margin-bottom: 0;
-    margin-right: 0.5rem;
+    width: 22rem;
   }
 }
 

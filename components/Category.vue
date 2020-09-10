@@ -4,22 +4,25 @@
     <nuxt-link
       ref="link"
       :to="{
-        path: 'categories',
+        path: '/categories',
         query: { filters: [name.toLowerCase()] },
       }"
+      event=""
+      @click.native="navigate('/categories', { filters: [name.toLowerCase()] })"
       >{{ name }}</nuxt-link
     >
   </div>
 </template>
 
 <script>
+import gsap from "gsap"
 export default {
   props: {
     variant: {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark', 'gradient'].includes(value)
+        return ["light", "dark", "gradient"].includes(value)
       },
     },
     to: {
@@ -31,12 +34,12 @@ export default {
       required: true,
     },
   },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
-  },
+  // mounted() {
+  //   this.onMount()
+  // },
+  // beforeDestroy() {
+  //   this.onDestroy()
+  // },
   activated() {
     this.onMount()
   },
@@ -45,25 +48,44 @@ export default {
   },
   methods: {
     startGradient() {
-      this.$refs.container.classList.add('largeGradient')
+      this.$refs.container.classList.add("largeGradient")
     },
     endGradient() {
-      this.$refs.container.classList.remove('largeGradient')
+      this.$refs.container.classList.remove("largeGradient")
     },
-    navigate() {
-      console.log('navigating programmatically')
+    navigate(destination, filters) {
+      if (this.$route.fullPath.includes("categories")) {
+        const tl = gsap.timeline()
+
+        tl.to(window, 0.3, {
+          scrollTo: 0,
+          onComplete: () => {
+            this.$router.push({
+              path: destination,
+              query: filters,
+            })
+          },
+        })
+      } else {
+        this.$router.push({
+          path: destination,
+          query: filters,
+        })
+      }
     },
     onMount() {
-      this.$refs.link.$el.addEventListener('mouseover', this.startGradient)
-      this.$refs.link.$el.addEventListener('mouseout', this.endGradient)
-      this.$refs.link.$el.addEventListener('focus', this.startGradient)
-      this.$refs.link.$el.addEventListener('blur', this.endGradient)
+      this.$refs.link.$el.addEventListener("mouseover", this.startGradient)
+      this.$refs.link.$el.addEventListener("mouseout", this.endGradient)
+      this.$refs.link.$el.addEventListener("focus", this.startGradient)
+      this.$refs.link.$el.addEventListener("blur", this.endGradient)
     },
     onDestroy() {
-      this.$refs.link.$el.removeEventListener('mouseover', this.startGradient)
-      this.$refs.link.$el.removeEventListener('mouseout', this.endGradient)
-      this.$refs.link.$el.removeEventListener('focus', this.startGradient)
-      this.$refs.link.$el.removeEventListener('blur', this.endGradient)
+      this.$refs.container.classList.remove("largeGradient")
+
+      this.$refs.link.$el.removeEventListener("mouseover", this.startGradient)
+      this.$refs.link.$el.removeEventListener("mouseout", this.endGradient)
+      this.$refs.link.$el.removeEventListener("focus", this.startGradient)
+      this.$refs.link.$el.removeEventListener("blur", this.endGradient)
     },
   },
 }
@@ -78,6 +100,8 @@ export default {
   font-size: 1rem;
   margin-bottom: 0.5rem;
 
+  transition: all 0.4s;
+
   @media (min-width: $bp-desktop) {
     font-size: 1.25rem;
     margin-bottom: 1rem;
@@ -91,10 +115,14 @@ export default {
   font-size: 4rem;
   line-height: 1;
 
+  transition: all 0.4s;
+
   a,
   a:visited {
     color: $white;
     text-decoration: none;
+
+    transition: all 0.4s;
 
     &:hover,
     &:focus {
@@ -110,10 +138,14 @@ export default {
   font-size: 4rem;
   line-height: 1;
 
+  transition: all 0.4s;
+
   a,
   a:visited {
     color: $black;
     text-decoration: none;
+
+    transition: all 0.4s;
 
     &:hover,
     &:focus {
@@ -138,8 +170,10 @@ export default {
   line-height: 1;
   position: relative;
 
+  transition: all 0.4s;
+
   ::before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     height: 2.5rem;
@@ -151,12 +185,15 @@ export default {
     box-shadow: 0 0 5rem 2rem $accent;
     opacity: 0.2;
     filter: blur(10px);
+
+    transition: all 0.4s;
   }
 
   a,
   a:visited {
     color: $black;
     text-decoration: none;
+    transition: all 0.4s;
 
     &:hover,
     &:focus {

@@ -5,14 +5,14 @@
       <p>
         {{ text }}
       </p>
-      <Button :to="{ name: 'cities' }">Learn More</Button>
+      <Button to="/">Learn More</Button>
     </Wrapper>
   </div>
 </template>
 
 <script>
-import Wrapper from './Wrapper'
-import Button from './Button'
+import Wrapper from "./Wrapper"
+import Button from "./Button"
 export default {
   components: { Wrapper, Button },
   computed: {
@@ -29,11 +29,12 @@ export default {
 <style lang="scss" scoped>
 .container {
   text-align: center;
-  margin: 5rem 0 5rem 0;
+  margin: 0;
+  padding: 5rem 0;
 
   @media (min-width: $bp-desktop) {
     width: 40%;
-    margin: 5rem auto 5rem auto;
+    margin: 0 auto 0 auto;
   }
 }
 

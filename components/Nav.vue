@@ -1,6 +1,11 @@
 <template>
   <div id="nav3d" class="nav3d">
-    <div id="navContainer" v-scroll-lock="isOpen" class="navContainer">
+    <div
+      id="navContainer"
+      ref="navContainer"
+      v-scroll-lock="isOpen"
+      class="navContainer"
+    >
       <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
         <canvas id="scene" ref="scene" class="scene" />
       </div>
@@ -15,11 +20,11 @@
 </template>
 
 <script>
-import * as THREE from 'three'
-import gsap from 'gsap'
-import globeTexture from '@/assets/images/globe.png'
-import NavToggle from '@/components/NavToggle'
-import NavFeed from '@/components/NavFeed'
+import * as THREE from "three"
+import gsap from "gsap"
+import globeTexture from "@/assets/images/globe.png"
+import NavToggle from "@/components/NavToggle"
+import NavFeed from "@/components/NavFeed"
 
 export default {
   components: {
@@ -30,20 +35,23 @@ export default {
     return {
       toggle: false,
       currentNav: null,
+      observer: null,
+      intersected: false,
     }
   },
+
   computed: {
     isIndex() {
-      return this.$route.fullPath === '/'
+      return this.$route.fullPath === "/"
     },
     isMobile() {
       return this.$device.isMobile
     },
     isNavLarge() {
-      return this.$store.state.isNavLarge
+      return this.$store.state.transitions.isNavLarge
     },
     isOpen() {
-      return this.$store.state.isOpen
+      return this.$store.state.transitions.isOpen
     },
     cities() {
       return this.$store.state.nav.cities
@@ -53,47 +61,78 @@ export default {
     },
   },
   mounted() {
+    this.observer = new IntersectionObserver((entries) => {
+      const nav = entries[0]
+      if (nav.isIntersecting) {
+        this.$store.state.transitions.play()
+      } else {
+        this.$store.state.transitions.pause(0)
+      }
+    })
+
+    this.observer.observe(this.$refs.navContainer)
+
+    if (!this.isIndex) {
+      const isMobile = window.$nuxt.$device.isMobile
+      this.$store.dispatch("transitions/setNavStyle", isMobile)
+    }
+
     this.initThree()
   },
   beforeDestroy() {
     this.onDestroy()
-  },
-  activated() {
-    this.initThree()
-  },
-  deactivated() {
-    this.onDestroy()
+    this.observer.disconnect()
   },
   methods: {
-    onMount() {},
     onDestroy() {
       if (!this.isNavLarge) {
-        const nav = document.querySelector('#navContainer')
-        nav.removeEventListener('click', this.route, false)
-        nav.removeEventListener('touchstart', this.route, false)
+        const nav = document.querySelector("#navContainer")
+        nav.removeEventListener("click", this.route, false)
+        nav.removeEventListener("touchstart", this.route, false)
       }
     },
     setNavSmall() {
-      this.$store.dispatch('setNavSmall')
-      this.$store.dispatch('setNavContainerSmall')
-      const nav = document.querySelector('#navContainer')
-      nav.addEventListener('click', this.handleNav, false)
-      nav.addEventListener('touchstart', this.handleNav, false)
+      this.$store.dispatch("transitions/setNavSmall")
+      this.$store.dispatch("transitions/setNavContainerSmall")
+      const nav = document.querySelector("#navContainer")
+      nav.addEventListener("click", this.handleNav, false)
+      nav.addEventListener("touchstart", this.handleNav, false)
     },
     setNavLarge() {
-      this.$store.dispatch('setNavLarge')
-      this.$store.dispatch('setNavContainerLarge')
-      const nav = document.querySelector('#navContainer')
-      nav.removeEventListener('click', this.handleNav, false)
-      nav.removeEventListener('touchstart', this.handleNav, false)
+      if (this.isIndex) {
+        this.$store.dispatch("transitions/setNavLarge")
+        this.$store.dispatch("transitions/setNavContainerLarge")
+      }
+
+      const nav = document.querySelector("#navContainer")
+      nav.removeEventListener("click", this.handleNav, false)
+      nav.removeEventListener("touchstart", this.handleNav, false)
     },
     handleNav() {
-      this.isNavLarge ? this.setNavSmall() : this.setNavLarge()
+      if (this.isNavLarge) {
+        this.setNavSmall()
+      } else {
+        this.setNavLarge()
+      }
     },
     initThree() {
-      // CHECK DEVICE
+      // Render Controls
 
-      const sceneContainer = document.querySelector('#navContainer')
+      const pauseAnimation = (timeout) => {
+        setTimeout(() => {
+          this.$store.commit("transitions/setIsPlay", false)
+        }, timeout)
+      }
+
+      const playAnimation = () => {
+        this.$store.commit("transitions/setIsPlay", true)
+        render()
+      }
+
+      this.$store.commit("transitions/setPause", pauseAnimation)
+      this.$store.commit("transitions/setPlay", playAnimation)
+
+      const sceneContainer = document.querySelector("#navContainer")
 
       let isDragging = false
       let isThrowing = false
@@ -172,12 +211,12 @@ export default {
         target ? (currentTarget = target) : (currentTarget = null)
 
         if (currentTarget && this.isMobile) {
-          sceneContainer.addEventListener('touchstart', navRouterMobile, false)
+          sceneContainer.addEventListener("touchstart", navRouterMobile, false)
         }
 
         if (!currentTarget && this.isMobile) {
           sceneContainer.removeEventListener(
-            'touchstart',
+            "touchstart",
             navRouterMobile,
             false
           )
@@ -187,9 +226,7 @@ export default {
       const navRouterMobile = (e) => {
         // Update Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-          1
+        rayMouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
@@ -201,30 +238,26 @@ export default {
         )
 
         if (intersects[0].object === currentTarget) {
-          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
-
           this.$router.push({
-            // path: `/post/${currentTarget.name}`,
-            path: 'categories',
-            query: { filters: [currentTarget.name, category] },
+            path: "categories",
+            query: { filters: currentTarget.name },
           })
+          removeTitle()
+          removeSprites()
         }
       }
 
       const navRouter = () => {
         if (currentTarget) {
-          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
-
           this.$router.push({
-            // path: `/post/${currentTarget.name}`,
-            path: 'categories',
-            query: { filters: [currentTarget.name, category] },
+            path: "categories",
+            query: { filters: currentTarget.name },
           })
         }
       }
 
       if (!this.isMobile) {
-        sceneContainer.addEventListener('click', navRouter, false)
+        sceneContainer.addEventListener("click", navRouter, false)
       }
 
       // LERP TIMER
@@ -275,8 +308,7 @@ export default {
       const mouseMove = (e) => {
         // Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((event.clientX - rect.left) / (rect.width - rect.left)) * 2 - 1
+        rayMouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1
 
@@ -285,7 +317,7 @@ export default {
         if (this.currentNav === pivotGlobe) {
           intersects = raycaster.intersectObjects(spriteCities)
 
-          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+          if (intersects.length > 0 && intersects[0].object.name === "mood") {
             toggleHover = true
           } else {
             toggleClick = false
@@ -296,7 +328,7 @@ export default {
         if (this.currentNav === pivotMood) {
           intersects = raycaster.intersectObjects(spriteMoodsFlat)
 
-          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
+          if (intersects.length > 0 && intersects[0].object.name === "globe") {
             toggleHover = true
           } else {
             toggleClick = false
@@ -306,8 +338,8 @@ export default {
 
         if (
           intersects.length >= 2 &&
-          intersects[0].object.name !== 'globe' &&
-          intersects[0].object.name !== 'mood' &&
+          intersects[0].object.name !== "globe" &&
+          intersects[0].object.name !== "mood" &&
           currentTarget !== intersects[0].object &&
           !gsap.isTweening(pivotMain.rotation)
         ) {
@@ -379,9 +411,7 @@ export default {
 
         // Mobile Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
-        rayMouse.x =
-          ((e.touches[0].clientX - rect.left) / (rect.width - rect.left)) * 2 -
-          1
+        rayMouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1
         rayMouse.y =
           -((e.touches[0].clientY - rect.top) / (rect.bottom - rect.top)) * 2 +
           1
@@ -391,7 +421,7 @@ export default {
         if (this.currentNav === pivotGlobe) {
           intersects = raycaster.intersectObjects(spriteCities)
 
-          if (intersects.length > 0 && intersects[0].object.name === 'mood') {
+          if (intersects.length > 0 && intersects[0].object.name === "mood") {
             toggleHover = true
           } else {
             toggleClick = false
@@ -402,7 +432,7 @@ export default {
         if (this.currentNav === pivotMood) {
           intersects = raycaster.intersectObjects(spriteMoodsFlat)
 
-          if (intersects.length > 0 && intersects[0].object.name === 'globe') {
+          if (intersects.length > 0 && intersects[0].object.name === "globe") {
             toggleHover = true
           } else {
             toggleClick = false
@@ -412,8 +442,8 @@ export default {
 
         if (
           intersects.length >= 2 &&
-          intersects[0].object.name !== 'globe' &&
-          intersects[0].object.name !== 'mood' &&
+          intersects[0].object.name !== "globe" &&
+          intersects[0].object.name !== "mood" &&
           currentTarget !== intersects[0].object
         ) {
           if (currentTarget) {
@@ -511,31 +541,31 @@ export default {
       // mouse event listeners
       if (!this.isMobile) {
         const addHandlers = () => {
-          sceneContainer.addEventListener('mousedown', mouseDown, false)
-          sceneContainer.addEventListener('mousemove', mouseMove, false)
-          sceneContainer.addEventListener('mouseup', mouseUp, false)
+          sceneContainer.addEventListener("mousedown", mouseDown, false)
+          sceneContainer.addEventListener("mousemove", mouseMove, false)
+          sceneContainer.addEventListener("mouseup", mouseUp, false)
         }
 
         const removeHandlers = () => {
           isDragging = false
           zoomPosition = 0.005
 
-          sceneContainer.removeEventListener('mousedown', mouseDown, false)
-          sceneContainer.removeEventListener('mousemove', mouseMove, false)
-          sceneContainer.removeEventListener('mouseup', mouseUp, false)
+          sceneContainer.removeEventListener("mousedown", mouseDown, false)
+          sceneContainer.removeEventListener("mousemove", mouseMove, false)
+          sceneContainer.removeEventListener("mouseup", mouseUp, false)
         }
 
         addHandlers()
 
-        sceneContainer.addEventListener('mouseover', addHandlers, false)
-        sceneContainer.addEventListener('mouseout', removeHandlers, false)
+        sceneContainer.addEventListener("mouseover", addHandlers, false)
+        sceneContainer.addEventListener("mouseout", removeHandlers, false)
       }
 
       // touch event listeners
 
-      sceneContainer.addEventListener('touchstart', onTouchStart, false)
-      sceneContainer.addEventListener('touchmove', onTouchMove, false)
-      sceneContainer.addEventListener('touchend', onTouchEnd, false)
+      sceneContainer.addEventListener("touchstart", onTouchStart, false)
+      sceneContainer.addEventListener("touchmove", onTouchMove, false)
+      sceneContainer.addEventListener("touchend", onTouchEnd, false)
 
       // INITIALIZE CANVAS
 
@@ -544,6 +574,7 @@ export default {
         canvas,
         antialias: true,
         alpha: true,
+        // powerPreference: "high-performance",
       })
       renderer.setPixelRatio(window.devicePixelRatio)
       renderer.setClearColor(0x000000, 0)
@@ -557,7 +588,7 @@ export default {
 
       // CAMERA
 
-      const camera = new THREE.PerspectiveCamera(45, 2, 0.1, 100)
+      const camera = new THREE.PerspectiveCamera(45, 2, 1, 12)
       pivotCamera.add(camera)
       camera.lookAt(0, 0, this.isMobile ? -6.5 : -4.75)
 
@@ -587,17 +618,20 @@ export default {
 
       let globe
       const loader = new THREE.TextureLoader()
+      const geometry = new THREE.SphereBufferGeometry(1, 64, 64)
+      let textureLoaded = false
 
       {
-        const texture = loader.load(globeTexture)
+        const texture = loader.load(globeTexture, (texture) => {
+          textureLoaded = true
+        })
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-        const geometry = new THREE.SphereGeometry(1, 32, 32)
         const material = new THREE.MeshPhongMaterial({
           map: texture,
         })
         material.map.minFilter = THREE.LinearFilter
         globe = new THREE.Mesh(geometry, material)
-        globe.name = 'globe'
+        globe.name = "globe"
         pivotGlobe.add(globe)
       }
 
@@ -696,9 +730,6 @@ export default {
       let mood
 
       {
-        const radius = 1
-        const geometry = new THREE.SphereBufferGeometry(radius, 32, 32)
-
         const vertexShader = `
           precision mediump float;
           precision mediump int;
@@ -732,7 +763,7 @@ export default {
         const material = new THREE.ShaderMaterial({
           uniforms: {
             viewVector: {
-              type: 'v3',
+              type: "v3",
               value: camera.position,
             },
           },
@@ -743,7 +774,7 @@ export default {
 
         const { count } = geometry.attributes.position
         geometry.setAttribute(
-          'color',
+          "color",
           new THREE.BufferAttribute(new Float32Array(count * 4), 4)
         )
 
@@ -768,7 +799,7 @@ export default {
         }
 
         mood = new THREE.Mesh(geometry, material)
-        mood.name = 'mood'
+        mood.name = "mood"
         pivotMood.add(mood)
       }
 
@@ -778,7 +809,7 @@ export default {
         windowHalfX = window.innerWidth / 2
         windowHalfY = window.innerHeight / 2
 
-        const canvas = renderer.domElement
+        // const canvas = renderer.domElement
         const width = canvas.clientWidth
         const height = canvas.clientHeight
         const needResize = canvas.width !== width || canvas.height !== height
@@ -815,16 +846,16 @@ export default {
 
           if (!gsap.isTweening(pivotMain.rotation)) {
             if (this.currentNav === pivotGlobe) {
-              gsap.to('#ball', 0.4, {
-                x: '23px',
-                backgroundColor: '#FB95B8',
+              gsap.to("#ball", 0.4, {
+                x: "23px",
+                backgroundColor: "#FB95B8",
               })
             }
 
             if (this.currentNav === pivotMood) {
-              gsap.to('#ball', 0.4, {
-                x: '0px',
-                backgroundColor: '#749bff',
+              gsap.to("#ball", 0.4, {
+                x: "0px",
+                backgroundColor: "#749bff",
               })
             }
 
@@ -837,7 +868,7 @@ export default {
           }
         }
 
-        document.querySelector('#toggle').addEventListener('click', toggleAnim)
+        document.querySelector("#toggle").addEventListener("click", toggleAnim)
 
         const checkToggleClick = () => {
           if (toggleHover) {
@@ -851,8 +882,22 @@ export default {
           }
         }
 
-        sceneContainer.addEventListener('mousedown', checkToggleClick)
-        sceneContainer.addEventListener('click', checkToggleHover)
+        const addNavClick = () => {
+          sceneContainer.addEventListener("mousedown", checkToggleClick)
+          sceneContainer.addEventListener("click", checkToggleHover)
+        }
+
+        const removeNavClick = () => {
+          sceneContainer.removeEventListener("mousedown", checkToggleClick)
+          sceneContainer.removeEventListener("click", checkToggleHover)
+        }
+
+        if (this.isIndex) {
+          addNavClick()
+        }
+
+        this.$store.commit("transitions/setAddNavClick", addNavClick)
+        this.$store.commit("transitions/setRemoveNavClick", removeNavClick)
       }
 
       // SET ROTATION AXIS
@@ -866,13 +911,13 @@ export default {
       const citiesArr = []
 
       const spriteMapBlue = new THREE.TextureLoader().load(
-        '/sprites/mapDot.png'
+        "/sprites/mapDot.png"
       )
       const spriteMapWhite = new THREE.TextureLoader().load(
-        '/sprites/mapDot2.png'
+        "/sprites/mapDot2.png"
       )
       const spriteMapBlack = new THREE.TextureLoader().load(
-        '/sprites/mapDot3.png'
+        "/sprites/mapDot3.png"
       )
 
       const spriteCities = []
@@ -906,7 +951,7 @@ export default {
           spriteCitiesMats.push(
             new THREE.SpriteMaterial({ map: spriteMapBlue })
           )
-          spriteCitiesMats[index].name = 'Main'
+          spriteCitiesMats[index].name = "Main"
           spriteCitiesMats[index].transparent = true
 
           // Main Sprite for each City
@@ -919,7 +964,7 @@ export default {
           spriteCitiesMatsAlt.push(
             new THREE.SpriteMaterial({ map: spriteMapWhite })
           )
-          spriteCitiesMatsAlt[index].name = 'Alt'
+          spriteCitiesMatsAlt[index].name = "Alt"
           spriteCitiesMatsAlt[index].transparent = true
 
           // Alt Sprite for each City
@@ -1018,7 +1063,7 @@ export default {
             spriteMoodsMats[color.name].push(
               new THREE.SpriteMaterial({ map: spriteMapWhite })
             )
-            spriteMoodsMats[color.name][index].name = 'Main'
+            spriteMoodsMats[color.name][index].name = "Main"
             spriteMoodsMats[color.name][index].transparent = true
 
             // Main Sprite for each City
@@ -1033,7 +1078,7 @@ export default {
             spriteMoodsMatsAlt[color.name].push(
               new THREE.SpriteMaterial({ map: spriteMapBlack })
             )
-            spriteMoodsMatsAlt[color.name][index].name = 'Alt'
+            spriteMoodsMatsAlt[color.name][index].name = "Alt"
             spriteMoodsMatsAlt[color.name][index].transparent = true
 
             // Alt Sprite for each City
@@ -1056,7 +1101,6 @@ export default {
       // RAYCASTER ARRAYS
 
       const spriteMoodsFlat = Object.values(spriteMoods).flat()
-      const spritesAll = spriteCities.concat(spriteMoodsFlat)
       const spritesAllAlt = spriteCitiesAlt.concat(
         Object.values(spriteMoodsAlt).flat()
       )
@@ -1114,40 +1158,40 @@ export default {
 
       const navRouterTitle = (e) => {
         if (e.target) {
-          const category = this.currentNav === pivotGlobe ? 'cities' : 'moods'
-
           this.$router.push({
-            // path: `/post/${e.target.innerHTML}`,
-            path: 'categories',
-            query: { filters: [currentTarget.name, category] },
+            path: "categories",
+            query: { filters: currentTarget.name },
           })
+
+          removeTitle()
+          removeSprites()
         }
       }
 
       const addTitle = (object) => {
         // add new title
-        const title = document.createElement('a')
-        title.classList.add('title')
+        const title = document.createElement("a")
+        title.classList.add("title")
         const text = document.createTextNode(`${object.name}`)
         title.append(text)
-        title.style.position = 'absolute'
+        title.style.position = "absolute"
         title.title = object.name
 
-        title.addEventListener('click', navRouterTitle, false)
-        title.addEventListener('touchstart', navRouterTitle, false)
+        title.addEventListener("click", navRouterTitle, false)
+        title.addEventListener("touchstart", navRouterTitle, false)
 
         this.$refs.sceneContainer.append(title)
 
         const tl = gsap.timeline()
         tl.set(title, {
-          fontSize: '0.8rem',
+          fontSize: "0.8rem",
           fontWeight: 500,
           opacity: 0,
           left: 0,
           top: 0,
           margin: 0,
-          transform: 'translateY(-50%)',
-          pointerEvents: 'auto',
+          transform: "translateY(-50%)",
+          pointerEvents: "auto",
         }).to(title, 0.3, { alpha: 1 })
 
         const newTitle = [object, title]
@@ -1159,10 +1203,6 @@ export default {
       }
 
       const removeTitle = (title = null) => {
-        // if (!title) {
-        //   title = null
-        // }
-
         // iterate through all, except object and fade/remove all
         for (let i = 0; i < activeTitles.length; i += 1) {
           if (activeTitles[i] !== title) {
@@ -1171,12 +1211,12 @@ export default {
             const tl = gsap.timeline({
               onComplete: () => {
                 activeTitles[i][1].removeEventListener(
-                  'click',
+                  "click",
                   navRouterTitle,
                   false
                 )
                 activeTitles[i][1].removeEventListener(
-                  'touchstart',
+                  "touchstart",
                   navRouterTitle,
                   false
                 )
@@ -1191,8 +1231,6 @@ export default {
           }
         }
       }
-
-      // Raycast
 
       // GLOW
 
@@ -1215,145 +1253,102 @@ export default {
       moodGlow.position.set(0, 0, 0)
       pivotMood.add(moodGlow)
 
-      // RENDER
+      // RENDER FUNCTIONS
 
-      const render = () => {
-        // RESIZE
+      const updateTitlePositions = () => {
+        // adds tracking animation to titles
+        if (activeTitles.length > 0) {
+          setActiveTitles()
+        }
+      }
 
-        if (resizeRendererToDisplaySize(renderer)) {
-          const canvas = renderer.domElement
-          camera.aspect = canvas.clientWidth / canvas.clientHeight
-          camera.updateProjectionMatrix()
+      const updateTitleRaycast = () => {
+        if (currentTarget && this.isMobile) {
+          raycasterTitle.setFromCamera(posRaycast, camera)
+
+          intersectsTitle =
+            this.currentNav === pivotGlobe
+              ? raycasterTitle.intersectObjects(spriteCities)
+              : raycasterTitle.intersectObjects(spriteMoodsFlat)
+
+          if (intersectsTitle.length > 0) {
+            if (
+              intersectsTitle[0].object.name === "globe" ||
+              intersectsTitle[0].object.name === "mood"
+            ) {
+              setTarget(null)
+              removeTitle()
+              removeSprites()
+            }
+          }
+        }
+      }
+
+      const updateGlobeControls = () => {
+        if (this.currentNav === pivotGlobe && isThrowing) {
+          // HORIZONAL ROTATION
+          deltaX =
+            (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
+          pivotGlobe.rotation.y += deltaX
+
+          // VERTICAL ROTATION
+          deltaY =
+            (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
+          if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, "x")) {
+            pivotGlobe.rotation.x += deltaY
+          }
+        }
+      }
+
+      const updateMoodControls = () => {
+        if (this.currentNav === pivotMood && isThrowing) {
+          // HORIZONAL ROTATION
+          deltaX =
+            (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
+          pivotMood.rotation.y += deltaX
+
+          // VERTICAL ROTATION
+          deltaY =
+            (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
+          if (isThrowing && checkMaxAngle(pivotMood, deltaY, "x")) {
+            pivotMood.rotation.x += deltaY
+          }
+        }
+      }
+
+      const updateCameraZoomIn = () => {
+        if (!this.isMobile && isDragging && !currentTarget) {
+          if (camera.position.z >= maxZoom) {
+            zoomPosition *= zoomInSpeed
+            camera.position.z -= zoomPosition
+          }
         }
 
-        if (this.isIndex) {
-          // adds tracking animation to titles
-          if (activeTitles.length > 0) {
-            setActiveTitles()
+        if (isDragging && this.isMobile) {
+          if (camera.position.z >= maxZoom) {
+            zoomPosition *= zoomInSpeed
+            camera.position.z -= zoomPosition
+          }
+        }
+      }
+
+      const updateCameraZoomOut = () => {
+        if (!isDragging && lerpTimerBool) {
+          if (camera.position.z <= minZoom) {
+            camera.position.z += zoomOutSpeed
           }
 
-          if (pivotMain && mood && globe) {
-            // Title Raycast (disappear when not in view)
-            if (currentTarget && this.isMobile) {
-              raycasterTitle.setFromCamera(posRaycast, camera)
+          // if momentum is below certain amount, we are not throwing
+          if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
+            isThrowing = false
+          }
+        }
+      }
 
-              intersectsTitle =
-                this.currentNav === pivotGlobe
-                  ? raycasterTitle.intersectObjects(spriteCities)
-                  : raycasterTitle.intersectObjects(spriteMoodsFlat)
-
-              if (intersectsTitle.length > 0) {
-                if (
-                  intersectsTitle[0].object.name === 'globe' ||
-                  intersectsTitle[0].object.name === 'mood'
-                ) {
-                  setTarget(null)
-                  removeTitle()
-                }
-              }
-            }
-
-            if (this.currentNav === pivotGlobe && isThrowing) {
-              // HORIZONAL ROTATION
-              deltaX =
-                (targetRotationXGlobe - pivotGlobe.rotation.y) * rotationInertia
-              pivotGlobe.rotation.y += deltaX
-
-              // VERTICAL ROTATION
-              deltaY =
-                (targetRotationYGlobe - pivotGlobe.rotation.x) * rotationInertia
-              if (isThrowing && checkMaxAngle(pivotGlobe, deltaY, 'x')) {
-                pivotGlobe.rotation.x += deltaY
-              }
-            }
-
-            if (this.currentNav === pivotMood && isThrowing) {
-              // HORIZONAL ROTATION
-              deltaX =
-                (targetRotationXMood - pivotMood.rotation.y) * rotationInertia
-              pivotMood.rotation.y += deltaX
-
-              // VERTICAL ROTATION
-              deltaY =
-                (targetRotationYMood - pivotMood.rotation.x) * rotationInertia
-              if (isThrowing && checkMaxAngle(pivotMood, deltaY, 'x')) {
-                pivotMood.rotation.x += deltaY
-              }
-            }
-
-            // CAMERA ZOOM IN
-
-            if (
-              !this.isMobile &&
-              isDragging &&
-              !currentTarget &&
-              this.isIndex
-            ) {
-              if (camera.position.z >= maxZoom) {
-                zoomPosition *= zoomInSpeed
-                camera.position.z -= zoomPosition
-              }
-            }
-
-            if (isDragging && this.isMobile && this.isIndex) {
-              if (camera.position.z >= maxZoom) {
-                zoomPosition *= zoomInSpeed
-                camera.position.z -= zoomPosition
-              }
-            }
-
-            // CAMERA ZOOM OUT
-
-            if ((!isDragging && lerpTimerBool) || !this.isIndex) {
-              if (camera.position.z <= minZoom) {
-                camera.position.z += zoomOutSpeed
-              }
-
-              // if momentum is below certain amount, we are not throwing
-              if (Math.abs(deltaX) < 0.005 && Math.abs(deltaY) < 0.005) {
-                isThrowing = false
-              }
-            }
-
-            if (this.currentNav === pivotGlobe) {
-              if (!isDragging && lerpTimerBool) {
-                // OBJECT CORRECTION LERP
-
-                if (!isThrowing) {
-                  targetRotationYGlobe = pivotGlobe.rotation.x
-
-                  if (pivotGlobe.rotation.x > 0.01) {
-                    pivotGlobe.rotation.x += -0.0015
-                  } else if (pivotGlobe.rotation.x < -0.01) {
-                    pivotGlobe.rotation.x += 0.0015
-                  }
-                }
-                globe.rotateOnAxis(globeAxis, 0.0015)
-              }
-
-              targetRotationYMood = pivotMood.rotation.x
-
-              if (pivotMood.rotation.x > 0.01) {
-                pivotMood.rotation.x += -0.0015
-              } else if (pivotMood.rotation.x < -0.01) {
-                pivotMood.rotation.x += 0.0015
-              }
-              mood.rotateOnAxis(globeAxis, 0.0015)
-            }
-
-            if (this.currentNav === pivotMood) {
-              if (!isDragging && lerpTimerBool) {
-                if (!isThrowing) {
-                  targetRotationYMood = pivotMood.rotation.x
-                  if (pivotMood.rotation.x > 0.01) {
-                    pivotMood.rotation.x += -0.0015
-                  } else if (pivotMood.rotation.x < -0.01) {
-                    pivotMood.rotation.x += 0.0015
-                  }
-                }
-                mood.rotateOnAxis(globeAxis, 0.0015)
-              }
-
+      const updateGlobeRotation = () => {
+        if (this.currentNav === pivotGlobe) {
+          if (!isDragging && lerpTimerBool) {
+            if (!isThrowing) {
               targetRotationYGlobe = pivotGlobe.rotation.x
 
               if (pivotGlobe.rotation.x > 0.01) {
@@ -1361,8 +1356,75 @@ export default {
               } else if (pivotGlobe.rotation.x < -0.01) {
                 pivotGlobe.rotation.x += 0.0015
               }
-              globe.rotateOnAxis(globeAxis, 0.0015)
             }
+            globe.rotateOnAxis(globeAxis, 0.0015)
+          }
+
+          targetRotationYMood = pivotMood.rotation.x
+
+          if (pivotMood.rotation.x > 0.01) {
+            pivotMood.rotation.x += -0.0015
+          } else if (pivotMood.rotation.x < -0.01) {
+            pivotMood.rotation.x += 0.0015
+          }
+          mood.rotateOnAxis(globeAxis, 0.0015)
+        }
+      }
+
+      const updateMoodRotation = () => {
+        if (this.currentNav === pivotMood) {
+          if (!isDragging && lerpTimerBool) {
+            if (!isThrowing) {
+              targetRotationYMood = pivotMood.rotation.x
+              if (pivotMood.rotation.x > 0.01) {
+                pivotMood.rotation.x += -0.0015
+              } else if (pivotMood.rotation.x < -0.01) {
+                pivotMood.rotation.x += 0.0015
+              }
+            }
+            mood.rotateOnAxis(globeAxis, 0.0015)
+          }
+
+          targetRotationYGlobe = pivotGlobe.rotation.x
+
+          if (pivotGlobe.rotation.x > 0.01) {
+            pivotGlobe.rotation.x += -0.0015
+          } else if (pivotGlobe.rotation.x < -0.01) {
+            pivotGlobe.rotation.x += 0.0015
+          }
+          globe.rotateOnAxis(globeAxis, 0.0015)
+        }
+      }
+
+      const render = () => {
+        console.log("rendering")
+
+        if (
+          !this.$store.state.transitions.isPlay &&
+          !this.$store.state.transitions.isResize
+        )
+          return
+
+        if (resizeRendererToDisplaySize(renderer)) {
+          camera.aspect = canvas.clientWidth / canvas.clientHeight
+          camera.updateProjectionMatrix()
+        }
+
+        if (pivotMain && mood && globe) {
+          if (!this.isIndex && textureLoaded) {
+            pauseAnimation(400)
+            addResizeListener()
+          }
+
+          if (this.isIndex) {
+            updateTitlePositions()
+            updateTitleRaycast()
+            updateGlobeControls()
+            updateMoodControls()
+            updateCameraZoomIn()
+            updateCameraZoomOut()
+            updateGlobeRotation()
+            updateMoodRotation()
           }
         }
 
@@ -1372,17 +1434,41 @@ export default {
 
       requestAnimationFrame(render)
 
-      // Cancel Animation when WebGL Context Lost
+      // RENDER ON RESIZE
 
-      const cancelAnimation = () => {
-        event.preventDefault()
-        console.log('context lost')
-        cancelAnimationFrame(render)
+      const resizeTimerFn = () => {
+        this.$store.commit("transitions/clearResizeTimer")
+        this.$store.commit("transitions/setIsResize", false)
+        this.$store.state.transitions.pause(0)
       }
+
+      const resizingRender = () => {
+        if (!this.$store.state.transitions.isResize) {
+          this.$store.commit("transitions/setIsResize", true)
+          requestAnimationFrame(render)
+        }
+
+        this.$store.commit("transitions/clearResizeTimer")
+        this.$store.commit(
+          "transitions/setResizeTimer",
+          setInterval(resizeTimerFn, 2200)
+        )
+      }
+
+      const addResizeListener = () => {
+        window.addEventListener("resize", resizingRender, false)
+      }
+
+      const removeResizeListener = () => {
+        window.removeEventListener("resize", resizingRender, false)
+      }
+
+      this.$store.commit("transitions/setAddResize", addResizeListener)
+      this.$store.commit("transitions/setRemoveResize", removeResizeListener)
 
       renderer
         .getContext()
-        .canvas.addEventListener('webglcontextlost', cancelAnimation, false)
+        .canvas.addEventListener("webglcontextlost", pauseAnimation, false)
     },
   },
 }
@@ -1390,7 +1476,10 @@ export default {
 
 <style lang="scss" scoped>
 .nav3d {
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   height: 100vh;
   // z-index: $z-modal;
 }
@@ -1418,7 +1507,7 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
+  width: 250%;
 }
 
 .scene {
@@ -1443,20 +1532,6 @@ export default {
 }
 
 @media (pointer: none), (pointer: coarse) {
-  // .welcome {
-  //   display: block;
-  //   text-align: center;
-  //   text-transform: uppercase;
-  //   font-weight: $medium;
-  //   font-size: 4vw;
-  //   z-index: $z-modal;
-  //   position: absolute;
-  //   left: 50%;
-  //   top: 5rem;
-  //   width: 100%;
-  //   transform: translateX(-50%);
-  // }
-
   .navContainer {
     position: fixed;
     top: 5rem;

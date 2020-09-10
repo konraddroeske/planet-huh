@@ -2,35 +2,40 @@
   <div id="layout" class="layout">
     <ModalFilters v-if="modal" />
     <Header />
-    <div id="blurrableContent">
+    <div id="blurrableContent" class="burrableContent">
       <Nav />
       <main id="main" class="main">
         <Nuxt keep-alive />
+        <Footer />
       </main>
-      <Footer />
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
-import Nav from '@/components/Nav'
+import { mapState } from "vuex"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
+import Nav from "@/components/Nav"
 export default {
   components: { Header, Nav, Footer },
   computed: mapState({
     modal: (state) => state.categories.modal,
   }),
   mounted() {
-    this.$store.commit('setMobile', this.$device.isMobile)
+    this.$store.commit("transitions/setMobile", this.$device.isMobile)
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.burrableContent {
+  position: relative;
+}
+
 .main {
   min-height: 100px;
   position: relative;
+  transform: translateY(100vh);
 }
 </style>

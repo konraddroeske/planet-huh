@@ -1,85 +1,97 @@
 <template>
   <div class="categories">
     <CategoryHero :title="title" />
+    <CategoryList v-if="isParentCategory" :categories="categories" />
+    <CategoryEmpty v-if="postsTotal.length === 0 && !isFetching" />
     <PostsFeed
-      :posts="posts"
+      :posts="postsTotal"
+      :post-limit="postLimit"
       get-some-posts-path="categories/getCategoryPosts"
     />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import gsap from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import CategoryHero from '@/components/CategoryHero'
-import PostsFeed from '@/components/PostsFeed'
+import isEmpty from "lodash.isempty"
+import { mapState } from "vuex"
+import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"
+import CategoryHero from "@/components/CategoryHero"
+import CategoryList from "@/components/CategoryList"
+import CategoryEmpty from "@/components/CategoryEmpty"
+import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
 
-const setNav = () => {
-  const isMobile = window.$nuxt.$device.isMobile
-
-  const setNavStyle = window.$nuxt.$store._actions.setNavStyle[0]
-  setNavStyle(isMobile)
-}
-
-const entering = () => {
-  // console.log('entering categories')
-}
-
-const leaving = () => {
-  // console.log('leaving categories')
-}
-
-const leavingToIndex = (el) => {
-  const setNavContainerLarge =
-    window.$nuxt.$store._actions.setNavContainerLarge[0]
-  setNavContainerLarge()
-
-  const setNavLarge = window.$nuxt.$store._actions.setNavLarge[0]
-  setNavLarge(el)
-}
-
 export default {
-  layout: 'default',
-  transition(to, from) {
-    if (!from) {
-      return setNav()
-    }
-
-    if (from.path === '/') {
-      entering()
-    }
-
-    to.path === '/'
-      ? leavingToIndex(to.matched[0].instances.default.$el)
-      : leaving()
+  layout: "default",
+  transition: {
+    enter(el, done) {
+      this.$store.dispatch("transitions/setEnter", { el, done })
+      this.$store.dispatch("transitions/setNavContainerSmall")
+    },
+    leave(el, done) {
+      this.$store.dispatch("transitions/setLeave", { el, done })
+    },
   },
   components: {
     CategoryHero,
     PostsFeed,
+    CategoryList,
+    CategoryEmpty,
   },
-  computed: mapState({
-    title: (state) => state.categories.title,
-    posts: (state) => state.categories.postsFeed,
-  }),
-  async created() {
-    await this.$store.dispatch('categories/handleQueries', this.$route.query)
+  data() {
+    return {
+      from: null,
+    }
   },
-  mounted() {
-    this.onHeroLoad()
-    this.onMount()
+  computed: {
+    ...mapState({
+      title: (state) => state.categories.title,
+      postLimit() {
+        return this.$store.getters["categories/postLimit"]
+      },
+      postsTotal() {
+        return this.$store.getters["categories/postsTotal"]
+      },
+      allFilters: (state) => state.categories.allFilters,
+      isFetching: (state) => state.categories.isFetching,
+    }),
+    isParentCategory() {
+      if (this.title) {
+        return this.allFilters[this.title]?.hasParent === false
+      }
+
+      return false
+    },
+    categories() {
+      if (this.isParentCategory) {
+        return [...this.$store.state.categories[this.title]]
+          .sort((a, b) => b.post.length - a.post.length)
+          .slice(0, 6)
+          .map((item) => {
+            return this.title === "moods" ? item.mood : item.name
+          })
+      }
+
+      return null
+    },
   },
-  beforeDestroy() {
-    this.onDestroy()
+  watch: {
+    $route(to, from) {
+      if (to.name === "categories") {
+        this.$store.dispatch(
+          "categories/handleRouteQueries",
+          isEmpty(to.query.filters) ? {} : to.query.filters
+        )
+      }
+    },
   },
   activated() {
-    this.$store.dispatch('categories/handleQueries', this.$route.query)
-
-    setTimeout(() => {
-      this.onHeroLoad()
-    }, 300)
+    this.$store.dispatch(
+      "categories/handleRouteQueries",
+      isEmpty(this.$route.query) ? {} : this.$route.query
+    )
 
     this.onMount()
   },
@@ -88,23 +100,32 @@ export default {
   },
   methods: {
     onMount() {
-      const nav = document.querySelector('#navContainer')
-      nav.addEventListener('click', this.route, false)
-      nav.addEventListener('touchstart', this.route, false)
+      const nav = document.querySelector("#navContainer")
+      nav.addEventListener("click", this.route, false)
+      nav.addEventListener("touchstart", this.route, false)
     },
     onDestroy() {
-      const nav = document.querySelector('#navContainer')
-      nav.removeEventListener('click', this.route, false)
-      nav.removeEventListener('touchstart', this.route, false)
-    },
-    onHeroLoad() {
-      this.$store.dispatch('setNavContainerSmall')
+      const nav = document.querySelector("#navContainer")
+      nav.removeEventListener("click", this.route, false)
+      nav.removeEventListener("touchstart", this.route, false)
     },
     route() {
       this.$router.push({
         path: `/`,
       })
     },
+  },
+  head() {
+    return {
+      title: `Planet Huh${this.title ? " | " + this.title : ""}`,
+      meta: [
+        {
+          hid: "og:title",
+          property: "og:title",
+          content: this.title,
+        },
+      ],
+    }
   },
 }
 </script>

@@ -5,7 +5,7 @@ $bp-desktop: 1024px;
 $bp-lg-desktop: 1280px;
 
 // Font
-$font-display: 'Work Sans', sans-serif;
+$font-display: "Work Sans", sans-serif;
 $font-sans: Oswald, sans-serif;
 $font-body: Georgia, sans-serif;
 
@@ -88,8 +88,19 @@ img {
   overflow: hidden;
 }
 
-.blurContent {
-  filter: blur(10px);
+.backdrop-blur {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+/* if backdrop support: very transparent and blurred */
+@supports (
+  (-webkit-backdrop-filter: blur(10px)) or (backdrop-filter: blur(10px))
+) {
+  .backdrop-blur {
+    background-color: rgba(255, 255, 255, 0.5);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
 }
 
 .accentText {

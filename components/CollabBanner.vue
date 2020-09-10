@@ -2,10 +2,10 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <img class="bannerImage" :src="imageSrc" alt="" @load="onImgLoad" />
+        <LazyImage class="bannerImage" :src="imageSrc" alt="" />
         <h1 class="titleText postTitle">
           <span class="miniTitle">{{ titleArray[0] }}</span>
-          {{ titleArray.slice(1).join(' ') }}
+          {{ titleArray.slice(1).join(" ") }}
         </h1>
 
         <div class="titleText artistOne">
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import Date from '@/components/Date'
+import Date from "@/components/Date"
 export default {
   components: { Date },
   props: {
@@ -115,16 +115,6 @@ export default {
     },
     titleArray() {
       return this.title.split(/\s+/)
-    },
-  },
-  activated() {
-    setTimeout(() => {
-      this.$store.dispatch('setNavContainerSmall')
-    }, 300)
-  },
-  methods: {
-    onImgLoad() {
-      this.$store.dispatch('setNavContainerSmall')
     },
   },
 }
@@ -304,7 +294,7 @@ export default {
   position: relative;
 
   &::before {
-    content: '•';
+    content: "•";
     position: absolute;
     left: -0.75rem;
     top: 0;
@@ -314,7 +304,7 @@ export default {
     margin-right: 1.5rem;
 
     &::before {
-      content: '•';
+      content: "•";
       position: absolute;
       left: -1rem;
       top: 0;
@@ -324,7 +314,7 @@ export default {
 
 .category:first-child {
   &::before {
-    content: '';
+    content: "";
   }
 }
 

@@ -14,7 +14,7 @@ export default {
       type: String,
       required: true,
       validator(value) {
-        return ['light', 'dark', 'gradient'].includes(value)
+        return ["light", "dark", "gradient"].includes(value)
       },
     },
     to: {
@@ -33,10 +33,10 @@ export default {
   },
   methods: {
     startGradient() {
-      this.$refs.container.classList.add('largeGradient')
+      this.$refs.container.classList.add("largeGradient")
     },
     endGradient() {
-      this.$refs.container.classList.remove('largeGradient')
+      this.$refs.container.classList.remove("largeGradient")
     },
   },
 }
@@ -68,6 +68,7 @@ export default {
   a:visited {
     color: $white;
     text-decoration: none;
+    text-align: center;
 
     &:hover,
     &:focus {
@@ -87,6 +88,7 @@ export default {
   a:visited {
     color: $black;
     text-decoration: none;
+    text-align: center;
 
     &:hover,
     &:focus {
@@ -111,8 +113,11 @@ export default {
   line-height: 1;
   position: relative;
 
+  display: flex;
+  flex-direction: column;
+
   ::before {
-    content: '';
+    content: "";
     position: absolute;
     z-index: -1;
     height: 2.5rem;
@@ -138,6 +143,7 @@ export default {
   a:visited {
     color: $black;
     text-decoration: none;
+    text-align: center;
   }
 
   @media (min-width: $bp-tablet) {

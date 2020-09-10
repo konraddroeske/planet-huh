@@ -1,11 +1,11 @@
-import { fetchContent } from '@/utils/api'
+import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
-  ctaTitle: '',
-  ctaText: '',
-  featuredPosts: [],
-  featuredCollabPosts: [],
+  ctaTitle: "",
+  ctaText: "",
   postsFeed: [],
+  maxPosts: 0,
+  featured: [],
 })
 
 export const actions = {
@@ -15,46 +15,45 @@ export const actions = {
         homePages {
             ctaTitle
             ctaText
-            featuredPosts {
-              title
-              date
-              slug
-              coverImage {
-                url
-              }
-            }
-            featuredCollabPosts(where: {featured: true}) {
-              title
-              slug
-              date
-              featured
-              headline
-              artist {
-                name
-                location
-              }
-              images {
-                url
-                id
-                fileName
-              }
-            }
           }
       }`)
 
-      const {
-        ctaTitle,
-        ctaText,
-        featuredPosts,
-        featuredCollabPosts,
-      } = data.data.homePages[0]
+      const { ctaTitle, ctaText } = data.data.homePages[0]
 
-      commit('setHomepage', {
+      commit("setHomepage", {
         ctaTitle,
         ctaText,
-        featuredPosts,
-        featuredCollabPosts,
       })
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error) // TODO: error handling
+    }
+  },
+  async getFeatured({ commit }) {
+    try {
+      const { data } = await fetchContent(`{
+          posts(where: {featured: true}, orderBy: date_DESC) {
+          id
+          slug
+          title
+          headline
+          featured
+          featuredImages {
+            id
+            url
+            fileName
+          }
+          artist {
+            name
+            location
+          }
+          date
+        }
+      }`)
+
+      const { posts } = data.data
+
+      commit("setFeatured", posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error) // TODO: error handling
@@ -91,7 +90,8 @@ export const actions = {
       }`)
 
       const { posts } = data.data
-      commit('setSomePosts', posts)
+      commit("setSomePosts", posts)
+      commit("setMaxPosts", 4)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -99,7 +99,18 @@ export const actions = {
   },
 }
 
-export const getters = {}
+export const getters = {
+  postLimit: (state) => {
+    return state.postsFeed.length - state.maxPosts <= 0
+  },
+  postsTotal: (state) => {
+    if (state.maxPosts >= state.postsFeed.length) {
+      return state.postsFeed
+    } else {
+      return state.postsFeed.slice(0, state.maxPosts)
+    }
+  },
+}
 
 export const mutations = {
   setHomepage(
@@ -113,5 +124,14 @@ export const mutations = {
   },
   setSomePosts(state, newPosts) {
     state.postsFeed = state.postsFeed.concat(newPosts)
+  },
+  setFeatured(state, featuredPosts) {
+    state.featured = featuredPosts
+  },
+  setMaxPosts(state, num) {
+    state.maxPosts += num
+  },
+  resetMaxPosts(state) {
+    state.maxPosts = 0
   },
 }

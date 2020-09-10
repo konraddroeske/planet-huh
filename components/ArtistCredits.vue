@@ -13,7 +13,7 @@
         <div class="shortInfo">
           <div class="name">
             <h3 class="accentText">
-              {{ isSingleArtist ? 'Written By' : 'Who' }}
+              {{ isSingleArtist ? "Written By" : "Who" }}
             </h3>
             <span>{{ artist.name }}</span>
           </div>
@@ -25,7 +25,7 @@
               target="_blank"
               rel="canonical noopener noreferrer"
             >
-              {{ artist.website.replace(/(^\w+:|^)\/\//, '') }}
+              {{ artist.website.replace(/(^\w+:|^)\/\//, "") }}
             </a>
           </div>
 
@@ -43,7 +43,7 @@
 
         <div>
           <h3 class="accentText">
-            {{ isSingleArtist ? 'About the Author' : 'About' }}
+            {{ isSingleArtist ? "About the Author" : "About" }}
           </h3>
           <p class="about">{{ artist.about }}</p>
         </div>

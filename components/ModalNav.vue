@@ -14,22 +14,30 @@
       </label>
     </div>
 
-    <section class="modal" :class="{ visuallyHidden: !isOpen }">
+    <section
+      id="modalNav"
+      ref="modalNav"
+      v-scroll-lock="isOpen"
+      class="modal backdrop-blur"
+    >
       <CategoryNav variant="light" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
         <SocialLinks variant="light" />
-        <SearchBar variant="light" />
+        <SearchBar variant="light" @onSubmit="routeFilter" />
       </div>
     </section>
   </div>
 </template>
 
 <script>
-import CategoryNav from './CategoryNav'
-import PageNav from './PageNav'
-import SocialLinks from './SocialLinks'
-import SearchBar from './SearchBar'
+import { mapActions, mapMutations } from "vuex"
+import gsap from "gsap"
+import CategoryNav from "./CategoryNav"
+import PageNav from "./PageNav"
+import SocialLinks from "./SocialLinks"
+import SearchBar from "./SearchBar"
+
 export default {
   components: { CategoryNav, PageNav, SocialLinks, SearchBar },
   data() {
@@ -37,17 +45,59 @@ export default {
       isOpen: false,
     }
   },
+  watch: {
+    $route(to, from) {
+      if (this.isOpen) {
+        setTimeout(() => {
+          this.closeNav()
+          document.getElementById("menuButton").checked = false
+        }, 0.4)
+      }
+    },
+  },
   methods: {
     toggleModal() {
-      const blurrableContent = document.getElementById('blurrableContent')
       if (this.isOpen) {
-        blurrableContent.classList.remove('blurContent')
-        document.body.classList.remove('lockScroll')
+        this.closeNav()
       } else {
-        blurrableContent.classList.add('blurContent')
-        document.body.classList.add('lockScroll')
+        this.openNav()
       }
+    },
+    closeNav() {
+      const modalNav = this.$refs.modalNav
+
+      gsap.to(modalNav, 0.6, {
+        autoAlpha: 0,
+      })
+
       this.isOpen = !this.isOpen
+    },
+    openNav() {
+      const modalNav = this.$refs.modalNav
+
+      gsap.to(modalNav, 0.6, {
+        autoAlpha: 1,
+      })
+
+      this.isOpen = !this.isOpen
+    },
+    ...mapActions({
+      getQueries: "categories/getQueries",
+    }),
+    ...mapMutations({
+      resetFilters: "categories/resetFilters",
+    }),
+    async routeFilter(filter) {
+      // clear filters
+      this.resetFilters()
+
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "/categories",
+        query: { filters: queries },
+      })
     },
   },
 }
@@ -62,12 +112,12 @@ export default {
   left: 0;
   right: 0;
   padding: 2rem;
-  background: rgba(255, 255, 255, 0.3);
+  visibility: hidden;
 
   @media (min-width: $bp-desktop) {
     display: grid;
     grid-template-rows: repeat(5, 1fr);
-    grid-template-areas: 'empty1' 'empty2' 'categoryNav' 'pageNav' 'searchBarSocial';
+    grid-template-areas: "empty1" "empty2" "categoryNav" "pageNav" "searchBarSocial";
   }
 }
 
@@ -94,7 +144,7 @@ export default {
   opacity: 0;
 }
 
-label[for='menuButton'] {
+label[for="menuButton"] {
   display: block;
   height: 2rem;
   width: 4rem;
@@ -114,7 +164,7 @@ label[for='menuButton'] {
 .menuIcon,
 .menuIcon::before,
 .menuIcon::after {
-  content: '';
+  content: "";
   display: block;
   height: 0.125rem;
   background: $black;
@@ -137,11 +187,11 @@ label[for='menuButton'] {
   top: 0.45rem;
 }
 
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
+.sandwichMenu input[type="checkbox"]:checked + label > .menuIcon {
   background: none;
 }
 
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon::before {
+.sandwichMenu input[type="checkbox"]:checked + label > .menuIcon::before {
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
   bottom: 0;
@@ -149,7 +199,7 @@ label[for='menuButton'] {
   transition: all 0.2s ease;
 }
 
-.sandwichMenu input[type='checkbox']:checked + label > .menuIcon::after {
+.sandwichMenu input[type="checkbox"]:checked + label > .menuIcon::after {
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
   top: 0;

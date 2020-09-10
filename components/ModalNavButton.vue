@@ -18,7 +18,7 @@
 export default {
   methods: {
     onClick(event) {
-      this.$emit('clicked')
+      this.$emit("clicked")
     },
   },
 }
@@ -37,7 +37,7 @@ export default {
   opacity: 0;
 }
 
-label[for='menuButton'] {
+label[for="menuButton"] {
   display: block;
   height: 2rem;
   width: 4rem;
@@ -46,7 +46,6 @@ label[for='menuButton'] {
   cursor: pointer;
 
   &:hover {
-    // .menuIcon,
     .menuIcon::before,
     .menuIcon::after {
       background: $accent;
@@ -57,7 +56,7 @@ label[for='menuButton'] {
 .menuIcon,
 .menuIcon::before,
 .menuIcon::after {
-  content: '';
+  content: "";
   display: block;
   height: 0.125rem;
   background: $black;
@@ -86,24 +85,4 @@ label[for='menuButton'] {
   transform: rotate(-45deg);
   top: 0;
 }
-
-// .sandwichMenu input[type='checkbox']:checked + label > .menuIcon {
-//   background: none;
-// }
-
-// .sandwichMenu input[type='checkbox']:checked + label > .menuIcon::before {
-//   -webkit-transform: rotate(45deg);
-//   transform: rotate(45deg);
-//   bottom: 0;
-//   -webkit-transition: all 0.2s ease;
-//   transition: all 0.2s ease;
-// }
-
-// .sandwichMenu input[type='checkbox']:checked + label > .menuIcon::after {
-//   -webkit-transform: rotate(-45deg);
-//   transform: rotate(-45deg);
-//   top: 0;
-//   -webkit-transition: all 0.2s ease;
-//   transition: all 0.2s ease;
-// }
 </style>

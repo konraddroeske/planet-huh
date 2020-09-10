@@ -11,11 +11,11 @@
         >
           <nuxt-link :to="`/post/${post.slug}`" class="imageLink">
             <div class="postImageContainer">
-              <img
+              <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
-                @load="onLoad"
+                @loaded="onLoaded"
               />
             </div>
           </nuxt-link>
@@ -26,16 +26,13 @@
             </nuxt-link>
           </h3>
           <p class="postTags">
-            {{ post.city }}{{ post.sense[0] ? formattedSense(post.sense) : null
+            {{ post.city[0].name
+            }}{{ post.sense[0] ? formattedSense(post.sense) : null
             }}{{ post.mood ? formattedMood(post.mood) : null }}
           </p>
         </li>
       </ul>
-      <Button
-        v-if="!allPostsFetched"
-        ref="load"
-        @clicked="getSomePostsAndUnfocus"
-      >
+      <Button v-if="!postLimit" ref="load" @clicked="getSomePostsAndUnfocus">
         Load More
       </Button>
     </Wrapper>
@@ -43,16 +40,20 @@
 </template>
 
 <script>
-import gsap from 'gsap'
-import Wrapper from '@/components/Wrapper'
-import Button from '@/components/Button'
-import Date from '@/components/Date'
+import gsap from "gsap"
+import Wrapper from "@/components/Wrapper"
+import Button from "@/components/Button"
+import Date from "@/components/Date"
 
 export default {
   components: { Wrapper, Button, Date },
   props: {
     posts: {
       type: Array,
+      required: true,
+    },
+    postLimit: {
+      type: Boolean,
       required: true,
     },
     getSomePostsPath: {
@@ -70,22 +71,8 @@ export default {
     formattedPosts() {
       return this.posts.map((post) => ({
         ...post,
-        city: 'Toronto',
       }))
     },
-  },
-  watch: {
-    posts(newPosts, oldPosts) {
-      if (newPosts.length === oldPosts.length) {
-        this.allPostsFetched = true
-      }
-    },
-  },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
   },
   activated() {
     this.onMount()
@@ -95,20 +82,20 @@ export default {
   },
   methods: {
     onMount() {
-      this.width = window.matchMedia('(min-width: 1024px)')
+      this.width = window.matchMedia("(min-width: 1024px)")
       this.setPadding(this.width)
       this.width.addListener(this.setPadding)
     },
     onDestroy() {
       this.width.removeListener(this.setPadding)
     },
-    onLoad() {
+    onLoaded() {
       if (this.width.matches) {
         this.onResize()
       }
     },
     onResize() {
-      const images = document.querySelectorAll('.postImageContainer')
+      const images = document.querySelectorAll(".postImageContainer")
 
       for (let i = 1; i < images.length; i++) {
         if (i % 2 === 1) {
@@ -122,12 +109,12 @@ export default {
       if (width.matches) {
         this.onResize()
         // add resize event listener
-        window.addEventListener('resize', this.onResize)
+        window.addEventListener("resize", this.onResize)
       } else {
         // remove resize event listener
-        window.removeEventListener('resize', this.onResize)
+        window.removeEventListener("resize", this.onResize)
 
-        const images = document.querySelectorAll('.postImageContainer')
+        const images = document.querySelectorAll(".postImageContainer")
 
         for (let i = 1; i < images.length; i++) {
           if (i % 2 === 1) {
@@ -208,12 +195,12 @@ section {
     width: calc(27.5% / 0.85);
   }
 
-  .postContainer:nth-child(8n + 3) {
+  .postContainer:nth-child(8n + 7) {
     width: 50%;
     padding-right: 1.5%;
   }
 
-  .postContainer:nth-child(8n + 4) {
+  .postContainer:nth-child(8n + 8) {
     width: 50%;
     padding-left: 1.5%;
   }
@@ -263,7 +250,7 @@ section {
 }
 
 .postTitle {
-  font-weight: $medium;
+  font-weight: $bold;
   font-size: 1.75rem;
   margin: 1rem 0;
 
@@ -287,7 +274,7 @@ section {
 .postTags {
   text-transform: uppercase;
   font-size: 1rem;
-  font-weight: $medium;
+  font-weight: $bold;
   margin: 0;
 
   @media (min-width: $bp-desktop) {

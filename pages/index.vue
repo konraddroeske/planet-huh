@@ -3,22 +3,26 @@
     <CTA />
     <CategoryNav variant="gradient" />
     <FeaturedCollabs />
-    <PostsFeed :posts="posts" get-some-posts-path="homepage/getSomePosts" />
+    <PostsFeed
+      :posts="postsTotal"
+      :post-limit="postLimit"
+      get-some-posts-path="homepage/getSomePosts"
+    />
   </div>
 </template>
 
 <script>
-import gsap from 'gsap'
-import { ScrollToPlugin } from 'gsap/ScrollToPlugin'
-import CTA from '@/components/CTA'
-import FeaturedCollabs from '@/components/FeaturedCollabs'
-import CategoryNav from '@/components/CategoryNav'
-import PostsFeed from '@/components/PostsFeed'
+import gsap from "gsap"
+import { ScrollToPlugin } from "gsap/ScrollToPlugin"
+import CTA from "@/components/CTA"
+import FeaturedCollabs from "@/components/FeaturedCollabs"
+import CategoryNav from "@/components/CategoryNav"
+import PostsFeed from "@/components/PostsFeed"
 
 gsap.registerPlugin(ScrollToPlugin)
 
 export default {
-  layout: 'default',
+  layout: "default",
   components: {
     CTA,
     FeaturedCollabs,
@@ -27,25 +31,11 @@ export default {
   },
   async fetch({ store }) {
     if (store.state.homepage.postsFeed.length === 0) {
-      await store.dispatch('homepage/getHomepage')
-      await store.dispatch('homepage/getSomePosts', 4)
+      await store.dispatch("homepage/getHomepage")
+      await store.dispatch("homepage/getFeatured")
+      await store.commit("homepage/resetMaxPosts")
+      await store.dispatch("homepage/getSomePosts", 8)
     }
-  },
-  transition: {
-    leave(el, done) {
-      const isNavLarge = window.$nuxt.$store.state.isNavLarge
-
-      if (isNavLarge) {
-        const setNavIndex = window.$nuxt.$store._actions.setNavIndex[0]
-        setNavIndex(done)
-      }
-
-      if (!isNavLarge) {
-        const setNavIndexSmall =
-          window.$nuxt.$store._actions.setNavIndexSmall[0]
-        setNavIndexSmall([done, el])
-      }
-    },
   },
   computed: {
     isMobile() {
@@ -54,15 +44,12 @@ export default {
     isOpen() {
       return this.$store.state.isOpen
     },
-    posts() {
-      return this.$store.state.homepage.postsFeed
+    postLimit() {
+      return this.$store.getters["homepage/postLimit"]
     },
-  },
-  mounted() {
-    this.onMount()
-  },
-  beforeDestroy() {
-    this.onDestroy()
+    postsTotal() {
+      return this.$store.getters["homepage/postsTotal"]
+    },
   },
   activated() {
     this.onMount()
@@ -73,14 +60,32 @@ export default {
   methods: {
     onMount() {
       if (this.isMobile) {
-        this.$store.commit('setNavOpen', true)
+        this.$store.commit("transitions/setNavOpen", true)
       }
     },
     onDestroy() {
       if (this.isMobile && this.isOpen) {
         // and scroll is locked
-        this.$store.commit('setNavOpen', false)
+        this.$store.commit("transitions/setNavOpen", false)
       }
+    },
+  },
+
+  transition: {
+    leave(el, done) {
+      const isNavLarge = this.$store.state.transitions.isNavLarge
+
+      if (isNavLarge) {
+        this.$store.dispatch("transitions/setNavIndex", done)
+      }
+
+      if (!isNavLarge) {
+        this.$store.dispatch("transitions/setNavIndexSmall", { done, el })
+      }
+    },
+    enter(el, done) {
+      this.$store.dispatch("transitions/setNavContainerLarge", el)
+      this.$store.dispatch("transitions/setNavLarge", el)
     },
   },
 }
