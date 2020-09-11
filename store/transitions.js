@@ -105,6 +105,7 @@ export const actions = {
     commit("setNavSize", true)
     commit("clearResizeTimer")
     state.removeResize()
+    state.play()
 
     if (state.isMobile) {
       commit("setNavOpen", true)
@@ -112,7 +113,7 @@ export const actions = {
 
     const navContainerTl = gsap.timeline({
       onComplete: () => {
-        state.play()
+        // state.play()
         state.addNavClick()
       },
     })
