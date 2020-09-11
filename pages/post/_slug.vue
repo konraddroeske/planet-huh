@@ -14,6 +14,7 @@
       :sense="{ name: post.sense[0].name, filterType: 'exclude' }"
       :mood="{ name: post.mood.mood, filterType: 'exclude' }"
     />
+    <Footer />
   </div>
 </template>
 
@@ -28,6 +29,7 @@ import RichText from "@/components/RichText"
 import ArtistCredits from "@/components/ArtistCredits"
 import SocialShare from "@/components/SocialShare"
 import SuggestedPosts from "@/components/SuggestedPosts"
+import Footer from "@/components/Footer"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -40,6 +42,7 @@ export default {
     ArtistCredits,
     SocialShare,
     SuggestedPosts,
+    Footer,
   },
   transition: {
     enter(el, done) {

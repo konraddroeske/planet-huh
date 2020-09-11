@@ -1192,6 +1192,7 @@ export default {
           margin: 0,
           transform: "translateY(-50%)",
           pointerEvents: "auto",
+          textTransform: "capitalize",
         }).to(title, 0.3, { alpha: 1 })
 
         const newTitle = [object, title]
@@ -1555,6 +1556,8 @@ export default {
     z-index: $z-modal;
     display: block;
     width: 80%;
+    display: flex;
+    justify-content: center;
   }
 }
 

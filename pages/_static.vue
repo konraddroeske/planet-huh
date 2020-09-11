@@ -1,9 +1,12 @@
 <template>
-  <div v-if="page" class="container">
-    <Wrapper>
-      <h1>{{ page.title }}</h1>
-    </Wrapper>
-    <RichText :content="page.content" />
+  <div>
+    <div v-if="page" class="container">
+      <Wrapper>
+        <h1>{{ page.title }}</h1>
+      </Wrapper>
+      <RichText :content="page.content" />
+    </div>
+    <Footer />
   </div>
 </template>
 
@@ -11,12 +14,14 @@
 import { mapState } from "vuex"
 import RichText from "@/components/RichText"
 import Wrapper from "@/components/Wrapper"
+import Footer from "@/components/Footer"
 
 export default {
   layout: "default",
   components: {
     RichText,
     Wrapper,
+    Footer,
   },
   data() {
     return {

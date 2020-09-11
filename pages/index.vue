@@ -8,6 +8,7 @@
       :post-limit="postLimit"
       get-some-posts-path="homepage/getSomePosts"
     />
+    <Footer />
   </div>
 </template>
 
@@ -18,6 +19,7 @@ import CTA from "@/components/CTA"
 import FeaturedCollabs from "@/components/FeaturedCollabs"
 import CategoryNav from "@/components/CategoryNav"
 import PostsFeed from "@/components/PostsFeed"
+import Footer from "@/components/Footer"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -28,6 +30,7 @@ export default {
     FeaturedCollabs,
     CategoryNav,
     PostsFeed,
+    Footer,
   },
   async fetch({ store }) {
     if (store.state.homepage.postsFeed.length === 0) {
@@ -60,6 +63,10 @@ export default {
   methods: {
     onMount() {
       if (this.isMobile) {
+        gsap.to(window, 0.4, {
+          scrollTo: 0,
+          ease: "power4.out",
+        })
         this.$store.commit("transitions/setNavOpen", true)
       }
     },
@@ -76,11 +83,11 @@ export default {
       const isNavLarge = this.$store.state.transitions.isNavLarge
 
       if (isNavLarge) {
-        this.$store.dispatch("transitions/setNavIndex", done)
+        this.$store.dispatch("transitions/setNavLeave", done)
       }
 
       if (!isNavLarge) {
-        this.$store.dispatch("transitions/setNavIndexSmall", { done, el })
+        this.$store.dispatch("transitions/setNavLeaveSmall", { done, el })
       }
     },
     enter(el, done) {

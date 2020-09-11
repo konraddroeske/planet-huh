@@ -17,7 +17,7 @@
               :class="setFiltersClass(filter)"
               @click="routeFilter(filter)"
             >
-              {{ formatMood(filter) }}
+              {{ filter }}
               <span class="tagClose"></span>
             </button>
           </li>
@@ -82,7 +82,7 @@
               :class="setFiltersClass(moodCategory)"
               @click="routeFilter(moodCategory)"
             >
-              {{ formatMood(moodCategory) }}
+              {{ moodCategory }}
             </button>
           </li>
         </ul>
@@ -254,9 +254,10 @@ export default {
         highlighted: this.filters.includes(name),
       }
     },
-    formatMood(mood) {
-      return mood.replace(/([a-z])([A-Z])/, "$1 $2")
-    },
+    // formatMood(mood) {
+    //   console.log(mood)
+    //   return mood.replace(/([a-z])([A-Z])/, "$1 $2")
+    // },
   },
 }
 </script>
