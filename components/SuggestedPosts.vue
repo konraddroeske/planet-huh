@@ -195,7 +195,7 @@ export default {
     window.removeEventListener("resize", this.setSnapPoints)
   },
   activated() {
-    // window.addEventListener("resize", this.setSnapPoints)
+    window.addEventListener("resize", this.setSnapPoints)
   },
   deactivated() {
     window.removeEventListener("resize", this.setSnapPoints)
@@ -232,13 +232,17 @@ export default {
     },
     handleSlide(direction) {
       const increment = this.isDesktop ? 3 : 1
+
+      // if desktop, check how many are to the right, then reduce
+
       if (direction === "left") {
         const isBeforeFirstPost = this.activeSlide - increment < 0
         this.activeSlide = isBeforeFirstPost ? 0 : this.activeSlide - increment
       } else if (direction === "right") {
-        const isAfterLastPost = this.activeSlide + increment >= this.numSlides
+        const isAfterLastPost =
+          this.activeSlide + increment * 2 >= this.numSlides
         this.activeSlide = isAfterLastPost
-          ? this.numSlides - 1
+          ? this.numSlides - increment
           : this.activeSlide + increment
       }
 
