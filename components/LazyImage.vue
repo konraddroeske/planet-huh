@@ -18,7 +18,7 @@ export default {
       type: String,
       default: "",
     },
-    imageWidth: {
+    maxWidth: {
       type: Number,
       default: null,
     },
@@ -29,8 +29,8 @@ export default {
   },
   computed: {
     computedSrc() {
-      if (!this.$props.imageWidth) return this.$props.src
-      return this.resizeImageSrc(this.$props.imageWidth)
+      if (!this.$props.maxWidth) return this.$props.src
+      return this.resizeImageSrc(this.$props.maxWidth)
     },
     srcPlaceholder() {
       return this.resizeImageSrc(this.$props.placeholderWidth)
@@ -53,7 +53,7 @@ export default {
       const src = this.$props.src.trim()
 
       const resizeQuery = "resize="
-      const idealResize = `${resizeQuery}width:${width}`
+      const idealResize = `${resizeQuery}fit:max,width:${width}`
 
       const { splitBySlash, joinBySlash, removeTrailingSlash } = this
 

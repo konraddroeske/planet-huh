@@ -25,16 +25,17 @@
       <div id="suggestedSlider">
         <ul :ref="'postList'" class="postList">
           <li
-            v-for="(post, index) of posts"
+            v-for="(post, index) of formattedPosts"
             :key="post.slug"
             :ref="'post' + index"
             class="post"
           >
-            <nuxt-link :to="`/post/${post.slug}`">
+            <nuxt-link :to="`/post/${post.slug}`" class="imageLink">
               <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
+                :max-width="667"
               />
             </nuxt-link>
             <p class="postDate"><Date :input="post.date" /></p>
@@ -44,8 +45,14 @@
               </nuxt-link>
             </h3>
             <p class="postTags">
-              {{ post.city[0].name }}, {{ post.sense[0].name }},
-              {{ post.mood.mood }}
+              <template v-for="(tag, idx) of post.tags">
+                <span :key="idx">
+                  <span v-if="idx > 0">, </span>
+                  <nuxt-link :to="`/categories?filters=${tag.toLowerCase()}`">{{
+                    tag
+                  }}</nuxt-link>
+                </span>
+              </template>
             </p>
           </li>
         </ul>
@@ -128,6 +135,12 @@ export default {
       const moodWhere = `mood: {${moodFilter}: "${mood.name}"}`
 
       return `where: {${cityWhere}, ${senseWhere}, ${moodWhere}}`
+    },
+    formattedPosts() {
+      return this.posts.map((post) => ({
+        ...post,
+        tags: this.computeTags(post.city, post.sense, post.mood),
+      }))
     },
   },
   async created() {
@@ -233,6 +246,22 @@ export default {
         x: this.offsets[this.activeSlide],
       })
     },
+    computeCities(cities) {
+      return cities.map((city) => city.name)
+    },
+    computeSenses(senses) {
+      return senses.map((sense) => sense.name)
+    },
+    computeMood(mood) {
+      return mood.mood ? [mood.mood] : []
+    },
+    computeTags(cities, senses, mood) {
+      const { computeCities, computeSenses, computeMood } = this
+      return computeCities(cities).concat(
+        computeSenses(senses),
+        computeMood(mood)
+      )
+    },
   },
 }
 </script>
@@ -304,13 +333,14 @@ export default {
   width: 85vw;
   text-align: center;
   margin-bottom: 4rem;
+  padding: 0.1rem;
 
   &:not(:last-child) {
     margin-right: 1rem;
   }
 
   @media (min-width: $bp-desktop) {
-    width: calc(28.3vw - 1.3rem);
+    width: calc(28.3vw - 1.6rem);
     text-align: left;
     margin-bottom: 6rem;
 
@@ -329,6 +359,15 @@ export default {
   @media (min-width: $bp-desktop) {
     height: auto;
     object-fit: fill;
+  }
+}
+
+.imageLink {
+  &:hover,
+  &:focus {
+    .postImage {
+      box-shadow: 0 0 0 0.1rem $accent;
+    }
   }
 }
 
@@ -369,5 +408,16 @@ export default {
   font-size: 1rem;
   font-weight: $bold;
   margin: 0;
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
+  }
 }
 </style>

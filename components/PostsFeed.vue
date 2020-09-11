@@ -9,12 +9,13 @@
           class="postContainer"
           :class="`postContainer${index}`"
         >
-          <nuxt-link :to="`/post/${post.slug}`">
+          <nuxt-link :to="`/post/${post.slug}`" class="imageLink">
             <div class="postImageContainer">
               <LazyImage
                 class="postImage"
                 :src="post.coverImage.url"
                 :alt="post.title"
+                :max-width="1000"
                 @loaded="onLoaded"
               />
             </div>
@@ -26,9 +27,14 @@
             </nuxt-link>
           </h3>
           <p class="postTags">
-            {{ post.city[0].name
-            }}{{ post.sense[0] ? formattedSense(post.sense) : null
-            }}{{ post.mood ? formattedMood(post.mood) : null }}
+            <template v-for="(tag, idx) of post.tags">
+              <span :key="idx">
+                <span v-if="idx > 0">, </span>
+                <nuxt-link :to="`/categories?filters=${tag.toLowerCase()}`">{{
+                  tag
+                }}</nuxt-link>
+              </span>
+            </template>
           </p>
         </li>
       </ul>
@@ -71,6 +77,7 @@ export default {
     formattedPosts() {
       return this.posts.map((post) => ({
         ...post,
+        tags: this.computeTags(post.city, post.sense, post.mood),
       }))
     },
   },
@@ -132,11 +139,21 @@ export default {
       this.$refs.load.$el.blur()
       this.getSomePosts()
     },
-    formattedSense(sense) {
-      return `, ${sense[0].name}`
+    computeCities(cities) {
+      return cities.map((city) => city.name)
     },
-    formattedMood(mood) {
-      return `, ${mood.mood}`
+    computeSenses(senses) {
+      return senses.map((sense) => sense.name)
+    },
+    computeMood(mood) {
+      return mood.mood ? [mood.mood] : []
+    },
+    computeTags(cities, senses, mood) {
+      const { computeCities, computeSenses, computeMood } = this
+      return computeCities(cities).concat(
+        computeSenses(senses),
+        computeMood(mood)
+      )
     },
   },
 }
@@ -228,6 +245,15 @@ section {
   }
 }
 
+.imageLink {
+  &:hover,
+  &:focus {
+    .postImage {
+      box-shadow: 0 0 0 0.1rem $accent;
+    }
+  }
+}
+
 .postDate {
   color: $accent;
   font-size: 1.1rem;
@@ -270,6 +296,17 @@ section {
 
   @media (min-width: $bp-desktop) {
     text-align: left;
+  }
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
   }
 }
 </style>

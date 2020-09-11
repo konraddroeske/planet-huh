@@ -2,7 +2,12 @@
   <div class="container">
     <div class="wrapper">
       <div class="heroRow">
-        <LazyImage class="bannerImage" :src="imageSrc" alt="" />
+        <LazyImage
+          class="bannerImage"
+          :src="imageSrc"
+          alt=""
+          :max-width="2000"
+        />
         <h1 class="titleText postTitle">
           <span class="miniTitle">{{ titleArray[0] }}</span>
           {{ titleArray.slice(1).join(" ") }}

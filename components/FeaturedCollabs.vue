@@ -21,6 +21,7 @@
               class="postImage"
               :src="post.featuredImages[0].url"
               :alt="post.title"
+              :max-width="1000"
             />
           </div>
           <div class="rightImage">
@@ -28,6 +29,7 @@
               class="postImage"
               :src="post.featuredImages[1].url"
               :alt="post.title"
+              :max-width="1000"
             />
           </div>
           <div class="collabsContent">
