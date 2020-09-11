@@ -30,7 +30,7 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.$emit("onSubmit", this.input)
+      this.$emit("onSubmit", this.input.toLowerCase())
       this.input = null
     },
   },

@@ -177,7 +177,7 @@ export const actions = {
         let str = "city_some.AND"
 
         for (let i = 0; i < cityFilters.length; i++) {
-          set(cityObj, str, { name: cityFilters[i] })
+          set(cityObj, str, { name: state.allFilters[cityFilters[i]].query })
           str += ".AND"
         }
         filtersArr.push(cityObj)
@@ -192,14 +192,14 @@ export const actions = {
 
         for (let i = 0; i < moodFilters.length; i++) {
           if (state.allFilters[moodFilters[i]].type === "mood") {
-            set(moodObj, str, { mood: moodFilters[i] })
+            set(moodObj, str, { mood: state.allFilters[moodFilters[i]].query })
           }
 
           if (state.allFilters[moodFilters[i]].type === "moodCategory") {
             moodCategories.push(moodFilters[i])
 
             set(moodObj, str, {
-              moodCategory: moodFilters[i].replace(/\s+/g, ""),
+              moodCategory: state.allFilters[moodFilters[i]].query,
             })
           }
 
@@ -215,7 +215,7 @@ export const actions = {
         let str = "sense_some.AND"
 
         for (let i = 0; i < senseFilters.length; i++) {
-          set(senseObj, str, { name: senseFilters[i] })
+          set(senseObj, str, { name: state.allFilters[senseFilters[i]].query })
           str += ".AND"
         }
 
@@ -260,7 +260,10 @@ export const actions = {
 
         // remove quotes from enumerations
         moodCategories.forEach((category) => {
-          str = str.replace(`"${category}"`, `"${category}"`.replace(/"/g, ""))
+          str = str.replace(
+            `"${state.allFilters[category].query}"`,
+            `"${state.allFilters[category].query}"`.replace(/"/g, "")
+          )
         })
 
         return str
@@ -371,47 +374,66 @@ export const mutations = {
     state.postsFeed = state.postsFeed.concat(newPosts)
   },
   setCities(state, cities) {
-    state.cities = cities
-
     cities.forEach((city) => {
-      state.allFilters[city.name] = {
+      state.allFilters[city.name.toLowerCase()] = {
         type: "city",
         hasParent: "cities",
-        query: `name: ${city.name}`,
+        query: `${city.name}`,
+      }
+    })
+
+    state.cities = cities.map((city) => {
+      return {
+        ...city,
+        name: city.name.toLowerCase(),
       }
     })
   },
   setMoods(state, moods) {
-    state.moods = moods
-
-    state.moodCategories = [
-      ...new Set(state.moods.map((mood) => mood.moodCategory)),
-    ]
-
     moods.forEach((mood) => {
-      state.allFilters[mood.mood] = {
+      state.allFilters[mood.mood.toLowerCase()] = {
         type: "mood",
         hasParent: "moods",
-        query: `name: ${mood.mood}`,
+        query: `${mood.mood}`,
       }
     })
 
-    state.moodCategories.forEach((moodCategory) => {
-      state.allFilters[moodCategory] = {
+    const moodCategories = [...new Set(moods.map((mood) => mood.moodCategory))]
+
+    moodCategories.forEach((moodCategory) => {
+      state.allFilters[
+        moodCategory.replace(/([a-z])([A-Z])/, "$1 $2").toLowerCase()
+      ] = {
         type: "moodCategory",
         hasParent: "moods",
-        query: `name: ${moodCategory}`,
+        query: `${moodCategory}`,
       }
     })
+
+    state.moods = moods.map((mood) => {
+      return {
+        ...mood,
+        mood: mood.mood.toLowerCase(),
+      }
+    })
+
+    state.moodCategories = moodCategories.map((moodCategory) =>
+      moodCategory.replace(/([a-z])([A-Z])/, "$1 $2").toLowerCase()
+    )
   },
   setSenses(state, senses) {
-    state.senses = senses
-
     senses.forEach((sense) => {
-      state.allFilters[sense.name] = {
+      state.allFilters[sense.name.toLowerCase()] = {
         type: "sense",
         hasParent: "senses",
-        query: `name: ${sense.name}`,
+        query: `${sense.name}`,
+      }
+    })
+
+    state.senses = senses.map((sense) => {
+      return {
+        ...sense,
+        name: sense.name.toLowerCase(),
       }
     })
   },

@@ -108,14 +108,14 @@ export const mutations = {
       state.cities.push([
         city.coordinates.latitude,
         city.coordinates.longitude,
-        city.name,
+        city.name.toLowerCase(),
       ])
     })
   },
   setMoods(state, moods) {
     moods.forEach((mood) => {
       state.moods[mood.moodCategory].posts.push({
-        title: mood.mood,
+        title: mood.mood.toLowerCase(),
       })
     })
   },

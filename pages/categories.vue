@@ -1,13 +1,16 @@
 <template>
-  <div class="categories">
-    <CategoryHero :title="title" />
-    <CategoryList v-if="isParentCategory" :categories="categories" />
-    <CategoryEmpty v-if="postsTotal.length === 0 && !isFetching" />
-    <PostsFeed
-      :posts="postsTotal"
-      :post-limit="postLimit"
-      get-some-posts-path="categories/getCategoryPosts"
-    />
+  <div>
+    <div class="categories">
+      <CategoryHero :title="title" />
+      <CategoryList v-if="isParentCategory" :categories="categories" />
+      <CategoryEmpty v-if="postsTotal.length === 0 && !isFetching" />
+      <PostsFeed
+        :posts="postsTotal"
+        :post-limit="postLimit"
+        get-some-posts-path="categories/getCategoryPosts"
+      />
+    </div>
+    <Footer />
   </div>
 </template>
 
@@ -20,6 +23,7 @@ import CategoryHero from "@/components/CategoryHero"
 import CategoryList from "@/components/CategoryList"
 import CategoryEmpty from "@/components/CategoryEmpty"
 import PostsFeed from "@/components/PostsFeed"
+import Footer from "@/components/Footer"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -39,6 +43,7 @@ export default {
     PostsFeed,
     CategoryList,
     CategoryEmpty,
+    Footer,
   },
   data() {
     return {

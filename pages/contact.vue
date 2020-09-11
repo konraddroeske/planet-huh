@@ -1,68 +1,71 @@
 <template>
-  <div class="contactContainer">
-    <Wrapper>
-      <div class="content">
-        <h1>{{ title }}</h1>
-        <p>{{ description }}</p>
-      </div>
-      <div v-if="!isSubmitted" class="formContainer">
-        <form
-          method="post"
-          name="contact"
-          action
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          @submit.prevent="handleSubmit"
-        >
-          <input type="hidden" name="form-name" value="contact" />
-          <p class="visuallyHidden">
-            <label>Don’t fill this out: <input name="bot-field" /></label>
-          </p>
-          <div class="upperForm">
+  <div>
+    <div class="contactContainer">
+      <Wrapper>
+        <div class="content">
+          <h1>{{ title }}</h1>
+          <p>{{ description }}</p>
+        </div>
+        <div v-if="!isSubmitted" class="formContainer">
+          <form
+            method="post"
+            name="contact"
+            action
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            @submit.prevent="handleSubmit"
+          >
+            <input type="hidden" name="form-name" value="contact" />
+            <p class="visuallyHidden">
+              <label>Don’t fill this out: <input name="bot-field" /></label>
+            </p>
+            <div class="upperForm">
+              <FormulateInput
+                v-model="name"
+                type="text"
+                name="name"
+                label="Name"
+                validation="required|alpha"
+                input-class="inputSmall"
+              />
+              <FormulateInput
+                v-model="email"
+                type="email"
+                name="email"
+                label="Email"
+                validation="required|email"
+                input-class="inputSmall"
+              />
+            </div>
             <FormulateInput
-              v-model="name"
-              type="text"
-              name="name"
-              label="Name"
-              validation="required|alpha"
-              input-class="inputSmall"
+              v-model="message"
+              type="textarea"
+              name="message"
+              label="Your Message"
+              validation="required|max:300,length"
+              input-class="inputLarge"
             />
-            <FormulateInput
-              v-model="email"
-              type="email"
-              name="email"
-              label="Email"
-              validation="required|email"
-              input-class="inputSmall"
-            />
+            <FormulateInput type="submit" label="Submit" class="submitButton" />
+          </form>
+        </div>
+        <div v-else class="response">
+          <div v-if="isSuccess" class="success">
+            <h2>
+              Thanks for getting in touch!
+            </h2>
           </div>
-          <FormulateInput
-            v-model="message"
-            type="textarea"
-            name="message"
-            label="Your Message"
-            validation="required|max:300,length"
-            input-class="inputLarge"
-          />
-          <FormulateInput type="submit" label="Submit" class="submitButton" />
-        </form>
-      </div>
-      <div v-else class="response">
-        <div v-if="isSuccess" class="success">
-          <h2>
-            Thanks for getting in touch!
-          </h2>
+          <div v-else class="fail">
+            <h2>
+              Sorry, that didn't work. Please try again.
+            </h2>
+          </div>
+          <div class="linkContainer">
+            <nuxt-link class="mainLink" to="/">Back To Main</nuxt-link>
+          </div>
         </div>
-        <div v-else class="fail">
-          <h2>
-            Sorry, that didn't work. Please try again.
-          </h2>
-        </div>
-        <div class="linkContainer">
-          <nuxt-link class="mainLink" to="/">Back To Main</nuxt-link>
-        </div>
-      </div>
-    </Wrapper>
+      </Wrapper>
+    </div>
+    <Footer />
   </div>
 </template>
 
@@ -70,11 +73,13 @@
 import axios from "axios"
 import { fetchContent } from "@/utils/api"
 import Wrapper from "@/components/Wrapper"
+import Footer from "@/components/Footer"
 
 export default {
   layout: "default",
   components: {
     Wrapper,
+    Footer,
   },
   async asyncData() {
     const { data } = await fetchContent(`{

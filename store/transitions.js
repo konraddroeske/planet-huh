@@ -44,7 +44,7 @@ export const actions = {
     gsap.to("#toggleContainer", navTime, { autoAlpha: 0 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
   },
-  setNavIndex({ state, commit }, startRouting) {
+  setNavLeave({ state, commit }, startRouting) {
     const navContainerTl = gsap.timeline()
     const scrollTime = 0.4
     const navTime = 1
@@ -79,26 +79,10 @@ export const actions = {
         overflow: "visible",
       })
 
-    const footerTl = gsap.timeline()
-
-    gsap.to("#footer", 0.6, {
-      y: "60vh",
-      ease: "power4.out",
-    })
-
-    footerTl
-      .to("#footer", 0.6, {
-        autoAlpha: 0,
-        ease: "power4.out",
-      })
-      .set("#footer", {
-        display: "none",
-      })
-
     gsap.to("#toggleContainer", navTime, { autoAlpha: 0 })
     gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
   },
-  setNavIndexSmall({ state }, payload) {
+  setNavLeaveSmall({ state }, payload) {
     const { done, el } = payload
 
     const navContainerTl = gsap.timeline({
@@ -109,31 +93,12 @@ export const actions = {
     const scrollTime = 0.4
 
     navContainerTl
-      .set("#footer", {
-        display: "none",
-      })
       .to(el, scrollTime, {
         autoAlpha: 0,
         ease: "power4.out",
       })
       .set("#main", {
         y: "100vh",
-      })
-
-    const footerTl = gsap.timeline()
-
-    gsap.to("#footer", 0.6, {
-      y: "60vh",
-      ease: "power4.out",
-    })
-
-    footerTl
-      .to("#footer", 0.6, {
-        autoAlpha: 0,
-        ease: "power4.out",
-      })
-      .set("#footer", {
-        display: "none",
       })
   },
   setNavLarge({ state, commit }, el) {
@@ -172,11 +137,6 @@ export const actions = {
       .set("#layout", {
         height: "auto",
         overflow: "visible",
-      })
-      .set("#footer", {
-        display: "block",
-        autoAlpha: 1,
-        y: 0,
       })
 
     if (el) {
@@ -223,20 +183,6 @@ export const actions = {
     gsap.to(el, 0.6, {
       autoAlpha: 0,
       ease: "power4.out",
-    })
-
-    gsap.to("#footer", 0.6, {
-      y: "60vh",
-      ease: "power4.out",
-    })
-
-    const tl = gsap.timeline()
-
-    tl.to("#footer", 0.6, {
-      autoAlpha: 0,
-      ease: "power4.out",
-    }).set("#footer", {
-      display: "none",
       onComplete: () => done(),
     })
   },
@@ -267,11 +213,7 @@ export const actions = {
         duration: 1.3,
         ease: "power4.out",
       }
-    ).set("#footer", {
-      display: "block",
-      autoAlpha: 1,
-      y: 0,
-    })
+    )
   },
 }
 
