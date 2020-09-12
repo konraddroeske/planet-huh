@@ -172,7 +172,9 @@ export default {
   server: {
     host: "0", // default: localhost
   },
-  env: {},
+  env: {
+    previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
+  },
   generate: {
     routes: dynamicRoutes,
   },
