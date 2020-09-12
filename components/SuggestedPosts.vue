@@ -4,7 +4,7 @@
       <h2 class="title">You Might Like</h2>
 
       <ButtonArrow
-        v-if="activeSlide > 0"
+        v-if="curPos < 0"
         class="leftArrow"
         @clicked="handleSlide('left')"
       >
@@ -12,9 +12,7 @@
         <LeftArrow />
       </ButtonArrow>
       <ButtonArrow
-        v-if="
-          isDesktop ? activeSlide < numSlides - 3 : activeSlide < numSlides - 1
-        "
+        v-if="curPos > (slideWidth * numSlides - increment) * -1"
         class="rightArrow"
         @clicked="handleSlide('right')"
       >
@@ -22,8 +20,8 @@
         <RightArrow />
       </ButtonArrow>
 
-      <div id="suggestedSlider">
-        <ul :ref="'postList'" class="postList">
+      <div id="suggestedSlider" ref="suggestedSlider">
+        <ul id="postList" :ref="'postList'" class="postList">
           <li
             v-for="(post, index) of formattedPosts"
             :key="post.slug"
@@ -112,9 +110,11 @@ export default {
   data() {
     return {
       posts: [],
-      activeSlide: 0,
-      offsets: [],
+      curPos: 0,
       isDesktop: false,
+      rightButton: true,
+      slideWidth: 0,
+      increment: 0,
     }
   },
   computed: {
@@ -143,7 +143,7 @@ export default {
       }))
     },
   },
-  async created() {
+  async mounted() {
     const { data } = await fetchContent(`{
       posts(orderBy: date_DESC, first: 12, ${this.computedWhere}) {
         title
@@ -182,41 +182,50 @@ export default {
 
     this.posts = randomizedPosts
 
-    // This runs the callback AFTER this.posts re-renders the DOM
-    this.$nextTick(function () {
+    this.$nextTick(() => {
+      gsap.registerPlugin(Draggable, InertiaPlugin)
+
       this.setSnapPoints()
+      window.addEventListener("resize", this.setSnapPoints)
     })
-  },
-  mounted() {
-    gsap.registerPlugin(Draggable, InertiaPlugin)
-    window.addEventListener("resize", this.setSnapPoints)
   },
   beforeDestroy() {
     window.removeEventListener("resize", this.setSnapPoints)
   },
   activated() {
-    // window.addEventListener("resize", this.setSnapPoints)
+    window.addEventListener("resize", this.setSnapPoints)
   },
   deactivated() {
     window.removeEventListener("resize", this.setSnapPoints)
   },
   methods: {
     resetSlider() {
-      this.activeSlide = 0
       gsap.to(this.$refs.postList, { x: 0 })
     },
     setSnapPoints() {
       this.resetSlider()
       this.isDesktop = window.innerWidth >= 1024
 
-      const newOffsets = []
+      const suggestedSlider = this.$refs.suggestedSlider
+
+      const slideWidth = this.isDesktop
+        ? Math.round(suggestedSlider.offsetWidth / 3)
+        : Math.round(suggestedSlider.offsetWidth)
+
+      this.slideWidth = slideWidth
+      this.increment = this.isDesktop ? 3 * this.slideWidth : this.slideWidth
+
       for (let i = 0; i < this.numSlides; i++) {
         const slide = this.$refs[`post${i}`][0]
-        newOffsets.push(-slide.offsetLeft)
+
+        // set width
+        gsap.set(slide, { width: slideWidth })
       }
-      this.offsets = newOffsets
 
       this.setDraggable()
+    },
+    snapX(x) {
+      return Math.round(x / this.slideWidth) * this.slideWidth
     },
     setDraggable() {
       const that = this
@@ -224,26 +233,30 @@ export default {
         type: "x",
         bounds: "#suggestedSlider",
         inertia: true,
-        snap: that.offsets,
+        snap: {
+          x: that.snapX,
+        },
         onDragEnd() {
-          that.activeSlide = that.offsets.indexOf(this.endX)
+          that.curPos = this.endX
         },
       })
     },
     handleSlide(direction) {
-      const increment = this.isDesktop ? 3 : 1
       if (direction === "left") {
-        const isBeforeFirstPost = this.activeSlide - increment < 0
-        this.activeSlide = isBeforeFirstPost ? 0 : this.activeSlide - increment
+        // if current position is less than a full increment, slide over the difference
+        this.curPos =
+          this.curPos * -1 <= this.increment ? 0 : this.curPos + this.increment
       } else if (direction === "right") {
-        const isAfterLastPost = this.activeSlide + increment >= this.numSlides
-        this.activeSlide = isAfterLastPost
-          ? this.numSlides - 1
-          : this.activeSlide + increment
+        // if current position + 2 * increment greater than full slide, slide over the difference
+        this.curPos =
+          this.curPos * -1 + this.increment * 2 >=
+          this.slideWidth * this.numSlides
+            ? (this.slideWidth * this.numSlides - this.increment) * -1
+            : this.curPos - this.increment
       }
 
       gsap.to(this.$refs.postList, 0.5, {
-        x: this.offsets[this.activeSlide],
+        x: this.curPos,
       })
     },
     computeCities(cities) {
@@ -300,7 +313,7 @@ export default {
     left: -4.5rem;
   }
   @media (min-width: $bp-lg-desktop) {
-    left: -6rem;
+    left: -5rem;
   }
 }
 
@@ -310,7 +323,7 @@ export default {
     right: -4.5rem;
   }
   @media (min-width: $bp-lg-desktop) {
-    right: -6rem;
+    right: -5rem;
   }
 }
 
@@ -330,23 +343,14 @@ export default {
   display: inline-block;
   vertical-align: top;
   white-space: normal;
-  width: 85vw;
   text-align: center;
   margin-bottom: 4rem;
   padding: 0.1rem;
 
-  &:not(:last-child) {
-    margin-right: 1rem;
-  }
-
   @media (min-width: $bp-desktop) {
-    width: calc(28.3vw - 1.6rem);
     text-align: left;
     margin-bottom: 6rem;
-
-    &:not(:last-child) {
-      margin-right: 2rem;
-    }
+    padding: 0.1rem 1rem;
   }
 }
 
