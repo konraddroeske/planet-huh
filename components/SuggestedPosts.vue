@@ -345,11 +345,12 @@ export default {
   white-space: normal;
   text-align: center;
   margin-bottom: 4rem;
+  padding: 0.1rem;
 
   @media (min-width: $bp-desktop) {
     text-align: left;
     margin-bottom: 6rem;
-    padding: 0 1rem;
+    padding: 0.1rem 1rem;
   }
 }
 
