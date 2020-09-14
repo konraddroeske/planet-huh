@@ -175,9 +175,9 @@ export default {
   env: {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
   },
-  // generate: {
-  //   routes: dynamicRoutes,
-  // },
+  generate: {
+    routes: dynamicRoutes,
+  },
   // router: {
   //   middleware: 'isMobile',
   // },
