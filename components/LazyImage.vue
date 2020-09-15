@@ -1,10 +1,14 @@
 <template>
+  <!-- <picture>
+    <source :srcset="computedSrc" type="image/webp" />
+    <source :srcset="computedSrc" type="image/jpeg" /> -->
   <v-lazy-image
     :src="computedSrc"
     :src-placeholder="srcPlaceholder"
     :alt="alt"
     @load="onLoaded"
   />
+  <!-- </picture> -->
 </template>
 
 <script>
@@ -44,7 +48,9 @@ export default {
       return str.replace(/\/$/, "")
     },
     splitBySlash(str) {
-      return str.split(/(?<!\/)\/(?!\/)/)
+      const split = [...str.split("/")]
+
+      return [split.splice(0, 3).join("/"), split[0]]
     },
     joinBySlash(...args) {
       return args.join("/")
@@ -59,9 +65,11 @@ export default {
 
       if (src.includes(resizeQuery)) {
         const [root, , output, id] = splitBySlash(src)
+
         return removeTrailingSlash(joinBySlash(root, idealResize, output, id))
       } else {
         const [root, output, id] = splitBySlash(src)
+
         return removeTrailingSlash(joinBySlash(root, idealResize, output, id))
       }
     },
