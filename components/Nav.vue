@@ -1565,7 +1565,7 @@ export default {
   }
 
   .navFeedContainer {
-    bottom: 10vh;
+    bottom: 17vh;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
@@ -1580,7 +1580,7 @@ export default {
 @media (pointer: none) and (min-height: 750px),
   (pointer: coarse) and (min-height: 750px) {
   .navFeedContainer {
-    bottom: 17vh;
+    // bottom: 17vh;
   }
 }
 
