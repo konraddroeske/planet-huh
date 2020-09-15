@@ -1577,10 +1577,10 @@ export default {
   }
 }
 
-@media (pointer: none) and (min-height: 800px),
-  (pointer: coarse) and (min-height: 800px) {
+@media (pointer: none) and (min-height: 750px),
+  (pointer: coarse) and (min-height: 750px) {
   .navFeedContainer {
-    bottom: 20vh;
+    bottom: 17vh;
   }
 }
 
