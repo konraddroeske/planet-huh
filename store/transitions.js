@@ -14,6 +14,8 @@ export const state = () => ({
   addResize: null,
   removeResize: null,
   scrollTime: 0.4,
+  addHandleNavListeners: null,
+  removeHandleNavListeners: null,
 })
 
 export const actions = {
@@ -23,9 +25,10 @@ export const actions = {
 
     const navContainerTl = gsap.timeline({
       onComplete: () => {
-        state.pause(400)
+        state.pause(0)
         state.addResize()
         state.removeNavClick()
+        state.addHandleNavListeners()
       },
     })
     const navTime = 1
@@ -104,6 +107,7 @@ export const actions = {
     commit("setNavSize", true)
     commit("clearResizeTimer")
     state.removeResize()
+    state.removeHandleNavListeners()
     state.play()
 
     if (state.isMobile) {
@@ -257,5 +261,11 @@ export const mutations = {
   },
   setRemoveResize(state, fn) {
     state.removeResize = fn
+  },
+  setAddHandleNavListeners(state, fn) {
+    state.addHandleNavListeners = fn
+  },
+  setRemoveHandleNavListeners(state, fn) {
+    state.removeHandleNavListeners = fn
   },
 }
