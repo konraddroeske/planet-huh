@@ -1565,7 +1565,7 @@ export default {
   }
 
   .navFeedContainer {
-    bottom: 10vh;
+    bottom: 15vh;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
