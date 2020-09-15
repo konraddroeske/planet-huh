@@ -14,6 +14,7 @@
 
 <script>
 import { mapActions, mapMutations } from "vuex"
+import gsap from "gsap"
 import Wrapper from "@/components/Wrapper"
 export default {
   components: {
@@ -34,6 +35,10 @@ export default {
     }),
     async routeFilter(filter) {
       this.resetFilters()
+      gsap.to(window, 0.4, {
+        scrollTo: 0,
+        ease: "power4.out",
+      })
 
       let queries = []
       filter ? (queries = await this.getQueries(filter)) : (queries = [])

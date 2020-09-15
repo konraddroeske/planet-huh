@@ -196,6 +196,11 @@ export default {
       getQueries: "categories/getQueries",
     }),
     async routeFilter(filter) {
+      gsap.to(window, 0.4, {
+        scrollTo: 0,
+        ease: "power4.out",
+      })
+
       let queries = []
       filter ? (queries = await this.getQueries(filter)) : (queries = [])
 

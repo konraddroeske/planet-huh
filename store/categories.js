@@ -142,7 +142,6 @@ export const actions = {
     const moodCategories = []
 
     if (state.filters.length > 0) {
-      // create city, mood, sense arrays
       const city = []
       const mood = []
       const sense = []
