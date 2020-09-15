@@ -1551,8 +1551,8 @@ export default {
 @media (pointer: none), (pointer: coarse) {
   .navContainer {
     position: fixed;
-    top: 5rem;
-    bottom: 5rem;
+    top: 10vh;
+    bottom: 10vh;
   }
 
   .scene {
