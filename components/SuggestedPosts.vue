@@ -4,7 +4,7 @@
       <h2 class="title">You Might Like</h2>
 
       <ButtonArrow
-        v-if="curPos < 0"
+        v-if="curPos < -tolerance"
         class="leftArrow"
         @clicked="handleSlide('left')"
       >
@@ -12,7 +12,7 @@
         <LeftArrow />
       </ButtonArrow>
       <ButtonArrow
-        v-if="curPos > (slideWidth * numSlides - increment) * -1"
+        v-if="curPos > (slideWidth * numSlides - increment) * -1 + tolerance"
         class="rightArrow"
         @clicked="handleSlide('right')"
       >
@@ -115,6 +115,7 @@ export default {
       rightButton: true,
       slideWidth: 0,
       increment: 0,
+      tolerance: 10,
     }
   },
   computed: {
@@ -143,7 +144,7 @@ export default {
       }))
     },
   },
-  async mounted() {
+  async activated() {
     const { data } = await fetchContent(`{
       posts(orderBy: date_DESC, first: 12, ${this.computedWhere}) {
         title
@@ -186,15 +187,17 @@ export default {
       gsap.registerPlugin(Draggable, InertiaPlugin)
 
       this.setSnapPoints()
+      console.log("mounted")
       window.addEventListener("resize", this.setSnapPoints)
     })
   },
-  beforeDestroy() {
-    window.removeEventListener("resize", this.setSnapPoints)
-  },
-  activated() {
-    window.addEventListener("resize", this.setSnapPoints)
-  },
+  // beforeDestroy() {
+  //   window.removeEventListener("resize", this.setSnapPoints)
+  // },
+  // activated() {
+  //   console.log("activated")
+  //   window.addEventListener("resize", this.setSnapPoints)
+  // },
   deactivated() {
     window.removeEventListener("resize", this.setSnapPoints)
   },

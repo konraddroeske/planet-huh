@@ -29,6 +29,7 @@ $z-fixed: 30;
 $z-filters: 40;
 
 // Font Size
+$font-disclaimer: 0.7rem;
 $font-x-sm: 0.8rem;
 $font-sm: 1rem;
 $font-md: 1.5rem;
@@ -114,4 +115,8 @@ img {
   @media (min-width: $bp-desktop) {
     font-size: 1rem;
   }
+}
+
+.italic {
+  font-style: italic;
 }

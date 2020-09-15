@@ -12,6 +12,12 @@ const dynamicRoutes = async () => {
         }
       }`)
 
+  console.log(
+    data.data.posts
+      .map((post) => `/post/${post.slug}`)
+      .concat(data.data.staticPages.map((page) => `/${page.slug}`))
+  )
+
   return data.data.posts
     .map((post) => `/post/${post.slug}`)
     .concat(data.data.staticPages.map((page) => `/${page.slug}`))
