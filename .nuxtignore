@@ -1,5 +1,5 @@
 # ignore layout foo.vue
-layouts/landing.vue
+# layouts/landing.vue
 
 # ignore page bar.vue
-pages/landing.vue
+# pages/landing.vue
