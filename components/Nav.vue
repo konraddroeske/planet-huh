@@ -45,6 +45,7 @@ export default {
       return this.$route.fullPath === "/"
     },
     isMobile() {
+      console.log(this.$device.isMobile)
       return this.$device.isMobile
     },
     isNavLarge() {
@@ -1483,6 +1484,8 @@ export default {
   right: 0;
   height: 100vh;
   // z-index: $z-modal;
+  // padding: env(safe-area-inset-top) env(safe-area-inset-right)
+  //   env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .navContainer {
@@ -1533,6 +1536,11 @@ export default {
 }
 
 @media (pointer: none), (pointer: coarse) {
+  .nav3d {
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+      env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
   .navContainer {
     position: fixed;
     top: 5rem;
