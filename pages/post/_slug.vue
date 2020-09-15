@@ -10,9 +10,9 @@
     <ArtistCredits :artists="post.artist" />
     <SocialShare :title="post.title" link="" />
     <SuggestedPosts
-      :city="{ name: post.city[0].name, filterType: 'exclude' }"
-      :sense="{ name: post.sense[0].name, filterType: 'exclude' }"
-      :mood="{ name: post.mood.mood, filterType: 'exclude' }"
+      :city="{ name: city, filterType: 'exclude' }"
+      :sense="{ name: sense, filterType: 'exclude' }"
+      :mood="{ name: mood, filterType: 'exclude' }"
     />
     <Footer />
   </div>
@@ -73,6 +73,15 @@ export default {
         imageSrc: coverImage.url,
         content: content.raw.children,
       }
+    },
+    city() {
+      return this.post.city[0] ? this.post.city[0].name : ""
+    },
+    sense() {
+      return this.post.sense[0] ? this.post.sense[0].name : ""
+    },
+    mood() {
+      return this.post.mood ? this.post.mood.mood : ""
     },
   },
 

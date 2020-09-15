@@ -13,6 +13,7 @@ export const state = () => ({
   resizeTimer: null,
   addResize: null,
   removeResize: null,
+  scrollTime: 0.4,
 })
 
 export const actions = {
@@ -46,13 +47,12 @@ export const actions = {
   },
   setNavLeave({ state, commit }, startRouting) {
     const navContainerTl = gsap.timeline()
-    const scrollTime = 0.4
     const navTime = 1
 
     if (state.isMobile) commit("setNavOpen", false)
 
     navContainerTl
-      .to(window, scrollTime, {
+      .to(window, state.scrollTime, {
         scrollTo: 0,
         ease: "power4.out",
         onComplete: () => {
@@ -90,10 +90,9 @@ export const actions = {
         done()
       },
     })
-    const scrollTime = 0.4
 
     navContainerTl
-      .to(el, scrollTime, {
+      .to(el, state.scrollTime, {
         autoAlpha: 0,
         ease: "power4.out",
       })
