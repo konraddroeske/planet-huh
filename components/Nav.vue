@@ -1484,8 +1484,6 @@ export default {
   right: 0;
   height: 100vh;
   // z-index: $z-modal;
-  // padding: env(safe-area-inset-top) env(safe-area-inset-right)
-  //   env(safe-area-inset-bottom) env(safe-area-inset-left);
 }
 
 .navContainer {
@@ -1536,11 +1534,6 @@ export default {
 }
 
 @media (pointer: none), (pointer: coarse) {
-  .nav3d {
-    padding: env(safe-area-inset-top) env(safe-area-inset-right)
-      env(safe-area-inset-bottom) env(safe-area-inset-left);
-  }
-
   .navContainer {
     position: fixed;
     top: 5rem;
@@ -1566,6 +1559,7 @@ export default {
     width: 80%;
     display: flex;
     justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
