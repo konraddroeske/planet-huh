@@ -45,7 +45,6 @@ export default {
       return this.$route.fullPath === "/"
     },
     isMobile() {
-      console.log(this.$device.isMobile)
       return this.$device.isMobile
     },
     isNavLarge() {
@@ -1545,12 +1544,12 @@ export default {
   }
 
   .toggleContainer {
-    top: 5rem !important;
+    top: 10vh !important;
     bottom: auto !important;
   }
 
   .navFeedContainer {
-    bottom: 5rem;
+    bottom: 10vh;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
@@ -1559,7 +1558,6 @@ export default {
     width: 80%;
     display: flex;
     justify-content: center;
-    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 

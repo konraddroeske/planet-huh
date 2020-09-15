@@ -2,10 +2,10 @@
   <nav>
     <ul :class="`navList-${variant}`">
       <li :class="`navItem-${variant}`">
-        <nuxt-link :to="'contact'">Contact</nuxt-link>
+        <nuxt-link :to="'/contact'">Contact</nuxt-link>
       </li>
       <li v-for="slug in slugs" :key="slug.slug" :class="`navItem-${variant}`">
-        <nuxt-link :to="slug.slug">
+        <nuxt-link :to="`/${slug.slug}`">
           {{ slug.shortTitle }}
         </nuxt-link>
       </li>

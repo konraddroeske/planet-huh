@@ -1,14 +1,10 @@
 <template>
-  <!-- <picture>
-    <source :srcset="computedSrc" type="image/webp" />
-    <source :srcset="computedSrc" type="image/jpeg" /> -->
   <v-lazy-image
     :src="computedSrc"
     :src-placeholder="srcPlaceholder"
     :alt="alt"
     @load="onLoaded"
   />
-  <!-- </picture> -->
 </template>
 
 <script>
@@ -49,8 +45,13 @@ export default {
     },
     splitBySlash(str) {
       const split = [...str.split("/")]
+      const arr = [split.splice(0, 3).join("/")]
 
-      return [split.splice(0, 3).join("/"), split[0]]
+      for (let i = 0; i < split.length; i++) {
+        arr.push(split[i])
+      }
+
+      return arr
     },
     joinBySlash(...args) {
       return args.join("/")
