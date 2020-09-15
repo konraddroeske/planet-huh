@@ -45,6 +45,7 @@ export default {
       return this.$route.fullPath === "/"
     },
     isMobile() {
+      console.log(this.$device.isMobile)
       return this.$device.isMobile
     },
     isNavLarge() {
@@ -1558,6 +1559,7 @@ export default {
     width: 80%;
     display: flex;
     justify-content: center;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 }
 
