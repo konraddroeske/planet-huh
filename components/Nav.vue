@@ -37,6 +37,7 @@ export default {
       currentNav: null,
       observer: null,
       intersected: false,
+      initialPlay: true,
     }
   },
 
@@ -66,7 +67,9 @@ export default {
       if (nav.isIntersecting) {
         this.$store.state.transitions.play()
       } else {
-        this.$store.state.transitions.pause(0)
+        !this.isIndex
+          ? this.$store.state.transitions.pause(400)
+          : this.$store.state.transitions.pause(0)
       }
     })
 
@@ -77,6 +80,16 @@ export default {
       this.$store.dispatch("transitions/setNavStyle", isMobile)
     }
 
+    // add listener functions to vuex
+    this.$store.commit(
+      "transitions/setAddHandleNavListeners",
+      this.addHandleNavListeners
+    )
+    this.$store.commit(
+      "transitions/setRemoveHandleNavListeners",
+      this.removeHandleNavListeners
+    )
+
     this.initThree()
   },
   beforeDestroy() {
@@ -84,6 +97,16 @@ export default {
     this.observer.disconnect()
   },
   methods: {
+    addHandleNavListeners() {
+      const nav = document.querySelector("#navContainer")
+      nav.addEventListener("click", this.handleNav, false)
+      nav.addEventListener("touchstart", this.handleNav, false)
+    },
+    removeHandleNavListeners() {
+      const nav = document.querySelector("#navContainer")
+      nav.removeEventListener("click", this.handleNav, false)
+      nav.removeEventListener("touchstart", this.handleNav, false)
+    },
     onDestroy() {
       if (!this.isNavLarge) {
         const nav = document.querySelector("#navContainer")
@@ -94,25 +117,18 @@ export default {
     setNavSmall() {
       this.$store.dispatch("transitions/setNavSmall")
       this.$store.dispatch("transitions/setNavContainerSmall")
-      const nav = document.querySelector("#navContainer")
-      nav.addEventListener("click", this.handleNav, false)
-      nav.addEventListener("touchstart", this.handleNav, false)
     },
     setNavLarge() {
       if (this.isIndex) {
         this.$store.dispatch("transitions/setNavLarge")
         this.$store.dispatch("transitions/setNavContainerLarge")
+      } else {
+        this.$store.state.transitions.removeHandleNavListeners()
       }
-
-      const nav = document.querySelector("#navContainer")
-      nav.removeEventListener("click", this.handleNav, false)
-      nav.removeEventListener("touchstart", this.handleNav, false)
     },
     handleNav() {
-      if (this.isNavLarge) {
-        this.setNavSmall()
-      } else {
-        this.setNavLarge()
+      if (!gsap.isTweening("#navContainer")) {
+        this.isNavLarge ? this.setNavSmall() : this.setNavLarge()
       }
     },
     initThree() {
@@ -126,7 +142,7 @@ export default {
 
       const playAnimation = () => {
         this.$store.commit("transitions/setIsPlay", true)
-        render()
+        requestAnimationFrame(render)
       }
 
       this.$store.commit("transitions/setPause", pauseAnimation)
@@ -1398,7 +1414,7 @@ export default {
       }
 
       const render = () => {
-        console.log("rendering")
+        // console.log("rendering")
 
         if (
           !this.$store.state.transitions.isPlay &&
@@ -1433,7 +1449,7 @@ export default {
         renderer.render(scene, camera)
       }
 
-      requestAnimationFrame(render)
+      playAnimation()
 
       // RENDER ON RESIZE
 
@@ -1525,7 +1541,7 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
-  z-index: $z-modal;
+  z-index: $z-filters;
 }
 
 .navFeedContainer {
@@ -1535,8 +1551,8 @@ export default {
 @media (pointer: none), (pointer: coarse) {
   .navContainer {
     position: fixed;
-    top: 5rem;
-    bottom: 5rem;
+    top: 10vh;
+    bottom: 10vh;
   }
 
   .scene {
