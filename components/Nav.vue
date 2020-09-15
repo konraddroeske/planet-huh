@@ -46,7 +46,7 @@ export default {
       return this.$route.fullPath === "/"
     },
     isMobile() {
-      return this.$device.isMobile
+      return this.$device.isMobileOrTablet
     },
     isNavLarge() {
       return this.$store.state.transitions.isNavLarge
@@ -76,7 +76,7 @@ export default {
     this.observer.observe(this.$refs.navContainer)
 
     if (!this.isIndex) {
-      const isMobile = window.$nuxt.$device.isMobile
+      const isMobile = window.$device.isMobileOrTablet
       this.$store.dispatch("transitions/setNavStyle", isMobile)
     }
 
@@ -1565,7 +1565,7 @@ export default {
   }
 
   .navFeedContainer {
-    bottom: 15vh;
+    bottom: 10vh;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
@@ -1574,6 +1574,13 @@ export default {
     width: 80%;
     display: flex;
     justify-content: center;
+  }
+}
+
+@media (pointer: none) and (min-height: 800px),
+  (pointer: coarse) and (min-height: 800px) {
+  .navFeedContainer {
+    bottom: 20vh;
   }
 }
 

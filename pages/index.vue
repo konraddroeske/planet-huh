@@ -42,7 +42,7 @@ export default {
   },
   computed: {
     isMobile() {
-      return this.$device.isMobile
+      return this.$device.isMobileOrTablet
     },
     isOpen() {
       return this.$store.state.isOpen

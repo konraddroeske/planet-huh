@@ -23,7 +23,7 @@ export default {
     modal: (state) => state.categories.modal,
   }),
   mounted() {
-    this.$store.commit("transitions/setMobile", this.$device.isMobile)
+    this.$store.commit("transitions/setMobile", this.$device.isMobileOrTablet)
   },
 }
 </script>
