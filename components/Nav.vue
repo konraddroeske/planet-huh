@@ -1565,22 +1565,15 @@ export default {
   }
 
   .navFeedContainer {
-    bottom: 17vh;
+    top: 80vh;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
     z-index: $z-modal;
     display: block;
-    width: 80%;
+    width: 16.5rem;
     display: flex;
     justify-content: center;
-  }
-}
-
-@media (pointer: none) and (min-height: 750px),
-  (pointer: coarse) and (min-height: 750px) {
-  .navFeedContainer {
-    // bottom: 17vh;
   }
 }
 
