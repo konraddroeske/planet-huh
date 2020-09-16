@@ -11,7 +11,7 @@
 
       <div class="secondRow">
         <PageNav variant="dark" />
-        <SearchBar variant="dark" />
+        <SearchBar variant="dark" @onSubmit="routeFilter" />
       </div>
 
       <div class="thirdRow">
@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import { mapActions, mapMutations } from "vuex"
 import gsap from "gsap"
 import Logo from "./Logo"
 import CategoryNav from "./CategoryNav"
@@ -122,6 +123,25 @@ export default {
         autoAlpha: 1,
       }
     )
+  },
+  methods: {
+    ...mapActions({
+      getQueries: "categories/getQueries",
+    }),
+    ...mapMutations({
+      resetFilters: "categories/resetFilters",
+    }),
+    async routeFilter(filter) {
+      this.resetFilters()
+
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "/categories",
+        query: { filters: queries },
+      })
+    },
   },
 }
 </script>

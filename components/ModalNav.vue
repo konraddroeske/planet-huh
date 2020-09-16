@@ -55,6 +55,7 @@ export default {
       }
     },
   },
+
   methods: {
     toggleModal() {
       if (this.isOpen) {
@@ -88,7 +89,6 @@ export default {
       resetFilters: "categories/resetFilters",
     }),
     async routeFilter(filter) {
-      // clear filters
       this.resetFilters()
 
       let queries = []
@@ -161,6 +161,18 @@ label[for="menuButton"] {
   }
 }
 
+@media (pointer: none), (pointer: coarse) {
+  label[for="menuButton"] {
+    &:hover {
+      .menuIcon,
+      .menuIcon::before,
+      .menuIcon::after {
+        background: $black;
+      }
+    }
+  }
+}
+
 .menuIcon,
 .menuIcon::before,
 .menuIcon::after {
@@ -197,6 +209,7 @@ label[for="menuButton"] {
   bottom: 0;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
+  background-color: $accent;
 }
 
 .sandwichMenu input[type="checkbox"]:checked + label > .menuIcon::after {
@@ -205,5 +218,6 @@ label[for="menuButton"] {
   top: 0;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
+  background-color: $accent;
 }
 </style>
