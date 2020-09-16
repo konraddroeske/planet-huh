@@ -187,17 +187,9 @@ export default {
       gsap.registerPlugin(Draggable, InertiaPlugin)
 
       this.setSnapPoints()
-      console.log("mounted")
       window.addEventListener("resize", this.setSnapPoints)
     })
   },
-  // beforeDestroy() {
-  //   window.removeEventListener("resize", this.setSnapPoints)
-  // },
-  // activated() {
-  //   console.log("activated")
-  //   window.addEventListener("resize", this.setSnapPoints)
-  // },
   deactivated() {
     window.removeEventListener("resize", this.setSnapPoints)
   },
