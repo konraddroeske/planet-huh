@@ -2,7 +2,7 @@
   <ul :class="`socialList-${variant}`">
     <li>
       <a
-        href="https://facebook.com"
+        href="https://facebook.com/planet.huh"
         target="_blank"
         rel="canonical noopener noreferrer"
       >
@@ -12,7 +12,7 @@
     </li>
     <li>
       <a
-        href="https://twitter.com"
+        href="https://twitter.com/planet.huh"
         target="_blank"
         rel="canonical noopener noreferrer"
       >
@@ -22,7 +22,7 @@
     </li>
     <li>
       <a
-        href="https://instagram.com"
+        href="https://instagram.com/planet.huh"
         target="_blank"
         rel="canonical noopener noreferrer"
       >
