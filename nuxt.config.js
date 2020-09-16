@@ -12,16 +12,15 @@ const dynamicRoutes = async () => {
         }
       }`)
 
-  console.log(
-    data.data.posts
-      .map((post) => `/post/${post.slug}`)
-      .concat(data.data.staticPages.map((page) => `/${page.slug}`))
-  )
-
   return data.data.posts
     .map((post) => `/post/${post.slug}`)
     .concat(data.data.staticPages.map((page) => `/${page.slug}`))
 }
+
+const title = "Planet Huh"
+const description =
+  "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde eveniet veritatis possimus ab obcaecati, a excepturi quaerat distinctio atque pariatur tenetur voluptatibus nisi alias, est aspernatur? Sed quas magnam a?"
+const img = "/banner.jpg"
 
 export default {
   /*
@@ -39,18 +38,14 @@ export default {
    ** See https://nuxtjs.org/api/configuration-head
    */
   head: {
-    title: "Planet Huh",
-    description:
-      "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde eveniet veritatis possimus ab obcaecati, a excepturi quaerat distinctio atque pariatur tenetur voluptatibus nisi alias, est aspernatur? Sed quas magnam a?",
-    img: "/banner.jpg",
+    title,
     meta: [
       { charset: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       {
         hid: "description",
         name: "description",
-        content:
-          "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde eveniet veritatis possimus ab obcaecati, a excepturi quaerat distinctio atque pariatur tenetur voluptatibus nisi alias, est aspernatur? Sed quas magnam a?",
+        content: description,
       },
       {
         hid: "twitter:card",
@@ -60,37 +55,47 @@ export default {
       {
         hid: "twitter:title",
         name: "twitter:title",
-        content: this.title,
+        content: title,
       },
       {
         hid: "twitter:description",
         name: "twitter:description",
-        content: this.description,
+        content: description,
       },
       {
         hid: "twitter:image",
         name: "twitter:image",
-        content: this.img,
+        content: img,
+      },
+      {
+        hid: "twitter:image:alt",
+        name: "twitter:image:alt",
+        content: "Planet huh logo and planets",
       },
       {
         hid: "og:image",
         property: "og:image",
-        content: this.img,
+        content: img,
       },
       {
         hid: "og:site_name",
         property: "og:site_name",
-        content: this.title,
+        content: title,
       },
-      { hid: "og:title", property: "og:title", content: this.title },
+      { hid: "og:title", property: "og:title", content: title },
       {
         hid: "og:description",
         property: "og:description",
-        content: this.description,
+        content: description,
+      },
+      {
+        hid: "og:url",
+        property: "og:url",
+        content: "http://www.planethuh.com",
       },
     ],
     link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
+      { rel: "icon", type: "image/x-icon", href: "/faviconBlk.ico" },
       {
         rel: "stylesheet",
         href:

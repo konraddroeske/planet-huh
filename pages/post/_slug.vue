@@ -83,6 +83,12 @@ export default {
     mood() {
       return this.post.mood ? this.post.mood.mood : ""
     },
+    img() {
+      return this.post.imageSrc
+    },
+    description() {
+      return this.post.excerpt
+    },
   },
 
   activated() {
@@ -93,13 +99,6 @@ export default {
   },
 
   methods: {
-    setData(data, coverImage, content) {
-      this.post = {
-        ...data.data.post,
-        imageSrc: coverImage.url,
-        content: content.raw.children,
-      }
-    },
     onMount() {
       const nav = document.querySelector("#navContainer")
       nav.addEventListener("click", this.route, false)
@@ -121,9 +120,49 @@ export default {
       title: `Planet Huh${this.title ? " | " + this.title : ""}`,
       meta: [
         {
+          hid: "description",
+          name: "description",
+          content: this.description,
+        },
+        {
           hid: "og:title",
           property: "og:title",
           content: this.title,
+        },
+        {
+          hid: "og:image",
+          property: "og:image",
+          content: this.img,
+        },
+        {
+          hid: "og:description",
+          property: "og:description",
+          content: this.description,
+        },
+        {
+          hid: "og:url",
+          property: "og:url",
+          content: `http://www.planethuh.com/${this.$route.params.slug}`,
+        },
+        {
+          hid: "twitter:title",
+          name: "twitter:title",
+          content: this.title,
+        },
+        {
+          hid: "twitter:image",
+          name: "twitter:image",
+          content: this.img,
+        },
+        {
+          hid: "twitter:description",
+          name: "twitter:description",
+          content: this.description,
+        },
+        {
+          hid: "twitter:image:alt",
+          name: "twitter:image:alt",
+          content: this.description,
         },
       ],
     }
