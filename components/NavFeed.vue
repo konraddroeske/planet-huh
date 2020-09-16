@@ -2,17 +2,11 @@
   <button class="downArrow" @click="onClick">
     <div class="explore">Explore</div>
     <slot />
-    <!-- <DownArrow /> -->
   </button>
 </template>
 
 <script>
-// import DownArrow from '~/assets/icons/downArrow.svg?inline'
-
 export default {
-  components: {
-    // DownArrow,
-  },
   methods: {
     onClick(event) {
       this.$emit("clicked")
@@ -30,7 +24,7 @@ export default {
   font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
-  font-size: 3rem;
+  font-size: 2.5rem;
   line-height: 1;
   position: relative;
 
