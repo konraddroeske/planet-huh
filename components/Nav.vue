@@ -1425,8 +1425,6 @@ export default {
       }
 
       const render = () => {
-        // console.log("rendering")
-
         if (
           !this.$store.state.transitions.isPlay &&
           !this.$store.state.transitions.isResize
@@ -1465,7 +1463,6 @@ export default {
       // RENDER ON RESIZE
 
       const resizeTimerFn = () => {
-        console.log("resize pause")
         this.$store.commit("transitions/clearResizeTimer")
         this.$store.commit("transitions/setIsResize", false)
         this.$store.state.transitions.pause(0)
