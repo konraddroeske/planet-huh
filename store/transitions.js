@@ -16,6 +16,7 @@ export const state = () => ({
   scrollTime: 0.4,
   addHandleNavListeners: null,
   removeHandleNavListeners: null,
+  clearTarget: null,
 })
 
 export const actions = {
@@ -116,7 +117,6 @@ export const actions = {
 
     const navContainerTl = gsap.timeline({
       onComplete: () => {
-        // state.play()
         state.addNavClick()
       },
     })
@@ -267,5 +267,8 @@ export const mutations = {
   },
   setRemoveHandleNavListeners(state, fn) {
     state.removeHandleNavListeners = fn
+  },
+  setClearTarget(state, fn) {
+    state.clearTarget = fn
   },
 }
