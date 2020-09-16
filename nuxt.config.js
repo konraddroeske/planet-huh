@@ -184,7 +184,4 @@ export default {
   generate: {
     routes: dynamicRoutes,
   },
-  // router: {
-  //   middleware: 'isMobile',
-  // },
 }

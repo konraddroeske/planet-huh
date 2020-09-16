@@ -19,11 +19,16 @@ import Header from "@/components/Header"
 import Nav from "@/components/Nav"
 export default {
   components: { Header, Nav },
-  computed: mapState({
-    modal: (state) => state.categories.modal,
-  }),
+  computed: {
+    ...mapState({
+      modal: (state) => state.categories.modal,
+    }),
+    isMobile() {
+      return this.$device.isMobileOrTablet
+    },
+  },
   mounted() {
-    this.$store.commit("transitions/setMobile", this.$device.isMobileOrTablet)
+    this.$store.commit("transitions/setMobile", this.isMobile)
   },
 }
 </script>

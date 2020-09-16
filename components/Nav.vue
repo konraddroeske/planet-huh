@@ -76,8 +76,7 @@ export default {
     this.observer.observe(this.$refs.navContainer)
 
     if (!this.isIndex) {
-      const isMobile = window.$device.isMobileOrTablet
-      this.$store.dispatch("transitions/setNavStyle", isMobile)
+      this.$store.dispatch("transitions/setNavStyle", this.isMobile)
     }
 
     // add listener functions to vuex
