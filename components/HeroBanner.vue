@@ -24,13 +24,25 @@
           <span class="accentText categoriesTitle">Filed Under:</span>
           <ul class="categories">
             <li v-if="city.length > 0" class="category">
-              <span class="visuallyHidden">City: </span>{{ nameFormatted }}
+              <span class="visuallyHidden">City: </span>
+              <nuxt-link
+                :to="`/categories?filters=${nameFormatted.toLowerCase()}`"
+                >{{ nameFormatted }}</nuxt-link
+              >
             </li>
             <li v-if="sense.length > 0" class="category">
-              <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
+              <span class="visuallyHidden">Sense: </span>
+              <nuxt-link
+                :to="`/categories?filters=${senseFormatted.toLowerCase()}`"
+                >{{ senseFormatted }}</nuxt-link
+              >
             </li>
             <li v-if="mood" class="category">
-              <span class="visuallyHidden">Mood: </span>{{ moodFormatted }}
+              <span class="visuallyHidden">Mood: </span>
+              <nuxt-link
+                :to="`/categories?filters=${moodFormatted.toLowerCase()}`"
+                >{{ moodFormatted }}</nuxt-link
+              >
             </li>
           </ul>
         </div>
@@ -220,6 +232,17 @@ export default {
     position: absolute;
     left: -0.75rem;
     top: 0;
+  }
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
   }
 
   @media (min-width: $bp-desktop) {
