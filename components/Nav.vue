@@ -114,6 +114,7 @@ export default {
       }
     },
     setNavSmall() {
+      this.$store.state.transitions.clearTarget()
       this.$store.dispatch("transitions/setNavSmall")
       this.$store.dispatch("transitions/setNavContainerSmall")
     },
@@ -238,6 +239,18 @@ export default {
         }
       }
 
+      const clearTarget = () => {
+        rayMouse.x = null
+        rayMouse.y = null
+        intersects = null
+        currentTarget = null
+        setTarget(null)
+        removeTitle()
+        removeSprites()
+      }
+
+      this.$store.commit("transitions/setClearTarget", clearTarget)
+
       const navRouterMobile = (e) => {
         // Update Raycaster
         const rect = renderer.domElement.getBoundingClientRect()
@@ -257,8 +270,8 @@ export default {
             path: "categories",
             query: { filters: currentTarget.name },
           })
-          removeTitle()
-          removeSprites()
+
+          clearTarget()
         }
       }
 
@@ -1178,8 +1191,7 @@ export default {
             query: { filters: currentTarget.name },
           })
 
-          removeTitle()
-          removeSprites()
+          clearTarget()
         }
       }
 
@@ -1453,6 +1465,7 @@ export default {
       // RENDER ON RESIZE
 
       const resizeTimerFn = () => {
+        console.log("resize pause")
         this.$store.commit("transitions/clearResizeTimer")
         this.$store.commit("transitions/setIsResize", false)
         this.$store.state.transitions.pause(0)
