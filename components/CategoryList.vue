@@ -56,27 +56,35 @@ export default {
 ul {
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-auto-rows: 1fr;
 }
 
 li {
   width: 100%;
   margin-bottom: 1rem;
   border: 1px solid $black;
+
+  // display: flex;
+  // align-items: center;
+
+  &:hover {
+    border: 1px solid $accent;
+  }
+
+  &:hover h2 {
+    color: $accent;
+  }
 }
 
-// li:last-child {
-//   margin-bottom: 0;
-// }
-
 .categoryButton {
-  padding: 2rem 1rem 2rem 1rem;
+  padding: 2.5rem 1rem 2.5rem 1rem;
   border: none;
   width: 100%;
+  height: 100%;
   background-color: transparent;
   cursor: pointer;
+  display: flex;
 }
 
 h2 {
@@ -90,8 +98,9 @@ h2 {
 }
 
 @media (min-width: $bp-tablet) {
-  li {
-    width: calc(50% - 1.5%);
+  ul {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 3%;
   }
 
   h2 {
