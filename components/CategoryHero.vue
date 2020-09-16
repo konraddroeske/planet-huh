@@ -64,6 +64,12 @@ export default {
   transform: translateX(-50%);
 }
 
+@media (pointer: none), (pointer: coarse) {
+  .buttonContainer {
+    bottom: 6.5rem;
+  }
+}
+
 @media (min-width: $bp-tablet) {
   .buttonContainer {
     left: 1rem;
