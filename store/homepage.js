@@ -33,21 +33,21 @@ export const actions = {
     try {
       const { data } = await fetchContent(`{
           posts(where: {featured: true}, orderBy: date_DESC) {
-          id
-          slug
-          title
-          headline
-          featured
-          featuredImages {
             id
-            url
-            fileName
-          }
-          artist {
-            name
-            location
-          }
-          date
+            slug
+            title
+            headline
+            featured
+            featuredImages {
+              id
+              url
+              fileName
+            }
+            artist {
+              name
+              location
+            }
+            date
         }
       }`)
 

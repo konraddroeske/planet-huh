@@ -58,8 +58,10 @@ export default {
     }
   },
   computed: {
-    title() {
-      return this.post?.title
+    metaTitle() {
+      return this.post?.title.replace(/(^\w{1})|(\s{1}\w{1})/g, (match) =>
+        match.toUpperCase()
+      )
     },
     ...mapState({
       posts: (state) => state.posts.posts,
@@ -117,7 +119,7 @@ export default {
   },
   head() {
     return {
-      title: `Planet Huh${this.title ? " | " + this.title : ""}`,
+      title: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
       meta: [
         {
           hid: "description",
@@ -127,7 +129,7 @@ export default {
         {
           hid: "og:title",
           property: "og:title",
-          content: this.title,
+          content: this.metaTitle,
         },
         {
           hid: "og:image",
@@ -147,7 +149,7 @@ export default {
         {
           hid: "twitter:title",
           name: "twitter:title",
-          content: this.title,
+          content: this.metaTitle,
         },
         {
           hid: "twitter:image",

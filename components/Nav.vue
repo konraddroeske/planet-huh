@@ -1507,7 +1507,6 @@ export default {
   left: 0;
   right: 0;
   height: 100vh;
-  // z-index: $z-modal;
 }
 
 .navContainer {
@@ -1550,7 +1549,7 @@ export default {
   bottom: 5rem;
   left: 50%;
   transform: translate(-50%, 0);
-  z-index: $z-filters;
+  z-index: $z-modal;
 }
 
 .navFeedContainer {
