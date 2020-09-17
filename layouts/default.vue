@@ -6,7 +6,6 @@
       <Nav />
       <main id="main" class="main">
         <Nuxt keep-alive />
-        <!-- <Footer /> -->
       </main>
     </div>
   </div>
@@ -15,7 +14,6 @@
 <script>
 import { mapState } from "vuex"
 import Header from "@/components/Header"
-// import Footer from "@/components/Footer"
 import Nav from "@/components/Nav"
 export default {
   components: { Header, Nav },

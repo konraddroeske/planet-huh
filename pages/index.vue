@@ -2,7 +2,7 @@
   <div>
     <CTA />
     <CategoryNav variant="gradient" />
-    <FeaturedCollabs />
+    <FeaturedCollabs :posts="featured" />
     <PostsFeed
       :posts="postsTotal"
       :post-limit="postLimit"
@@ -35,7 +35,6 @@ export default {
   async fetch({ store }) {
     if (store.state.homepage.postsFeed.length === 0) {
       await store.dispatch("homepage/getHomepage")
-      await store.dispatch("homepage/getFeatured")
       await store.commit("homepage/resetMaxPosts")
       await store.dispatch("homepage/getSomePosts", 8)
     }
@@ -52,6 +51,10 @@ export default {
     },
     postsTotal() {
       return this.$store.getters["homepage/postsTotal"]
+    },
+    featured() {
+      console.log(this.$store.state.homepage.featured)
+      return this.$store.state.homepage.featured
     },
   },
   activated() {

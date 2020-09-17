@@ -2,6 +2,7 @@
   <div>
     <div class="categories">
       <CategoryHero :title="title" />
+      <FeaturedCollabs v-if="cityCollabs.length > 0" :posts="cityCollabs" />
       <CategoryList v-if="isParentCategory" :categories="categories" />
       <CategoryEmpty v-if="postsTotal.length === 0 && !isFetching" />
       <PostsFeed
@@ -20,6 +21,7 @@ import { mapState } from "vuex"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CategoryHero from "@/components/CategoryHero"
+import FeaturedCollabs from "@/components/FeaturedCollabs"
 import CategoryList from "@/components/CategoryList"
 import CategoryEmpty from "@/components/CategoryEmpty"
 import PostsFeed from "@/components/PostsFeed"
@@ -40,6 +42,7 @@ export default {
   },
   components: {
     CategoryHero,
+    FeaturedCollabs,
     PostsFeed,
     CategoryList,
     CategoryEmpty,
@@ -61,10 +64,19 @@ export default {
       },
       allFilters: (state) => state.categories.allFilters,
       isFetching: (state) => state.categories.isFetching,
+      collabs: (state) => state.posts.collabs,
     }),
+    metaTitle() {
+      return this.title.replace(/(^\w{1})|(\s{1}\w{1})/g, (match) =>
+        match.toUpperCase()
+      )
+    },
     isParentCategory() {
       if (this.title) {
-        return this.allFilters[this.title]?.hasParent === false
+        return (
+          this.allFilters[this.title]?.hasParent === false &&
+          this.title !== "cities"
+        )
       }
 
       return false
@@ -81,6 +93,16 @@ export default {
 
       return null
     },
+    cityCollabs() {
+      return this.collabs.filter((collab) => {
+        if (
+          collab.artist[0].location.toLowerCase() === this.title ||
+          collab.artist[1].location.toLowerCase() === this.title
+        ) {
+          return collab
+        }
+      })
+    },
   },
   watch: {
     $route(to, from) {
@@ -91,6 +113,9 @@ export default {
         )
       }
     },
+  },
+  mounted() {
+    // console.log(this.collabs, this.cityCollabs)
   },
   activated() {
     this.$store.dispatch(
@@ -122,12 +147,12 @@ export default {
   },
   head() {
     return {
-      title: `Planet Huh${this.title ? " | " + this.title : ""}`,
+      title: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
       meta: [
         {
           hid: "og:title",
           property: "og:title",
-          content: this.title,
+          content: this.metaTitle,
         },
       ],
     }

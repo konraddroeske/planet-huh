@@ -1,5 +1,6 @@
 export const actions = {
   async nuxtServerInit({ dispatch }) {
+    await dispatch("homepage/getFeatured")
     await dispatch("posts/getPosts")
     await dispatch("static/getStaticPages")
     await dispatch("nav/getMoods")

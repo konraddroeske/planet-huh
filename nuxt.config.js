@@ -19,7 +19,7 @@ const dynamicRoutes = async () => {
 
 const title = "Planet Huh"
 const description =
-  "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Unde eveniet veritatis possimus ab obcaecati, a excepturi quaerat distinctio atque pariatur tenetur voluptatibus nisi alias, est aspernatur? Sed quas magnam a?"
+  "HUH is a content platform exploring creativity through cities, senses, and moods. Discover multisensory contributions from artists around the planet participating in an evolving experiment in global collaboration."
 const img = "/banner.jpg"
 
 export default {

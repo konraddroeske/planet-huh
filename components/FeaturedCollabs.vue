@@ -1,12 +1,20 @@
 <template>
   <section class="featuredCollabs">
-    <h2 class="title">Featured Collabs</h2>
+    <h2 class="title">
+      {{ posts.length > 1 ? "Featured Collabs" : "Featured Collab" }}
+    </h2>
 
     <div class="buttonContainer">
-      <ButtonArrow class="leftArrow" @clicked="handleSlide(-1)"
+      <ButtonArrow
+        v-if="posts.length > 1"
+        class="leftArrow"
+        @clicked="handleSlide(-1)"
         ><LeftArrow
       /></ButtonArrow>
-      <ButtonArrow class="rightArrow" @clicked="handleSlide(1)"
+      <ButtonArrow
+        v-if="posts.length > 1"
+        class="rightArrow"
+        @clicked="handleSlide(1)"
         ><RightArrow
       /></ButtonArrow>
       <ul class="collabsList">
@@ -40,10 +48,16 @@
                 </p>
               </div>
               <div class="collabsTitle">
-                <h3>
-                  {{ post.artist[0].name }} + {{ post.artist[1].name }}
-                  {{ post.title }}
-                </h3>
+                <div class="artist">
+                  <h3>{{ post.artist[0].name }}</h3>
+                  <span>{{ post.artist[0].location }}</span>
+                </div>
+                <span class="plus">+</span>
+                <div class="artist">
+                  <h3>{{ post.artist[1].name }}</h3>
+                  <span>{{ post.artist[1].location }}</span>
+                </div>
+                <h3 class="title">{{ post.title }}</h3>
               </div>
               <div class="buttonContainer">
                 <Button @clicked="onClick(post.slug)">Explore</Button>
@@ -57,7 +71,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
 import gsap from "gsap"
 import { Draggable, InertiaPlugin } from "gsap/all"
 import { debounce } from "vue-debounce"
@@ -72,6 +85,12 @@ export default {
     ButtonArrow,
     LeftArrow,
     RightArrow,
+  },
+  props: {
+    posts: {
+      type: Array,
+      required: true,
+    },
   },
   data() {
     return {
@@ -88,9 +107,6 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      posts: (state) => state.homepage.featured,
-    }),
     wrap() {
       return this.wrapPartial(-100, (this.posts.length - 1) * 100)
     },
@@ -107,14 +123,14 @@ export default {
       return this.numChars.indexOf(Math.max(...this.numChars))
     },
   },
-  // mounted() {
-  //   this.onMount()
-  // },
-  // beforeDestroy() {
-  //   window.removeEventListener('resize', this.resize)
-  // },
+  mounted() {
+    this.onMount()
+  },
   activated() {
     this.onMount()
+  },
+  beforeDestroy() {
+    window.removeEventListener("resize", this.resize)
   },
   deactivated() {
     window.removeEventListener("resize", this.resize)
@@ -131,36 +147,39 @@ export default {
 
       // SET POSITION
 
-      this.setPosition()
-      this.updateAnimation()
+      if (this.posts.length > 1) {
+        this.setPosition()
 
-      const that = this
+        const that = this
 
-      this.dragInstance = Draggable.create(this.proxyRef, {
-        trigger: ".collabsList",
-        type: "x",
-        // edgeResistance: 0.65,
-        inertia: true,
-        onPress() {
-          that.slideAnimation.kill()
-          this.update()
-        },
-        onDrag: this.updateProgress,
-        onThrowUpdate: this.updateProgress,
-        snap: {
-          x: this.snapX,
-        },
-      })
+        this.updateAnimation()
 
-      this.animation = gsap.to(".collab", 0.8, {
-        xPercent: "+=" + this.numSlides * 100,
-        ease: "none",
-        paused: true,
-        repeat: -1,
-        modifiers: {
-          xPercent: this.wrap,
-        },
-      })
+        this.dragInstance = Draggable.create(this.proxyRef, {
+          trigger: ".collabsList",
+          type: "x",
+          // edgeResistance: 0.65,
+          inertia: true,
+          onPress() {
+            that.slideAnimation.kill()
+            this.update()
+          },
+          onDrag: this.updateProgress,
+          onThrowUpdate: this.updateProgress,
+          snap: {
+            x: this.snapX,
+          },
+        })
+
+        this.animation = gsap.to(".collab", 0.8, {
+          xPercent: "+=" + this.numSlides * 100,
+          ease: "none",
+          paused: true,
+          repeat: -1,
+          modifiers: {
+            xPercent: this.wrap,
+          },
+        })
+      }
 
       this.resize()
 
@@ -264,12 +283,14 @@ export default {
 
         // Set Position of Posts
 
-        gsap.set(this.proxyRef, {
-          x: norm * this.wrapWidth,
-        })
+        if (this.posts.length > 1) {
+          gsap.set(this.proxyRef, {
+            x: norm * this.wrapWidth,
+          })
 
-        this.animateSlides(0)
-        this.slideAnimation.progress(1)
+          this.animateSlides(0)
+          this.slideAnimation.progress(1)
+        }
       }, 400)
 
       resizeDebounced()
@@ -342,7 +363,8 @@ p {
 }
 
 h2,
-h3 {
+h3,
+.plus {
   font-size: 2rem;
   line-height: 1;
 }
@@ -384,12 +406,37 @@ ul {
   }
 
   .content {
-    width: 85%;
-    margin: 2rem auto 0 auto;
+    width: 100%;
+    margin: 2rem 0 0 0;
   }
 
   .collabsTitle {
-    margin: 0.5rem 0 1.5rem 0;
+    margin: 0.5rem 0 0 0;
+
+    .plus {
+      font-size: 2rem;
+      font-weight: $extrabold;
+      margin: 0.5rem 0;
+    }
+
+    span {
+      display: block;
+      width: 100%;
+      font-size: $font-md;
+      font-weight: $medium;
+      text-align: center;
+      text-transform: uppercase;
+    }
+  }
+
+  .artist {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .title {
+    display: block;
+    margin: 1.5rem 0;
   }
 
   .buttonContainer {
@@ -413,6 +460,10 @@ ul {
     .rightImage {
       height: 58vh;
     }
+
+    .collabsTitle {
+      margin: 2rem 0 0 0;
+    }
   }
 }
 
@@ -420,15 +471,6 @@ ul {
   .leftArrow,
   .rightArrow {
     top: 50%;
-  }
-
-  h2 {
-    margin: 1.5rem 0;
-  }
-
-  h2,
-  h3 {
-    font-size: 3rem;
   }
 
   .collabsList {
@@ -463,29 +505,38 @@ ul {
     .content {
       min-width: 280px;
       width: 70%;
-      padding: 4rem 0;
+      padding: 2rem 0;
       margin: 0 auto;
-    }
-
-    .collabsTitle {
-      margin: 2.5rem 0 3rem 0;
     }
   }
 }
 
 @media (min-width: $bp-lg-desktop) {
-  h2,
-  h3 {
-    font-size: 3.5rem;
+  p {
+    font-size: $font-md;
   }
 
-  p {
-    font-size: 1.25rem;
+  h2 {
+    margin: 1.5rem 0;
+  }
+
+  h2,
+  h3,
+  .plus {
+    font-size: 3rem;
   }
 
   .collab {
     .content {
       min-width: 325px;
+    }
+
+    .collabsTitle {
+      margin: 2.5rem 0 3rem 0;
+
+      span {
+        font-size: 2rem;
+      }
     }
   }
 }
