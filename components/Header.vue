@@ -26,6 +26,7 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  pointer-events: none;
 
   @media (min-width: $bp-desktop) {
     padding: 1.5rem 2rem;
@@ -35,5 +36,6 @@ header {
 .logoContainer {
   position: relative;
   z-index: $z-fixed;
+  pointer-events: auto;
 }
 </style>
