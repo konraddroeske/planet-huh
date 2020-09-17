@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="modalNav">
     <div class="sandwichMenu">
       <input
         id="menuButton"
@@ -104,6 +104,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.modalNav {
+  pointer-events: auto;
+}
+
 .modal {
   position: fixed;
   z-index: $z-modal;

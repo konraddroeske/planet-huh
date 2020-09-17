@@ -133,7 +133,11 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     "@nuxtjs/eslint-module",
+    "@nuxtjs/google-analytics",
   ],
+  googleAnalytics: {
+    id: process.env.googleId,
+  },
   /*
    ** Nuxt.js modules
    */
@@ -185,6 +189,7 @@ export default {
   },
   env: {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
+    googleId: process.env.GOOGLE_ANALYTICS_ID,
   },
   generate: {
     routes: dynamicRoutes,
