@@ -187,16 +187,13 @@ export default {
   server: {
     host: "0", // default: localhost
   },
-  // env: {
-  //   previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
-  // },
+  env: {
+    previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
+  },
   publicRuntimeConfig: {
     googleAnalytics: {
       id: process.env.GOOGLE_ANALYTICS_ID,
     },
-  },
-  privateRuntimeConfig: {
-    previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
   },
   generate: {
     routes: dynamicRoutes,
