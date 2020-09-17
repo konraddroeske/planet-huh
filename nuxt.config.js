@@ -1,6 +1,6 @@
 import { fetchContent } from "./utils/api.js"
 
-if (process.env.NODE_ENV !== "production") require("dotenv").config()
+// if (process.env.NODE_ENV !== "production") require("dotenv").config()
 
 const dynamicRoutes = async () => {
   const { data } = await fetchContent(`{
@@ -136,7 +136,7 @@ export default {
     "@nuxtjs/google-analytics",
   ],
   googleAnalytics: {
-    id: process.env.GOOGLE_ANALYTICS_ID,
+    id: "UA-140131824-1",
   },
   /*
    ** Nuxt.js modules
@@ -187,7 +187,15 @@ export default {
   server: {
     host: "0", // default: localhost
   },
-  env: {
+  // env: {
+  //   previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
+  // },
+  publicRuntimeConfig: {
+    googleAnalytics: {
+      id: process.env.GOOGLE_ANALYTICS_ID,
+    },
+  },
+  privateRuntimeConfig: {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
   },
   generate: {
