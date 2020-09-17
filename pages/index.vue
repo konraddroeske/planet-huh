@@ -53,7 +53,6 @@ export default {
       return this.$store.getters["homepage/postsTotal"]
     },
     featured() {
-      console.log(this.$store.state.homepage.featured)
       return this.$store.state.homepage.featured
     },
   },

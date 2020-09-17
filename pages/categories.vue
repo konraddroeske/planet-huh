@@ -114,9 +114,6 @@ export default {
       }
     },
   },
-  mounted() {
-    // console.log(this.collabs, this.cityCollabs)
-  },
   activated() {
     this.$store.dispatch(
       "categories/handleRouteQueries",
