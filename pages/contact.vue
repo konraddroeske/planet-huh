@@ -25,16 +25,18 @@
                 type="text"
                 name="name"
                 label="Name"
-                validation="required|alpha"
                 input-class="inputSmall"
+                :error="nameError ? 'Name is required.' : null"
               />
               <FormulateInput
                 v-model="email"
                 type="email"
                 name="email"
                 label="Email"
-                validation="required|email"
                 input-class="inputSmall"
+                :error="
+                  emailError ? 'E-mail is required and must be valid.' : null
+                "
               />
             </div>
             <FormulateInput
@@ -42,7 +44,11 @@
               type="textarea"
               name="message"
               label="Your Message"
-              validation="required|max:300,length"
+              :error="
+                messageError
+                  ? 'Message is required and must be less than 300 characters.'
+                  : null
+              "
               input-class="inputLarge"
             />
             <FormulateInput type="submit" label="Submit" class="submitButton" />
@@ -106,6 +112,9 @@ export default {
       message: "",
       isSubmitted: false,
       isSuccess: true,
+      nameError: false,
+      emailError: false,
+      messageError: false,
     }
   },
   computed: {
@@ -143,13 +152,29 @@ export default {
       this.name = ""
       this.email = ""
       this.message = ""
+      this.nameError = false
+      this.emailError = false
+      this.messageError = false
+    },
+    nameCheck(name) {
+      const re = /^[a-zA-Z()]+$/
+      console.log(re.test(name))
+      this.nameError = re.test(name)
+    },
+    emailCheck(email) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      this.emailError = re.test(String(email).toLowerCase())
+    },
+    messageCheck(message) {
+      console.log(message.length, message.length < 300)
+      this.messageError = message.length < 300
     },
     handleSubmit() {
-      if (
-        this.name.length > 0 &&
-        this.email.length > 0 &&
-        this.message.length > 0
-      ) {
+      this.nameCheck(this.name)
+      this.emailCheck(this.email)
+      this.messageCheck(this.message)
+
+      if (!this.nameError && !this.emailError && !this.messageError) {
         const formValues = {
           name: this.name,
           email: this.email,
