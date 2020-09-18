@@ -652,6 +652,7 @@ export default {
       {
         const texture = loader.load(globeTexture, (texture) => {
           textureLoaded = true
+          this.$nextTick(() => this.$store.state.finish())
         })
         texture.anisotropy = renderer.capabilities.getMaxAnisotropy()
         const material = new THREE.MeshPhongMaterial({

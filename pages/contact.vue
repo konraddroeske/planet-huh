@@ -25,16 +25,18 @@
                 type="text"
                 name="name"
                 label="Name"
-                validation="required|alpha"
                 input-class="inputSmall"
+                :error="nameError ? 'Name is required.' : null"
               />
               <FormulateInput
                 v-model="email"
                 type="email"
                 name="email"
                 label="Email"
-                validation="required|email"
                 input-class="inputSmall"
+                :error="
+                  emailError ? 'E-mail is required and must be valid.' : null
+                "
               />
             </div>
             <FormulateInput
@@ -42,7 +44,11 @@
               type="textarea"
               name="message"
               label="Your Message"
-              validation="required|max:300,length"
+              :error="
+                messageError
+                  ? 'Message is required and must be less than 300 characters.'
+                  : null
+              "
               input-class="inputLarge"
             />
             <FormulateInput type="submit" label="Submit" class="submitButton" />
@@ -106,6 +112,9 @@ export default {
       message: "",
       isSubmitted: false,
       isSuccess: true,
+      nameError: false,
+      emailError: false,
+      messageError: false,
     }
   },
   computed: {
@@ -143,35 +152,62 @@ export default {
       this.name = ""
       this.email = ""
       this.message = ""
+      this.nameError = false
+      this.emailError = false
+      this.messageError = false
+    },
+    nameCheck(name) {
+      const re = /^[a-zA-Z()]+$/
+      this.nameError = !re.test(name) || name.length === 0
+    },
+    emailCheck(email) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+      this.emailError =
+        !re.test(String(email).toLowerCase()) || email.length === 0
+    },
+    messageCheck(message) {
+      this.messageError = message.length > 300 || message.length === 0
     },
     handleSubmit() {
-      const formValues = {
-        name: this.name,
-        email: this.email,
-        message: this.message,
-      }
+      this.nameCheck(this.name)
+      this.emailCheck(this.email)
+      this.messageCheck(this.message)
 
-      this.isSubmitted = true
+      this.$nextTick(() => {
+        if (
+          (!this.nameError === false && !this.emailError) ||
+          !this.messageError
+        ) {
+          const formValues = {
+            name: this.name,
+            email: this.email,
+            message: this.message,
+          }
 
-      const axiosConfig = {
-        header: { "Content-Type": "application/x-www-form-urlencoded" },
-      }
+          this.isSubmitted = true
 
-      axios
-        .post(
-          "/",
-          this.encode({
-            "form-name": "contact",
-            ...formValues,
-          }),
-          axiosConfig
-        )
-        .then(() => {
-          this.isSuccess = true
-        })
-        .catch(() => {
-          this.isSuccess = false
-        })
+          const axiosConfig = {
+            header: { "Content-Type": "application/x-www-form-urlencoded" },
+          }
+
+          axios
+            .post(
+              "/",
+              this.encode({
+                "form-name": "contact",
+                ...formValues,
+              }),
+              axiosConfig
+            )
+            .then(() => {
+              this.isSuccess = true
+            })
+            .catch(() => {
+              this.isSuccess = false
+            })
+        }
+      })
     },
     onMount() {
       const nav = document.querySelector("#navContainer")
