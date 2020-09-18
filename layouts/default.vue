@@ -1,5 +1,6 @@
 <template>
-  <div id="layout" class="layout">
+  <div id="layout" ref="layout" class="layout">
+    <Loading />
     <ModalFilters v-if="modal" />
     <Header />
     <div id="blurrableContent" class="burrableContent">
@@ -15,8 +16,10 @@
 import { mapState } from "vuex"
 import Header from "@/components/Header"
 import Nav from "@/components/Nav"
+import Loading from "@/components/Loading"
+
 export default {
-  components: { Header, Nav },
+  components: { Header, Nav, Loading },
   computed: {
     ...mapState({
       modal: (state) => state.categories.modal,

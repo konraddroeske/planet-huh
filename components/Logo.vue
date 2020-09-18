@@ -1,5 +1,5 @@
 <template>
-  <nuxt-link :to="{ name: 'index' }" class="logo">
+  <nuxt-link :to="link" class="logo">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -28,7 +28,15 @@
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    link: {
+      type: String,
+      required: false,
+      default: "/",
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>

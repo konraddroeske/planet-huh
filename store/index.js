@@ -1,3 +1,8 @@
+export const state = () => ({
+  loading: true,
+  finish: null,
+})
+
 export const actions = {
   async nuxtServerInit({ dispatch }) {
     await dispatch("homepage/getFeatured")
@@ -8,5 +13,14 @@ export const actions = {
     await dispatch("categories/getMoods")
     await dispatch("categories/getCities")
     await dispatch("categories/getSenses")
+  },
+}
+
+export const mutations = {
+  setLoading(state, payload) {
+    state.loading = payload
+  },
+  setFinish(state, fn) {
+    state.finish = fn
   },
 }
