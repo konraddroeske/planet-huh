@@ -5,7 +5,7 @@
       <p>
         {{ text }}
       </p>
-      <Button to="/">Learn More</Button>
+      <Button to="/about">Learn More</Button>
     </Wrapper>
   </div>
 </template>
