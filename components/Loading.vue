@@ -23,14 +23,10 @@ export default {
   mounted() {
     gsap.registerPlugin(CSSPlugin)
     this.$store.commit("setFinish", this.finish)
-    this.start()
+    // this.start()
   },
   methods: {
-    start() {
-      gsap.to(this.$refs.logo, 1.5, {
-        autoAlpha: 1,
-      })
-    },
+    // start() {},
     finish() {
       gsap.to(this.$refs.loading, 2, {
         autoAlpha: 0,
@@ -58,7 +54,6 @@ export default {
 
   .logoContainer {
     display: inline-block;
-    opacity: 0;
   }
 }
 </style>
