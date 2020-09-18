@@ -158,51 +158,56 @@ export default {
     },
     nameCheck(name) {
       const re = /^[a-zA-Z()]+$/
-      console.log(re.test(name))
-      this.nameError = re.test(name)
+      this.nameError = !re.test(name) || name.length === 0
     },
     emailCheck(email) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-      this.emailError = re.test(String(email).toLowerCase())
+
+      this.emailError =
+        !re.test(String(email).toLowerCase()) || email.length === 0
     },
     messageCheck(message) {
-      console.log(message.length, message.length < 300)
-      this.messageError = message.length < 300
+      this.messageError = message.length > 300 || message.length === 0
     },
     handleSubmit() {
       this.nameCheck(this.name)
       this.emailCheck(this.email)
       this.messageCheck(this.message)
 
-      if (!this.nameError && !this.emailError && !this.messageError) {
-        const formValues = {
-          name: this.name,
-          email: this.email,
-          message: this.message,
+      this.$nextTick(() => {
+        if (
+          (!this.nameError === false && !this.emailError) ||
+          !this.messageError
+        ) {
+          const formValues = {
+            name: this.name,
+            email: this.email,
+            message: this.message,
+          }
+
+          this.isSubmitted = true
+
+          const axiosConfig = {
+            header: { "Content-Type": "application/x-www-form-urlencoded" },
+          }
+
+          axios
+            .post(
+              "/",
+              this.encode({
+                "form-name": "contact",
+                ...formValues,
+              }),
+              axiosConfig
+            )
+            .then(() => {
+              this.isSuccess = true
+            })
+            .catch(() => {
+              this.isSuccess = false
+            })
         }
-
-        this.isSubmitted = true
-
-        const axiosConfig = {
-          header: { "Content-Type": "application/x-www-form-urlencoded" },
-        }
-
-        axios
-          .post(
-            "/",
-            this.encode({
-              "form-name": "contact",
-              ...formValues,
-            }),
-            axiosConfig
-          )
-          .then(() => {
-            this.isSuccess = true
-          })
-          .catch(() => {
-            this.isSuccess = false
-          })
-      }
+      })
     },
     onMount() {
       const nav = document.querySelector("#navContainer")
