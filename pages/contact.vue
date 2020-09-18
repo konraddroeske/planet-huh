@@ -145,33 +145,39 @@ export default {
       this.message = ""
     },
     handleSubmit() {
-      const formValues = {
-        name: this.name,
-        email: this.email,
-        message: this.message,
+      if (
+        this.name.length > 0 &&
+        this.email.length > 0 &&
+        this.message.length > 0
+      ) {
+        const formValues = {
+          name: this.name,
+          email: this.email,
+          message: this.message,
+        }
+
+        this.isSubmitted = true
+
+        const axiosConfig = {
+          header: { "Content-Type": "application/x-www-form-urlencoded" },
+        }
+
+        axios
+          .post(
+            "/",
+            this.encode({
+              "form-name": "contact",
+              ...formValues,
+            }),
+            axiosConfig
+          )
+          .then(() => {
+            this.isSuccess = true
+          })
+          .catch(() => {
+            this.isSuccess = false
+          })
       }
-
-      this.isSubmitted = true
-
-      const axiosConfig = {
-        header: { "Content-Type": "application/x-www-form-urlencoded" },
-      }
-
-      axios
-        .post(
-          "/",
-          this.encode({
-            "form-name": "contact",
-            ...formValues,
-          }),
-          axiosConfig
-        )
-        .then(() => {
-          this.isSuccess = true
-        })
-        .catch(() => {
-          this.isSuccess = false
-        })
     },
     onMount() {
       const nav = document.querySelector("#navContainer")
