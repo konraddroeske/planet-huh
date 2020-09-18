@@ -196,6 +196,7 @@ export default {
   methods: {
     resetSlider() {
       gsap.to(this.$refs.postList, { x: 0 })
+      this.curPos = 0
     },
     setSnapPoints() {
       this.resetSlider()
