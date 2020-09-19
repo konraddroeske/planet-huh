@@ -76,35 +76,23 @@ export default {
     Wrapper,
   },
   props: {
-    city: {
-      type: Object,
+    includedCities: {
+      type: Array,
       required: true,
-      validator(obj) {
-        return (
-          typeof obj.name === "string" &&
-          ["include", "exclude"].includes(obj.filterType)
-        )
+      validator(arr) {
+        return arr.every((item) => typeof item === "string")
       },
     },
-    sense: {
-      type: Object,
+    includedSenses: {
+      type: Array,
       required: true,
-      validator(obj) {
-        return (
-          typeof obj.name === "string" &&
-          ["include", "exclude"].includes(obj.filterType)
-        )
+      validator(arr) {
+        return arr.every((item) => typeof item === "string")
       },
     },
-    mood: {
-      type: Object,
+    includedMood: {
+      type: String,
       required: true,
-      validator(obj) {
-        return (
-          typeof obj.name === "string" &&
-          ["include", "exclude"].includes(obj.filterType)
-        )
-      },
     },
   },
   data() {
@@ -122,20 +110,21 @@ export default {
     numSlides() {
       return this.posts.length
     },
-    computedWhere() {
-      const { city, sense, mood } = this.$props
+    inclusiveWhere() {
+      const { includedCities, includedSenses, includedMood } = this.$props
 
-      const cityFilter =
-        city.filterType === "include" ? "city_some" : "city_none"
-      const senseFilter =
-        sense.filterType === "include" ? "sense_some" : "sense_none"
-      const moodFilter = mood.filterType === "include" ? "mood" : "mood_not"
+      const cityWheres = includedCities.map(
+        (city) => `{city_some: {name: "${city}"}}`
+      )
+      const senseWheres = includedSenses.map(
+        (sense) => `{sense_some: {name: "${sense}"}}`
+      )
+      const moodWhere = `{mood: {mood: "${includedMood}"}}`
 
-      const cityWhere = `${cityFilter}: {name: "${city.name}"}`
-      const senseWhere = `${senseFilter}: {name: "${sense.name}"}`
-      const moodWhere = `mood: {${moodFilter}: "${mood.name}"}`
+      const allWheres = [...cityWheres, ...senseWheres]
+      if (includedMood) allWheres.push(moodWhere)
 
-      return `where: {${cityWhere}, ${senseWhere}, ${moodWhere}}`
+      return allWheres.join(", ")
     },
     formattedPosts() {
       return this.posts.map((post) => ({
@@ -146,7 +135,7 @@ export default {
   },
   async activated() {
     const { data } = await fetchContent(`{
-      posts(orderBy: date_DESC, first: 12, ${this.computedWhere}) {
+      posts(orderBy: date_DESC, first: 12, where: {OR: [${this.inclusiveWhere}]}) {
         title
         slug
         coverImage {
