@@ -23,12 +23,10 @@ export default {
   mounted() {
     gsap.registerPlugin(CSSPlugin)
     this.$store.commit("setFinish", this.finish)
-    // this.start()
   },
   methods: {
-    // start() {},
     finish() {
-      gsap.to(this.$refs.loading, 2, {
+      gsap.to(this.$refs.loading, 1, {
         autoAlpha: 0,
         onComplete: () => this.$store.commit("setLoading", false),
       })

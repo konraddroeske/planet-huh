@@ -65,9 +65,6 @@ li {
   margin-bottom: 1rem;
   border: 1px solid $black;
 
-  // display: flex;
-  // align-items: center;
-
   &:hover {
     border: 1px solid $accent;
   }

@@ -1,6 +1,6 @@
 <template>
   <section class="featuredCollabs">
-    <h2 class="title">
+    <h2 class="sectionTitle">
       {{ posts.length > 1 ? "Featured Collabs" : "Featured Collab" }}
     </h2>
 
@@ -316,6 +316,7 @@ export default {
 <style lang="scss" scoped>
 .featuredCollabs {
   position: relative;
+  margin-bottom: 5rem;
 }
 
 .buttonContainer {
@@ -338,17 +339,11 @@ export default {
   right: 1rem;
 }
 
-h2,
 h3,
 p {
   text-align: center;
 }
 
-h2 {
-  margin: 2rem 0;
-}
-
-h2,
 h3 {
   text-transform: uppercase;
 }
@@ -362,7 +357,6 @@ p {
   font-size: 1.15rem;
 }
 
-h2,
 h3,
 .plus {
   font-size: 2rem;
@@ -516,14 +510,9 @@ ul {
     font-size: $font-md;
   }
 
-  h2 {
-    margin: 1.5rem 0;
-  }
-
-  h2,
   h3,
   .plus {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .collab {
@@ -535,7 +524,7 @@ ul {
       margin: 2.5rem 0 3rem 0;
 
       span {
-        font-size: 2rem;
+        font-size: 1.5rem;
       }
     }
   }
