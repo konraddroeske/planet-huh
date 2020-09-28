@@ -4,7 +4,7 @@
       <h2 class="sectionTitle">
         {{ artists.length > 1 ? "City Curators" : "City Curator" }}
       </h2>
-      <ul class="curatorsList">
+      <ul :class="getClass()">
         <li v-for="artist of viewableArtists" :key="artist.id">
           <CityCurator :artist="artist" />
         </li>
@@ -66,6 +66,13 @@ export default {
     onDestroy() {
       this.width.removeListener(this.setCurators)
     },
+    getClass() {
+      return {
+        curatorsSingle: this.artists.length === 1,
+        curatorsDouble: this.artists.length === 2,
+        curatorsList: this.artists.length > 2,
+      }
+    },
     setCurators(width) {
       if (width.matches) {
         this.postsPerRow = 3
@@ -96,22 +103,45 @@ export default {
 ul {
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-row-gap: 3rem;
+
+  li {
+    border: 1px solid $black;
+    display: flex;
+
+    &:hover {
+      border: 1px solid $accent;
+    }
+  }
 }
 
-li {
-  width: 100%;
-  border: 1px solid $black;
+.curatorsSingle {
   display: flex;
+  justify-content: center;
 
-  &:hover {
-    border: 1px solid $accent;
+  li {
+    width: 100%;
+    max-width: calc(40rem - 1.5%);
+  }
+}
+
+.curatorsDouble {
+  margin: 0 auto;
+  max-width: 80rem;
+}
+
+.curatorsList,
+.curatorsDouble {
+  display: grid;
+  grid-row-gap: 3rem;
+
+  li {
+    width: 100%;
   }
 }
 
 @media (min-width: $bp-desktop) {
-  .curatorsList {
+  .curatorsList,
+  .curatorsDouble {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-column-gap: 3%;
   }
