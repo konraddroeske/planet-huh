@@ -160,7 +160,7 @@ export default {
         {
           hid: "og:title",
           property: "og:title",
-          content: this.metaTitle,
+          content: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
         },
       ],
     }
