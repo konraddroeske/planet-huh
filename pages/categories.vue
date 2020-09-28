@@ -3,6 +3,7 @@
     <div class="categories">
       <CategoryHero :title="title" />
       <FeaturedCollabs v-if="cityCollabs.length > 0" :posts="cityCollabs" />
+      <CityCurators v-if="cityCurators.length > 0" :artists="cityCurators" />
       <CategoryList v-if="isParentCategory" :categories="categories" />
       <CategoryEmpty v-if="postsTotal.length === 0 && !isFetching" />
       <PostsFeed
@@ -22,6 +23,7 @@ import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import CategoryHero from "@/components/CategoryHero"
 import FeaturedCollabs from "@/components/FeaturedCollabs"
+import CityCurators from "@/components/CityCurators"
 import CategoryList from "@/components/CategoryList"
 import CategoryEmpty from "@/components/CategoryEmpty"
 import PostsFeed from "@/components/PostsFeed"
@@ -44,6 +46,7 @@ export default {
     CategoryHero,
     FeaturedCollabs,
     PostsFeed,
+    CityCurators,
     CategoryList,
     CategoryEmpty,
     Footer,
@@ -65,6 +68,7 @@ export default {
       allFilters: (state) => state.categories.allFilters,
       isFetching: (state) => state.categories.isFetching,
       collabs: (state) => state.posts.collabs,
+      artists: (state) => state.categories.artists,
     }),
     metaTitle() {
       return this.title.replace(/(^\w{1})|(\s{1}\w{1})/g, (match) =>
@@ -100,6 +104,13 @@ export default {
           collab.artist[1].location.toLowerCase() === this.title
         ) {
           return collab
+        }
+      })
+    },
+    cityCurators() {
+      return this.artists.filter((artist) => {
+        if (artist.location.toLowerCase() === this.title) {
+          return artist
         }
       })
     },

@@ -1,6 +1,6 @@
 <template>
   <section class="featuredCollabs">
-    <h2 class="title">
+    <h2 class="sectionTitle">
       {{ posts.length > 1 ? "Featured Collabs" : "Featured Collab" }}
     </h2>
 
@@ -49,15 +49,15 @@
               </div>
               <div class="collabsTitle">
                 <div class="artist">
-                  <h3>{{ post.artist[0].name }}</h3>
+                  <h3 class="sectionHeadline">{{ post.artist[0].name }}</h3>
                   <span>{{ post.artist[0].location }}</span>
                 </div>
                 <span class="plus">+</span>
                 <div class="artist">
-                  <h3>{{ post.artist[1].name }}</h3>
+                  <h3 class="sectionHeadline">{{ post.artist[1].name }}</h3>
                   <span>{{ post.artist[1].location }}</span>
                 </div>
-                <h3 class="title">{{ post.title }}</h3>
+                <h3 class="sectionHeadline title">{{ post.title }}</h3>
               </div>
               <div class="buttonContainer">
                 <Button @clicked="onClick(post.slug)">Explore</Button>
@@ -316,6 +316,7 @@ export default {
 <style lang="scss" scoped>
 .featuredCollabs {
   position: relative;
+  margin-bottom: 5rem;
 }
 
 .buttonContainer {
@@ -338,22 +339,10 @@ export default {
   right: 1rem;
 }
 
-h2,
-h3,
 p {
   text-align: center;
 }
 
-h2 {
-  margin: 2rem 0;
-}
-
-h2,
-h3 {
-  text-transform: uppercase;
-}
-
-h3,
 p {
   margin: 0;
 }
@@ -362,8 +351,6 @@ p {
   font-size: 1.15rem;
 }
 
-h2,
-h3,
 .plus {
   font-size: 2rem;
   line-height: 1;
@@ -476,7 +463,6 @@ ul {
   .collabsList {
     border-top: 1px solid $black;
     border-bottom: 1px solid $black;
-    margin-bottom: 8rem;
   }
 
   .collab {
@@ -516,14 +502,8 @@ ul {
     font-size: $font-md;
   }
 
-  h2 {
-    margin: 1.5rem 0;
-  }
-
-  h2,
-  h3,
   .plus {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .collab {
@@ -535,7 +515,7 @@ ul {
       margin: 2.5rem 0 3rem 0;
 
       span {
-        font-size: 2rem;
+        font-size: 1.5rem;
       }
     }
   }

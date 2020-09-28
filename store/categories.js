@@ -20,6 +20,7 @@ export const state = () => ({
   senses: [],
   moodCategories: [],
   isFetching: false,
+  artists: [],
 })
 
 export const actions = {
@@ -121,6 +122,33 @@ export const actions = {
       const { senses } = data.data
 
       commit("setSenses", senses)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  },
+  async getArtists({ commit, state }) {
+    try {
+      const { data } = await fetchContent(`{
+        artists(orderBy: name_ASC) {
+          id
+          location
+          name
+          socialUrl
+          website
+          social
+          about
+          picture {
+            url
+            width
+            height
+          }
+        }
+      }`)
+
+      const { artists } = data.data
+
+      commit("setArtists", artists)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -447,5 +475,8 @@ export const mutations = {
   },
   setIsFetching(state, payload) {
     state.isFetching = payload
+  },
+  setArtists(state, payload) {
+    state.artists = payload
   },
 }

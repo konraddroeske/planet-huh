@@ -13,6 +13,7 @@ export const actions = {
     await dispatch("categories/getMoods")
     await dispatch("categories/getCities")
     await dispatch("categories/getSenses")
+    await dispatch("categories/getArtists")
   },
 }
 
