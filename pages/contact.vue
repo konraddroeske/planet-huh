@@ -232,7 +232,9 @@ export default {
         {
           hid: "og:title",
           property: "og:title",
-          content: this.titleLoaded,
+          content: `Planet Huh${
+            this.titleLoaded ? " | " + this.titleLoaded : ""
+          }`,
         },
       ],
     }
