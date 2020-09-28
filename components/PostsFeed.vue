@@ -167,9 +167,9 @@ section {
 
 .postList {
   padding-left: 0;
+  margin-bottom: 3rem;
 
   @media (min-width: $bp-desktop) {
-    margin-bottom: 5rem;
     display: flex;
     flex-wrap: wrap;
   }
@@ -177,6 +177,10 @@ section {
 
 .postContainer {
   margin-bottom: 5rem;
+}
+
+.postContainer:last-child {
+  margin-bottom: 0;
 }
 
 @media (min-width: $bp-desktop) {

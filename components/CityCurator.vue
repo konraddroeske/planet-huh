@@ -27,7 +27,7 @@
           {{ artist.about }}
         </p>
       </div>
-      <Button>Show {{ artist.name }} list</Button>
+      <Button>Show {{ artist.name.replace(/ .*/, "") }} posts</Button>
     </div>
   </div>
 </template>
@@ -110,6 +110,9 @@ export default {
 
   .lower {
     padding: 2.5rem 2rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   .name {
@@ -128,11 +131,12 @@ export default {
 
   .links {
     display: flex;
+    flex-wrap: wrap;
   }
 
   .website,
   .social {
-    width: 50%;
+    flex-grow: 1;
   }
 
   h4 {
@@ -140,9 +144,8 @@ export default {
   }
 
   button {
-    margin: 0 auto;
+    margin: auto auto 0 auto;
     display: block;
-    align-self: center;
   }
 
   .about p {
@@ -165,14 +168,6 @@ export default {
     &:hover,
     &:focus {
       color: $accent;
-    }
-  }
-}
-
-@media (min-width: $bp-lg-desktop) {
-  .curator {
-    .upper {
-      height: 22.5rem;
     }
   }
 }
