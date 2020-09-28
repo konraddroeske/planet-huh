@@ -2,7 +2,7 @@
   <section class="curators">
     <Wrapper>
       <h2 class="sectionTitle">
-        {{ artists.length > 1 ? "Featured Collabs" : "Featured Collab" }}
+        {{ artists.length > 1 ? "City Curators" : "City Curator" }}
       </h2>
       <ul class="curatorsList">
         <li v-for="artist of artists" :key="artist.id">

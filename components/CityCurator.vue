@@ -9,8 +9,8 @@
       />
     </div>
     <div class="lower">
-      <div class="name">{{ artist.name }}</div>
-      <div class="city">{{ artist.location }}</div>
+      <h3 class="name sectionHeadline">{{ artist.name }}</h3>
+      <p class="city">{{ artist.location }}</p>
       <div class="links">
         <div class="website">
           <h4 class="accentText">Website</h4>
@@ -109,7 +109,21 @@ export default {
   }
 
   .lower {
-    padding: 2rem;
+    padding: 2.5rem 2rem;
+  }
+
+  .name {
+    text-align: left;
+  }
+
+  .city {
+    display: block;
+    width: 100%;
+    font-size: $font-sm-md;
+    font-weight: $medium;
+    text-align: left;
+    text-transform: uppercase;
+    margin: 0;
   }
 
   .links {
@@ -133,6 +147,7 @@ export default {
 
   .about p {
     margin-top: 0;
+    margin-bottom: 2rem;
   }
 
   a,
@@ -141,6 +156,7 @@ export default {
     font-size: 1.25rem;
     font-weight: $semibold;
   }
+
   a,
   a:visited {
     color: $black;
@@ -149,6 +165,14 @@ export default {
     &:hover,
     &:focus {
       color: $accent;
+    }
+  }
+}
+
+@media (min-width: $bp-lg-desktop) {
+  .curator {
+    .upper {
+      height: 22.5rem;
     }
   }
 }
