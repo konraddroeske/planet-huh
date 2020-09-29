@@ -259,10 +259,6 @@ export default {
         highlighted: this.filters.includes(name),
       }
     },
-    // formatMood(mood) {
-    //   console.log(mood)
-    //   return mood.replace(/([a-z])([A-Z])/, "$1 $2")
-    // },
   },
 }
 </script>

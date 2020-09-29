@@ -27,12 +27,16 @@
           {{ artist.about }}
         </p>
       </div>
-      <Button>Show {{ artist.name.replace(/ .*/, "") }} posts</Button>
+      <Button @clicked="routeFilter(artist.name)"
+        >Show {{ artist.name.replace(/ .*/, "") }} posts</Button
+      >
     </div>
   </div>
 </template>
 
 <script>
+import gsap from "gsap"
+import { mapMutations, mapActions } from "vuex"
 import LazyImage from "@/components/LazyImage"
 import Button from "@/components/Button"
 
@@ -80,6 +84,30 @@ export default {
   computed: {
     websiteFormatted() {
       return this.artist.website.replace(/^https?:\/\//i, "")
+    },
+  },
+  methods: {
+    ...mapMutations({
+      resetFilters: "categories/resetFilters",
+    }),
+    ...mapActions({
+      getQueries: "categories/getQueries",
+    }),
+    async routeFilter(filter) {
+      this.resetFilters()
+
+      gsap.to(window, 0.4, {
+        scrollTo: 0,
+        ease: "power4.out",
+      })
+
+      let queries = []
+      filter ? (queries = await this.getQueries(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "/categories",
+        query: { filters: queries },
+      })
     },
   },
 }
