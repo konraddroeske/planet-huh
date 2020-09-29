@@ -385,6 +385,17 @@ export const actions = {
 
     return queries
   },
+  getQueriesSearch({ state }, newFilter) {
+    const queries = [...state.filters]
+
+    if (state.filters.includes(newFilter)) {
+      // do nothing
+    } else {
+      queries.push(newFilter)
+    }
+
+    return queries
+  },
 }
 
 export const getters = {

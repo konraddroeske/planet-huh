@@ -9,7 +9,7 @@
         </div>
       </div>
       <div class="filtersSearch">
-        <SearchBar variant="light" @onSubmit="routeFilter" />
+        <SearchBar variant="light" @onSubmit="routeFilterSearch" />
         <ul class="tags">
           <li v-for="(filter, index) in filters" :key="index">
             <button
@@ -194,7 +194,22 @@ export default {
     },
     ...mapActions({
       getQueries: "categories/getQueries",
+      getQueriesSearch: "categories/getQueriesSearch",
     }),
+    async routeFilterSearch(filter) {
+      gsap.to(window, 0.4, {
+        scrollTo: 0,
+        ease: "power4.out",
+      })
+
+      let queries = []
+      filter ? (queries = await this.getQueriesSearch(filter)) : (queries = [])
+
+      this.$router.push({
+        path: "/categories",
+        query: { filters: queries },
+      })
+    },
     async routeFilter(filter) {
       gsap.to(window, 0.4, {
         scrollTo: 0,

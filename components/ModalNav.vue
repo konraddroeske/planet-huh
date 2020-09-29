@@ -24,22 +24,23 @@
       <PageNav variant="light" />
       <div class="searchBarSocial">
         <SocialLinks variant="light" />
-        <SearchBar variant="light" @onSubmit="routeFilter" />
+        <SearchBar variant="light" @onSubmit="routeModal" />
       </div>
     </section>
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex"
 import gsap from "gsap"
 import CategoryNav from "./CategoryNav"
 import PageNav from "./PageNav"
 import SocialLinks from "./SocialLinks"
 import SearchBar from "./SearchBar"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 
 export default {
   components: { CategoryNav, PageNav, SocialLinks, SearchBar },
+  mixins: [categoryRouteReset],
   data() {
     return {
       isOpen: false,
@@ -50,7 +51,6 @@ export default {
       if (this.isOpen) {
         setTimeout(() => {
           this.closeNav()
-          document.getElementById("menuButton").checked = false
         }, 0.4)
       }
     },
@@ -72,6 +72,8 @@ export default {
       })
 
       this.isOpen = !this.isOpen
+
+      document.getElementById("menuButton").checked = false
     },
     openNav() {
       const modalNav = this.$refs.modalNav
@@ -82,22 +84,9 @@ export default {
 
       this.isOpen = !this.isOpen
     },
-    ...mapActions({
-      getQueries: "categories/getQueries",
-    }),
-    ...mapMutations({
-      resetFilters: "categories/resetFilters",
-    }),
-    async routeFilter(filter) {
-      this.resetFilters()
-
-      let queries = []
-      filter ? (queries = await this.getQueries(filter)) : (queries = [])
-
-      this.$router.push({
-        path: "/categories",
-        query: { filters: queries },
-      })
+    routeModal(filter) {
+      this.routeFilter(filter)
+      this.toggleModal()
     },
   },
 }
