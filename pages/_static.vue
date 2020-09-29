@@ -85,6 +85,25 @@ export default {
             this.page?.title ? " | " + this.page?.title : ""
           }`,
         },
+        {
+          hid: "twitter:title",
+          name: "twitter:title",
+          content: `Planet Huh${
+            this.page?.title ? " | " + this.page?.title : ""
+          }`,
+        },
+        {
+          hid: "og:site_name",
+          property: "og:site_name",
+          content: `Planet Huh${
+            this.page?.title ? " | " + this.page?.title : ""
+          }`,
+        },
+        {
+          hid: "og:url",
+          property: "og:url",
+          content: `http://www.planethuh.com${this.$route.fullPath}`,
+        },
       ],
     }
   },

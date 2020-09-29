@@ -144,12 +144,12 @@ export default {
         {
           hid: "og:url",
           property: "og:url",
-          content: `http://www.planethuh.com/${this.$route.params.slug}`,
+          content: `http://www.planethuh.com${this.$route.fullPath}`,
         },
         {
           hid: "twitter:title",
           name: "twitter:title",
-          content: this.metaTitle,
+          content: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
         },
         {
           hid: "twitter:image",
@@ -165,6 +165,11 @@ export default {
           hid: "twitter:image:alt",
           name: "twitter:image:alt",
           content: this.description,
+        },
+        {
+          hid: "og:site_name",
+          property: "og:site_name",
+          content: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
         },
       ],
     }

@@ -236,6 +236,25 @@ export default {
             this.titleLoaded ? " | " + this.titleLoaded : ""
           }`,
         },
+        {
+          hid: "twitter:title",
+          name: "twitter:title",
+          content: `Planet Huh${
+            this.titleLoaded ? " | " + this.titleLoaded : ""
+          }`,
+        },
+        {
+          hid: "og:site_name",
+          property: "og:site_name",
+          content: `Planet Huh${
+            this.titleLoaded ? " | " + this.titleLoaded : ""
+          }`,
+        },
+        {
+          hid: "og:url",
+          property: "og:url",
+          content: `http://www.planethuh.com${this.$route.fullPath}`,
+        },
       ],
     }
   },

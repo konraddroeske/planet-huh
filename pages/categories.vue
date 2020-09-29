@@ -162,6 +162,21 @@ export default {
           property: "og:title",
           content: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
         },
+        {
+          hid: "twitter:title",
+          name: "twitter:title",
+          content: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
+        },
+        {
+          hid: "og:site_name",
+          property: "og:site_name",
+          content: `Planet Huh${this.metaTitle ? " | " + this.metaTitle : ""}`,
+        },
+        {
+          hid: "og:url",
+          property: "og:url",
+          content: `http://www.planethuh.com${this.$route.fullPath}`,
+        },
       ],
     }
   },
