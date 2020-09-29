@@ -116,9 +116,7 @@ section {
   p {
     margin: 0;
   }
-  h3 {
-    margin-bottom: 0.25rem;
-  }
+
   a,
   span {
     font-family: $font-display;
@@ -133,15 +131,6 @@ section {
     &:hover,
     &:focus {
       color: $accent;
-    }
-  }
-
-  .about {
-    font-family: $font-body;
-    font-size: 1.1rem;
-
-    @media (min-width: $bp-desktop) {
-      font-size: 1.25rem;
     }
   }
 }

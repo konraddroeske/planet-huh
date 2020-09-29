@@ -143,6 +143,7 @@ img {
   font-weight: $semibold;
   font-size: 0.8rem;
   letter-spacing: 1px;
+  margin-bottom: 0.25rem;
 
   @media (min-width: $bp-desktop) {
     font-size: 1rem;
@@ -151,4 +152,13 @@ img {
 
 .italic {
   font-style: italic;
+}
+
+.about {
+  font-family: $font-body;
+  font-size: 1.1rem;
+
+  @media (min-width: $bp-desktop) {
+    font-size: 1.25rem;
+  }
 }
