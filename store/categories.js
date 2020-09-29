@@ -173,6 +173,7 @@ export const actions = {
       const city = []
       const mood = []
       const sense = []
+      const artist = []
       const search = []
 
       // separate into categories
@@ -188,6 +189,8 @@ export const actions = {
           mood.push(item)
         } else if (state.allFilters[item].type === "sense") {
           sense.push(item)
+        } else if (state.allFilters[item].type === "artist") {
+          artist.push(item)
         }
       })
 
@@ -195,6 +198,7 @@ export const actions = {
       let cityObj = null
       let moodObj = null
       let senseObj = null
+      let artistObj = null
       let searchObj = null
 
       // convert categories to query objects
@@ -208,6 +212,48 @@ export const actions = {
           str += ".AND"
         }
         filtersArr.push(cityObj)
+      }
+
+      if (sense.length > 0) {
+        const senseFilters = sense.filter((item) => item !== "senses")
+        senseObj = { sense_some: { id_not: "null" } }
+        let str = "sense_some.AND"
+
+        for (let i = 0; i < senseFilters.length; i++) {
+          set(senseObj, str, { name: state.allFilters[senseFilters[i]].query })
+          str += ".AND"
+        }
+
+        filtersArr.push(senseObj)
+      }
+
+      if (artist.length > 0) {
+        const artistFilters = artist.filter((item) => item !== "artists")
+        artistObj = { artist_some: { id_not: "null" } }
+        let str = "artist_some.AND"
+
+        for (let i = 0; i < artistFilters.length; i++) {
+          set(artistObj, str, {
+            name_contains: state.allFilters[artistFilters[i]].query,
+          })
+          str += ".AND"
+        }
+
+        filtersArr.push(artistObj)
+      }
+
+      if (search.length > 0) {
+        let str = "AND"
+        for (let i = 0; i < search.length; i++) {
+          if (i === 0) {
+            searchObj = { _search: search[i] }
+          } else {
+            set(searchObj, str, { _search: search[i] })
+            str += ".AND"
+          }
+        }
+
+        filtersArr.push(searchObj)
       }
 
       // must combine mood categories with mood
@@ -234,33 +280,6 @@ export const actions = {
         }
 
         filtersArr.push(moodObj)
-      }
-
-      if (sense.length > 0) {
-        const senseFilters = sense.filter((item) => item !== "senses")
-        senseObj = { sense_some: { id_not: "null" } }
-        let str = "sense_some.AND"
-
-        for (let i = 0; i < senseFilters.length; i++) {
-          set(senseObj, str, { name: state.allFilters[senseFilters[i]].query })
-          str += ".AND"
-        }
-
-        filtersArr.push(senseObj)
-      }
-
-      if (search.length > 0) {
-        let str = "AND"
-        for (let i = 0; i < search.length; i++) {
-          if (i === 0) {
-            searchObj = { _search: search[i] }
-          } else {
-            set(searchObj, str, { _search: search[i] })
-            str += ".AND"
-          }
-        }
-
-        filtersArr.push(searchObj)
       }
 
       let finalStr = "AND"
@@ -366,6 +385,17 @@ export const actions = {
 
     return queries
   },
+  getQueriesSearch({ state }, newFilter) {
+    const queries = [...state.filters]
+
+    if (state.filters.includes(newFilter)) {
+      // do nothing
+    } else {
+      queries.push(newFilter)
+    }
+
+    return queries
+  },
 }
 
 export const getters = {
@@ -464,6 +494,22 @@ export const mutations = {
       }
     })
   },
+  setArtists(state, artists) {
+    artists.forEach((artist) => {
+      state.allFilters[artist.name.toLowerCase()] = {
+        type: "artist",
+        hasParent: "artists",
+        query: `${artist.name}`,
+      }
+    })
+
+    state.artists = artists.map((artist) => {
+      return {
+        ...artist,
+        name: artist.name.toLowerCase(),
+      }
+    })
+  },
   setModal(state, payload) {
     state.modal = payload
   },
@@ -475,8 +521,5 @@ export const mutations = {
   },
   setIsFetching(state, payload) {
     state.isFetching = payload
-  },
-  setArtists(state, payload) {
-    state.artists = payload
   },
 }

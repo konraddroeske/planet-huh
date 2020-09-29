@@ -46,19 +46,26 @@ a:visited {
 }
 
 button {
-  border: 2px solid $accent;
+  border: 2px solid #749bff;
   border-radius: 180px;
-  padding: 1rem 2.5rem;
+  padding: 1rem 1.5rem;
   background: transparent;
   cursor: pointer;
   text-transform: uppercase;
-  font-weight: $bold;
-  font-size: 1.25rem;
+  font-weight: 600;
+  font-size: 1rem;
 
   &:hover,
   &:focus {
     color: $white;
     background: $accent;
+  }
+}
+
+@media (min-width: $bp-tablet) {
+  button {
+    padding: 1rem 2.5rem;
+    font-size: 1.25rem;
   }
 }
 </style>

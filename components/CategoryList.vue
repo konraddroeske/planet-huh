@@ -13,40 +13,17 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex"
-import gsap from "gsap"
 import Wrapper from "@/components/Wrapper"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 export default {
   components: {
     Wrapper,
   },
+  mixins: [categoryRouteReset],
   props: {
     categories: {
       required: true,
       type: Array,
-    },
-  },
-  methods: {
-    ...mapActions({
-      getQueries: "categories/getQueries",
-    }),
-    ...mapMutations({
-      resetFilters: "categories/resetFilters",
-    }),
-    async routeFilter(filter) {
-      this.resetFilters()
-      gsap.to(window, 0.4, {
-        scrollTo: 0,
-        ease: "power4.out",
-      })
-
-      let queries = []
-      filter ? (queries = await this.getQueries(filter)) : (queries = [])
-
-      this.$router.push({
-        path: "/categories",
-        query: { filters: queries },
-      })
     },
   },
 }

@@ -110,16 +110,17 @@
 </template>
 
 <script>
-import { mapActions, mapMutations } from "vuex"
 import gsap from "gsap"
 import Logo from "./Logo"
 import CategoryNav from "./CategoryNav"
 import PageNav from "./PageNav"
 import SearchBar from "./SearchBar"
 import SocialLinks from "./SocialLinks"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 
 export default {
   components: { Logo, CategoryNav, PageNav, SearchBar, SocialLinks },
+  mixins: [categoryRouteReset],
   mounted() {
     const tl = gsap.timeline()
 
@@ -131,25 +132,6 @@ export default {
         autoAlpha: 1,
       }
     )
-  },
-  methods: {
-    ...mapActions({
-      getQueries: "categories/getQueries",
-    }),
-    ...mapMutations({
-      resetFilters: "categories/resetFilters",
-    }),
-    async routeFilter(filter) {
-      this.resetFilters()
-
-      let queries = []
-      filter ? (queries = await this.getQueries(filter)) : (queries = [])
-
-      this.$router.push({
-        path: "/categories",
-        query: { filters: queries },
-      })
-    },
   },
 }
 </script>

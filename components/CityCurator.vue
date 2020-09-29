@@ -21,26 +21,28 @@
           <a :href="artist.socialUrl">@{{ artist.social }}</a>
         </div>
       </div>
-      <div class="about">
+      <div>
         <h4 class="accentText">About</h4>
-        <p>
+        <p class="about">
           {{ artist.about }}
         </p>
       </div>
-      <Button>Show {{ artist.name.replace(/ .*/, "") }} posts</Button>
+      <Button @clicked="routeFilter(artist.name)"
+        >Show {{ artist.name.replace(/ .*/, "") }} posts</Button
+      >
     </div>
   </div>
 </template>
 
 <script>
-import LazyImage from "@/components/LazyImage"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 import Button from "@/components/Button"
 
 export default {
   components: {
-    LazyImage,
     Button,
   },
+  mixins: [categoryRouteReset],
   props: {
     artist: {
       type: Object,
@@ -139,16 +141,12 @@ export default {
     flex-grow: 1;
   }
 
-  h4 {
-    margin-bottom: 0;
-  }
-
   button {
     margin: auto auto 0 auto;
     display: block;
   }
 
-  .about p {
+  .about {
     margin-top: 0;
     margin-bottom: 2rem;
   }
