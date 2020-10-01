@@ -1,5 +1,6 @@
 <template>
   <iframe
+    class="richTextEmbed"
     :src="url"
     :style="setStyle"
     frameborder="0"
@@ -37,4 +38,8 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.richTextEmbed {
+  max-width: 100%;
+}
+</style>
