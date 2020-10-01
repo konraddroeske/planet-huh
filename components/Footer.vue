@@ -21,7 +21,7 @@
           <span class="visuallyHidden">Somewherelse</span>
 
           <a
-            href="https://twitter.com/planet.huh"
+            href="https://somewherelse.com"
             target="_blank"
             rel="canonical noopener noreferrer"
           >
