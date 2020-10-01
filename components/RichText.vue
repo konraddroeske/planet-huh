@@ -80,13 +80,12 @@
           </div>
         </div>
 
-        <div v-if="item.type === 'iframe'" :key="index" class="video">
-          <iframe
-            :src="item.url"
-            frameborder="0"
-            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
+        <div v-if="item.type === 'iframe'" :key="index" class="embed">
+          <RichTextEmbed
+            :url="item.url"
+            :width="`${item.width}px`"
+            :height="`${item.height}px`"
+          />
         </div>
       </template>
     </div>
@@ -94,7 +93,12 @@
 </template>
 
 <script>
+import RichTextEmbed from "@/components/RichTextEmbed"
+
 export default {
+  components: {
+    RichTextEmbed,
+  },
   props: {
     content: {
       type: Array,
@@ -185,6 +189,8 @@ export default {
           cleanContent.push({
             type: item.type,
             url: item.url,
+            width: item.width,
+            height: item.height,
           })
         }
       })
@@ -400,20 +406,40 @@ blockquote {
   font-size: 0.65rem;
 }
 
-.video {
+// .video {
+//   position: relative;
+//   width: 100%;
+//   height: 0;
+//   margin: 2rem 0;
+//   padding-bottom: 56.25%;
+
+//   iframe {
+//     position: absolute;
+//     top: 0;
+//     left: 0;
+//     width: 100%;
+//     height: 100%;
+//   }
+
+//   @media (min-width: $bp-desktop) {
+//     margin: 3rem 0;
+//   }
+// }
+
+.embed {
   position: relative;
   width: 100%;
-  height: 0;
+  //   height: 0;
   margin: 2rem 0;
-  padding-bottom: 56.25%;
+  //   padding-bottom: 56.25%;
 
-  iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
+  //   iframe {
+  //     position: absolute;
+  //     top: 0;
+  //     left: 0;
+  //     width: 100%;
+  //     height: 100%;
+  //   }
 
   @media (min-width: $bp-desktop) {
     margin: 3rem 0;
