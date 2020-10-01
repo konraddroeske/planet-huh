@@ -2,7 +2,7 @@
   <section>
     <div class="wrapper">
       <template v-for="(item, index) of organizedContent">
-        <p v-if="item.type === 'paragraph'" :key="index">
+        <p v-if="item.type === 'paragraph'" :key="index" class="bodyText">
           <template v-for="(child, idx) of item.children">
             <a v-if="child.type === 'link'" :key="idx" :href="child.href">{{
               child.text
@@ -230,15 +230,6 @@ export default {
 }
 
 p {
-  font-family: $font-body;
-  font-size: 1.1rem;
-  color: $mediumGray;
-  line-height: 1.65;
-
-  @media (min-width: $bp-desktop) {
-    font-size: 1.15rem;
-  }
-
   a,
   a:visited {
     color: $black;

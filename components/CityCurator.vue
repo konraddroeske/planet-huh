@@ -23,7 +23,7 @@
       </div>
       <div>
         <h4 class="accentText">About</h4>
-        <p class="about">
+        <p class="bodyText">
           {{ artist.about }}
         </p>
       </div>
@@ -146,7 +146,7 @@ export default {
     display: block;
   }
 
-  .about {
+  .bodyText {
     margin-top: 0;
     margin-bottom: 2rem;
   }

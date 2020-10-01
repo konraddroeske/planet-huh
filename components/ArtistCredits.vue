@@ -45,7 +45,7 @@
           <h3 class="accentText">
             {{ isSingleArtist ? "About the Author" : "About" }}
           </h3>
-          <p class="about">{{ artist.about }}</p>
+          <p class="bodyText">{{ artist.about }}</p>
         </div>
       </div>
     </div>

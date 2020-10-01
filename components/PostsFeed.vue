@@ -81,6 +81,12 @@ export default {
       }))
     },
   },
+  mounted() {
+    this.onMount()
+  },
+  onDestroy() {
+    this.onDestroy()
+  },
   activated() {
     this.onMount()
   },
