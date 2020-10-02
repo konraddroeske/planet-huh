@@ -9,6 +9,6 @@ HUH is a content platform exploring creativity through cities, senses, and moods
 - SCSS
 
 ## Team
-Developers: **Konrad Droeske** & **Dan Fitz**
-Designer: **Marta Ryczko**
+Developers: **Konrad Droeske** & **Dan Fitz**<br/>
+Designer: **Marta Ryczko**<br/>
 Agency: **Somewherelse**
