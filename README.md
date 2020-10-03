@@ -6,6 +6,7 @@ HUH is a content platform exploring creativity through cities, senses, and moods
 ## Tech
 - Vue
 - NUXT.js
+- Vuex
 - Three.js
 - GraphCMS
 - SCSS
