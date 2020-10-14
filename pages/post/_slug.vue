@@ -20,7 +20,6 @@
 
 <script>
 import { mapState } from "vuex"
-
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import HeroBanner from "@/components/HeroBanner"
@@ -96,6 +95,8 @@ export default {
 
   activated() {
     this.onMount()
+    const embed = document.getElementsByClassName("Embed")
+    console.log(embed)
   },
   deactivated() {
     this.onDestroy()

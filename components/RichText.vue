@@ -85,6 +85,7 @@
             :url="item.url"
             :width="`${item.width}px`"
             :height="`${item.height}px`"
+            :name="`iframe${index}`"
           />
         </div>
       </template>
