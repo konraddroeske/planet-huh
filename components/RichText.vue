@@ -93,6 +93,8 @@
             v-else
             :url="item.url.slice(0, -5)"
             :max-width="item.width"
+            :hide-caption="true"
+            :class-name="`instagramEmbed`"
           />
         </div>
       </template>
@@ -417,40 +419,10 @@ blockquote {
   font-size: 0.65rem;
 }
 
-// .video {
-//   position: relative;
-//   width: 100%;
-//   height: 0;
-//   margin: 2rem 0;
-//   padding-bottom: 56.25%;
-
-//   iframe {
-//     position: absolute;
-//     top: 0;
-//     left: 0;
-//     width: 100%;
-//     height: 100%;
-//   }
-
-//   @media (min-width: $bp-desktop) {
-//     margin: 3rem 0;
-//   }
-// }
-
 .embed {
   position: relative;
   width: 100%;
-  //   height: 0;
   margin: 2rem 0;
-  //   padding-bottom: 56.25%;
-
-  //   iframe {
-  //     position: absolute;
-  //     top: 0;
-  //     left: 0;
-  //     width: 100%;
-  //     height: 100%;
-  //   }
 
   @media (min-width: $bp-desktop) {
     margin: 3rem 0;

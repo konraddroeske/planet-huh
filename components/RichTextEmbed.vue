@@ -2,7 +2,6 @@
   <div class="richTextContainer">
     <resize-observer @notify="handleResize()" />
     <iframe
-      v-if="!instagram"
       :id="name"
       class="richTextEmbed"
       :src="url"
@@ -42,10 +41,6 @@ export default {
       type: String,
       required: true,
     },
-    instagram: {
-      type: Boolean,
-      required: true,
-    },
   },
 
   computed: {
@@ -70,15 +65,10 @@ export default {
     handleResize() {
       const container = document.getElementById(this.name)
       const width = container.offsetWidth
-      let extra = 1
-
-      if (this.instagram) {
-        extra = 1.1
-      }
 
       if (width < this.newWidth) {
         gsap.set(`#${this.name}`, {
-          height: `${this.ratio * width * extra}px`,
+          height: `${this.ratio * width}px`,
         })
       } else {
         gsap.set(`#${this.name}`, {
