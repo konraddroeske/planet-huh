@@ -11,7 +11,6 @@ export const state = () => ({
       longitude: 0,
       posts: [],
       name: "green",
-      // name: "blue",
     },
     NegativeHigh: {
       r: 193,
@@ -21,7 +20,6 @@ export const state = () => ({
       longitude: -120,
       posts: [],
       name: "purple",
-      // name: "orange",
     },
     NegativeMedium: {
       r: 116,
@@ -31,7 +29,6 @@ export const state = () => ({
       longitude: 120,
       posts: [],
       name: "blue",
-      // name: "green",
     },
     PositiveMedium: {
       r: 255,
@@ -41,7 +38,6 @@ export const state = () => ({
       longitude: 60,
       posts: [],
       name: "orange",
-      // name: "magenta",
     },
     PositiveHigh: {
       r: 255,
