@@ -1424,7 +1424,7 @@ export default {
         }
       }
 
-      const render = () => {
+      const render = (time) => {
         if (
           !this.$store.state.transitions.isPlay &&
           !this.$store.state.transitions.isResize
@@ -1454,8 +1454,9 @@ export default {
           }
         }
 
-        requestAnimationFrame(render)
         renderer.render(scene, camera)
+
+        requestAnimationFrame(render)
       }
 
       playAnimation()

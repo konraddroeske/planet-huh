@@ -8,7 +8,7 @@
     />
     <RichText :content="post.content" />
     <ArtistCredits :artists="post.artist" />
-    <SocialShare :title="post.title" link="" />
+    <SocialShare :title="post.title" :link="link" />
     <SuggestedPosts
       :included-cities="cities"
       :included-senses="senses"
@@ -55,6 +55,7 @@ export default {
   data() {
     return {
       slug: this.$route.params.slug,
+      link: `http://www.planethuh.com${this.$route.fullPath}`,
     }
   },
   computed: {
@@ -144,7 +145,7 @@ export default {
         {
           hid: "og:url",
           property: "og:url",
-          content: `http://www.planethuh.com${this.$route.fullPath}`,
+          content: this.link,
         },
         {
           hid: "twitter:title",
