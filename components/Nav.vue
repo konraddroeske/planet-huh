@@ -838,7 +838,6 @@ export default {
         windowHalfX = window.innerWidth / 2
         windowHalfY = window.innerHeight / 2
 
-        // const canvas = renderer.domElement
         const width = canvas.clientWidth
         const height = canvas.clientHeight
         const needResize = canvas.width !== width || canvas.height !== height
@@ -957,7 +956,7 @@ export default {
 
       function calcPosition(lat, lon, radius) {
         const phi = (90 - lat) * (Math.PI / 180)
-        const theta = (lon + 180) * (Math.PI / 180)
+        const theta = (lon + 180.7) * (Math.PI / 180)
 
         const x = -(radius * Math.sin(phi) * Math.cos(theta))
         const z = radius * Math.sin(phi) * Math.sin(theta)
