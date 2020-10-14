@@ -24,12 +24,12 @@
       </li>
       <li>
         <a
-          href="https://instagram.com"
+          :href="`mailto:?subject=${title}&body=${link}`"
           target="_blank"
           rel="canonical noopener noreferrer"
         >
-          <FontAwesomeIcon :icon="['fab', 'instagram']" />
-          <span class="visuallyHidden">Instagram</span>
+          <FontAwesomeIcon :icon="['fas', 'envelope']" />
+          <span class="visuallyHidden">Email</span>
         </a>
       </li>
     </ul>

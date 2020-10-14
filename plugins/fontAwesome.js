@@ -5,8 +5,9 @@ import {
   faTwitter,
   faInstagram,
 } from "@fortawesome/free-brands-svg-icons"
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
 
-library.add(faFacebookF, faTwitter, faInstagram)
+library.add(faFacebookF, faTwitter, faInstagram, faEnvelope)
 
 Vue.component("FontAwesomeIcon", FontAwesomeIcon)
