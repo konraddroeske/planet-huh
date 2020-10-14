@@ -82,11 +82,17 @@
 
         <div v-if="item.type === 'iframe'" :key="index" class="embed">
           <RichTextEmbed
+            v-if="!item.instagram"
             :url="item.url"
             :width="`${item.width}px`"
             :height="`${item.height}px`"
             :name="`iframe${index}`"
             :instagram="item.instagram"
+          />
+          <InstagramEmbed
+            v-else
+            :url="item.url.slice(0, -5)"
+            :max-width="item.width"
           />
         </div>
       </template>
@@ -95,11 +101,13 @@
 </template>
 
 <script>
+import InstagramEmbed from "vue-instagram-embed"
 import RichTextEmbed from "@/components/RichTextEmbed"
 
 export default {
   components: {
     RichTextEmbed,
+    InstagramEmbed,
   },
   props: {
     content: {

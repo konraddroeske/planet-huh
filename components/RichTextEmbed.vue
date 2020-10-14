@@ -2,6 +2,7 @@
   <div class="richTextContainer">
     <resize-observer @notify="handleResize()" />
     <iframe
+      v-if="!instagram"
       :id="name"
       class="richTextEmbed"
       :src="url"
@@ -46,6 +47,7 @@ export default {
       required: true,
     },
   },
+
   computed: {
     setStyle() {
       return {
