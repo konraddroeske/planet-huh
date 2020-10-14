@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="richTextContainer">
     <resize-observer @notify="handleResize()" />
     <iframe
       :id="name"
@@ -41,6 +41,10 @@ export default {
       type: String,
       required: true,
     },
+    instagram: {
+      type: Boolean,
+      required: true,
+    },
   },
   computed: {
     setStyle() {
@@ -64,16 +68,32 @@ export default {
     handleResize() {
       const container = document.getElementById(this.name)
       const width = container.offsetWidth
+      let extra = 1
 
-      gsap.set(`#${this.name}`, {
-        height: `${this.ratio * width}px`,
-      })
+      if (this.instagram) {
+        extra = 1.1
+      }
+
+      if (width < this.newWidth) {
+        gsap.set(`#${this.name}`, {
+          height: `${this.ratio * width * extra}px`,
+        })
+      } else {
+        gsap.set(`#${this.name}`, {
+          height: this.height,
+        })
+      }
     },
   },
 }
 </script>
 
 <style lang="scss" scoped>
+.richTextContainer {
+  display: inline-block;
+  position: relative;
+}
+
 .richTextEmbed {
   max-width: 100%;
 }

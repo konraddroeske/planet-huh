@@ -86,6 +86,7 @@
             :width="`${item.width}px`"
             :height="`${item.height}px`"
             :name="`iframe${index}`"
+            :instagram="item.instagram"
           />
         </div>
       </template>
@@ -192,6 +193,7 @@ export default {
             url: item.url,
             width: item.width,
             height: item.height,
+            instagram: item.url.includes("instagram"),
           })
         }
       })
