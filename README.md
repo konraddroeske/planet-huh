@@ -1,20 +1,17 @@
-# huh-site
+# Planet HUH
+HUH is a content platform exploring creativity through cities, senses, and moods. Discover multisensory contributions from artists around the planet participating in an evolving experiment in global collaboration.<br/>
+<br/>
+[Planet HUH Site](https://www.planethuh.com)<br/>
 
-## Build Setup
+## Tech
+- Vue
+- NUXT.js
+- Vuex
+- Three.js
+- GraphCMS
+- SCSS
 
-```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
-```
-
-For detailed explanation on how things work, check out [Nuxt.js docs](https://nuxtjs.org).
+## Team
+Developers: **Konrad Droeske** & **Dan Fitz**<br/>
+Designer: **Marta Ryczko**<br/>
+Agency: **Somewherelse**
