@@ -180,7 +180,7 @@ export default {
             cleanContent.push({
               type: "full-image",
               src: item.src,
-              caption: item.altText.trim(),
+              caption: item.altText ? item.altText.trim() : "",
             })
           } else if (lastItem.type === "full-image") {
             const lastImage = cleanContent.pop()
@@ -188,13 +188,16 @@ export default {
               type: "flex-images",
               images: [
                 { src: lastImage.src, caption: lastImage.caption },
-                { src: item.src, caption: item.altText.trim() },
+                {
+                  src: item.src,
+                  caption: item.altText ? item.altText.trim() : "",
+                },
               ],
             })
           } else if (lastItem.type === "flex-images") {
             lastItem.images.push({
               src: item.src,
-              caption: item.altText.trim(),
+              caption: item.altText ? item.altText.trim() : "",
             })
           }
         } else if (item.type === "iframe") {
