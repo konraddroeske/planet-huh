@@ -2,16 +2,8 @@
   <div class="curator">
     <div class="upper">
       <LazyImage
-        v-if="artist.picture.url"
         class="artistImage"
         :src="artist.picture.url"
-        :alt="artist.name"
-        :max-width="1000"
-      />
-      <LazyImage
-        v-else
-        class="artistImage"
-        src="replaceMe"
         :alt="artist.name"
         :max-width="1000"
       />

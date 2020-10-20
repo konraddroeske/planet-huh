@@ -3,16 +3,8 @@
     <div class="wrapper">
       <div class="heroRow">
         <LazyImage
-          v-if="imageSrc"
           class="bannerImage"
           :src="imageSrc"
-          alt=""
-          :max-width="2000"
-        />
-        <LazyImage
-          v-else
-          class="bannerImage"
-          src="replaceMe.jpg"
           alt=""
           :max-width="2000"
         />

@@ -1,10 +1,12 @@
 <template>
   <v-lazy-image
+    v-if="src"
     :src="computedSrc"
     :src-placeholder="srcPlaceholder"
     :alt="alt"
     @load="onLoaded"
   />
+  <v-lazy-image v-else src="replaceMe.jpg" alt="Replace me." @load="onLoaded" />
 </template>
 
 <script>
@@ -13,6 +15,7 @@ export default {
     src: {
       type: String,
       required: true,
+      // default: "replaceMe.jpg",
     },
     alt: {
       type: String,
@@ -29,7 +32,6 @@ export default {
   },
   computed: {
     computedSrc() {
-      if (this.src === "replaceMe.jpg") return this.src
       if (!this.$props.maxWidth) return this.$props.src
       return this.resizeImageSrc(this.$props.maxWidth)
     },

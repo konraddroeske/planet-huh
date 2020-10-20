@@ -26,32 +26,16 @@
         >
           <div class="leftImage">
             <LazyImage
-              v-if="post.featuredImages[0].url"
               class="postImage"
               :src="post.featuredImages[0].url"
-              :alt="post.title"
-              :max-width="1000"
-            />
-            <LazyImage
-              v-else
-              class="postImage"
-              src="replaceMe.jpg"
               :alt="post.title"
               :max-width="1000"
             />
           </div>
           <div class="rightImage">
             <LazyImage
-              v-if="post.featuredImages[1].url"
               class="postImage"
               :src="post.featuredImages[1].url"
-              :alt="post.title"
-              :max-width="1000"
-            />
-            <LazyImage
-              v-else
-              class="postImage"
-              src="replaceMe.jpg"
               :alt="post.title"
               :max-width="1000"
             />
