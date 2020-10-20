@@ -95,8 +95,6 @@ export default {
 
   activated() {
     this.onMount()
-    const embed = document.getElementsByClassName("Embed")
-    console.log(embed)
   },
   deactivated() {
     this.onDestroy()

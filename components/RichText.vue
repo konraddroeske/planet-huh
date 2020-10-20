@@ -65,7 +65,8 @@
           :key="index"
           class="fullImageContainer"
         >
-          <LazyImage :src="item.src" alt="" :max-width="2000" />
+          <LazyImage v-if="item.src" :src="item.src" alt="" :max-width="2000" />
+          <LazyImage v-else src="replaceMe.jps" alt="" :max-width="2000" />
           <div class="accentText caption">{{ item.caption }}</div>
         </div>
 
@@ -75,7 +76,13 @@
             :key="idx"
             class="flexImageContainer"
           >
-            <LazyImage :src="image.src" alt="" :max-width="1000" />
+            <LazyImage
+              v-if="image.src"
+              :src="image.src"
+              alt=""
+              :max-width="1000"
+            />
+            <LazyImage v-else src="replaceMe.jpg" alt="" :max-width="1000" />
             <div class="accentText caption">{{ image.caption }}</div>
           </div>
         </div>

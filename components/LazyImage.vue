@@ -29,6 +29,7 @@ export default {
   },
   computed: {
     computedSrc() {
+      if (this.src === "replaceMe.jpg") return this.src
       if (!this.$props.maxWidth) return this.$props.src
       return this.resizeImageSrc(this.$props.maxWidth)
     },

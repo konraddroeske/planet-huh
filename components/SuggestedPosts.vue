@@ -30,8 +30,16 @@
           >
             <nuxt-link :to="`/post/${post.slug}`" class="imageLink">
               <LazyImage
+                v-if="post.coverImage.url"
                 class="postImage"
                 :src="post.coverImage.url"
+                :alt="post.title"
+                :max-width="667"
+              />
+              <LazyImage
+                v-else
+                class="postImage"
+                src="replaceMe.jpg"
                 :alt="post.title"
                 :max-width="667"
               />
