@@ -7,7 +7,6 @@
       :posts="postsTotal"
       :post-limit="postLimit"
       get-some-posts-path="homepage/getSomePosts"
-      :show-featured="false"
     />
     <Footer />
   </div>

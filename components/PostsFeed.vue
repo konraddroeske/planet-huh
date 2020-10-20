@@ -66,10 +66,10 @@ export default {
       type: String,
       required: true,
     },
-    showFeatured: {
-      type: Boolean,
-      required: true,
-    },
+    // showFeatured: {
+    //   type: Boolean,
+    //   required: true,
+    // },
   },
   data() {
     return {
@@ -79,19 +79,10 @@ export default {
   },
   computed: {
     formattedPosts() {
-      if (this.showFeatured) {
-        return this.posts.map((post) => ({
-          ...post,
-          tags: this.computeTags(post.city, post.sense, post.mood),
-        }))
-      }
-
-      return this.posts
-        .map((post) => ({
-          ...post,
-          tags: this.computeTags(post.city, post.sense, post.mood),
-        }))
-        .filter((post) => !post.featured)
+      return this.posts.map((post) => ({
+        ...post,
+        tags: this.computeTags(post.city, post.sense, post.mood),
+      }))
     },
   },
   mounted() {
@@ -165,7 +156,7 @@ export default {
       return senses.map((sense) => sense.name)
     },
     computeMood(mood) {
-      return mood.mood ? [mood.mood] : []
+      return mood ? [mood.mood] : []
     },
     computeTags(cities, senses, mood) {
       const { computeCities, computeSenses, computeMood } = this
