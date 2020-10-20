@@ -20,7 +20,7 @@
       v-scroll-lock="isOpen"
       class="modal backdrop-blur"
     >
-      <CategoryNav variant="light" />
+      <CategoryNav variant="light" @close-modal="toggleModal" />
       <PageNav variant="light" />
       <div class="searchBarSocial">
         <SocialLinks variant="light" />

@@ -14,6 +14,7 @@
           :name="'Cities'"
           :to="{ name: 'cities' }"
           :variant="variant"
+          v-on="$listeners"
         />
       </li>
       <li>
@@ -21,6 +22,7 @@
           :name="'Senses'"
           :to="{ name: 'categories' }"
           :variant="variant"
+          v-on="$listeners"
         />
       </li>
       <li>
@@ -28,6 +30,7 @@
           :name="'Moods'"
           :to="{ name: 'categories' }"
           :variant="variant"
+          v-on="$listeners"
         />
       </li>
     </ul>
