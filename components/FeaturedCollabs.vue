@@ -50,12 +50,12 @@
               <div class="collabsTitle">
                 <div class="artist">
                   <h3 class="sectionHeadline">{{ post.artist[0].name }}</h3>
-                  <span>{{ post.artist[0].location }}</span>
+                  <span>{{ post.artist[0].city.name }}</span>
                 </div>
                 <span class="plus">+</span>
                 <div class="artist">
                   <h3 class="sectionHeadline">{{ post.artist[1].name }}</h3>
-                  <span>{{ post.artist[1].location }}</span>
+                  <span>{{ post.artist[1].city.name }}</span>
                 </div>
                 <h3 class="sectionHeadline title">{{ post.title }}</h3>
               </div>

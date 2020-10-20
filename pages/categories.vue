@@ -106,7 +106,7 @@ export default {
     },
     cityCurators() {
       return this.artists.filter((artist) => {
-        if (artist.location.toLowerCase() === this.title) {
+        if (artist.city.name.toLowerCase() === this.title) {
           return artist
         }
       })

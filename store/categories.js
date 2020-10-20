@@ -133,12 +133,14 @@ export const actions = {
       const { data } = await fetchContent(`{
         artists(orderBy: name_ASC) {
           id
-          location
           name
           socialUrl
           website
           social
           about
+          city {
+            name
+          }
           picture {
             url
             width

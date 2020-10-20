@@ -10,7 +10,7 @@
     </div>
     <div class="lower">
       <h3 class="name sectionHeadline">{{ artist.name }}</h3>
-      <p class="city">{{ artist.location }}</p>
+      <p class="city">{{ artist.city.name }}</p>
       <div class="links">
         <div class="website">
           <h4 class="accentText">Website</h4>
@@ -52,10 +52,6 @@ export default {
             type: String,
             required: true,
           },
-          location: {
-            type: String,
-            required: true,
-          },
           website: {
             type: String,
             required: false,
@@ -73,6 +69,10 @@ export default {
           },
           about: {
             type: String,
+            required: true,
+          },
+          city: {
+            type: Object,
             required: true,
           },
         }
