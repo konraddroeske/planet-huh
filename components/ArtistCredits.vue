@@ -13,7 +13,7 @@
         <div class="shortInfo">
           <div class="name">
             <h3 class="accentText">
-              {{ isSingleArtist ? "Written By" : "Who" }}
+              {{ isSingleArtist ? "Curated By" : "Who" }}
             </h3>
             <span>{{ artist.name }}</span>
           </div>

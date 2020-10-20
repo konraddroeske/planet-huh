@@ -4,7 +4,7 @@
     <CollabBanner
       v-if="post.artist.length > 1"
       v-bind="post"
-      :headline="'Presented by Red Bull'"
+      :headline="post.headline"
     />
     <RichText :content="post.content" />
     <ArtistCredits :artists="post.artist" />
