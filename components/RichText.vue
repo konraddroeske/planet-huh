@@ -167,8 +167,8 @@ export default {
           const [text, source] = this.childrenToText(item.children).split("@")
           cleanContent.push({
             type: item.type,
-            text: text.trim(),
-            source: source.trim(),
+            text: text ? text.trim() : "",
+            source: source ? source.trim() : "",
           })
         } else if (item.type === "image") {
           const lastItem = cleanContent[cleanContent.length - 1]

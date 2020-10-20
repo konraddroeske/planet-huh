@@ -40,7 +40,9 @@ export const actions = {
             }
             artist {
                 name
-                location
+                city {
+                  name
+                }
                 about
                 website
                 social
