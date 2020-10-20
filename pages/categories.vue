@@ -77,10 +77,7 @@ export default {
     },
     isParentCategory() {
       if (this.title) {
-        return (
-          this.allFilters[this.title]?.hasParent === false &&
-          this.title !== "cities"
-        )
+        return this.allFilters[this.title]?.hasParent === false
       }
 
       return false
