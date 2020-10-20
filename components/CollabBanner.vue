@@ -8,17 +8,17 @@
           alt=""
           :max-width="2000"
         />
-        <h1 class="titleText postTitle">
+        <h1 class="titleText postTitle" :class="{ blueTitle }">
           <span class="miniTitle">{{ titleArray[0] }}</span>
           {{ titleArray.slice(1).join(" ") }}
         </h1>
 
-        <div class="titleText artistOne">
+        <div class="titleText artistOne" :class="{ blueTitle }">
           {{ artistOne.name }}
           <span class="miniTitle">{{ artistOne.location }}</span>
         </div>
 
-        <div class="titleText artistTwo">
+        <div class="titleText artistTwo" :class="{ blueTitle }">
           <span class="miniTitle">{{ artistTwo.location }}</span>
           {{ artistTwo.name }}
         </div>
@@ -98,6 +98,10 @@ export default {
       type: Object,
       default: () => null,
     },
+    blueTitle: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     senseFormatted() {
@@ -167,6 +171,10 @@ export default {
   height: 100%;
   width: 100%;
   object-fit: cover;
+}
+
+.blueTitle {
+  color: $accent;
 }
 
 .titleText {

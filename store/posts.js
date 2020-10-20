@@ -14,6 +14,7 @@ export const actions = {
             title
             headline
             slug
+            blueTitle
             excerpt
             date
             featured
