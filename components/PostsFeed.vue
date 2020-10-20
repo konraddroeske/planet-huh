@@ -167,7 +167,7 @@ export default {
 
 <style lang="scss" scoped>
 section {
-  margin: 5rem 0;
+  margin: 7rem 0;
   text-align: center;
 }
 
