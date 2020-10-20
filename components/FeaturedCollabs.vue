@@ -491,16 +491,16 @@ ul {
     .content {
       min-width: 280px;
       width: 70%;
-      padding: 2rem 0;
+      padding: 3rem 0;
       margin: 0 auto;
     }
   }
 }
 
 @media (min-width: $bp-lg-desktop) {
-  p {
+  /* p {
     font-size: $font-md;
-  }
+  } */
 
   .plus {
     font-size: 2.5rem;
