@@ -45,7 +45,9 @@ export const actions = {
             }
             artist {
               name
-              location
+              city {
+                name
+              }
             }
             date
         }
