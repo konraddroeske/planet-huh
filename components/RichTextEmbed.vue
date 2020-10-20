@@ -42,7 +42,6 @@ export default {
       required: true,
     },
   },
-
   computed: {
     setStyle() {
       return {
@@ -50,23 +49,25 @@ export default {
         height: this.height,
       }
     },
-    newWidth() {
+    intWidth() {
       return parseInt(this.width.slice(0, -2))
     },
-    newHeight() {
+    intHeight() {
       return parseInt(this.height.slice(0, -2))
     },
     ratio() {
-      return this.newHeight / this.newWidth
+      return this.intHeight / this.intWidth
     },
   },
-
+  activated() {
+    this.handleResize()
+  },
   methods: {
     handleResize() {
       const container = document.getElementById(this.name)
       const width = container.offsetWidth
 
-      if (width < this.newWidth) {
+      if (width < this.intWidth) {
         gsap.set(`#${this.name}`, {
           height: `${this.ratio * width}px`,
         })
