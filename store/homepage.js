@@ -62,7 +62,7 @@ export const actions = {
   async getSomePosts({ commit, state }, numPosts = 4) {
     try {
       const { data } = await fetchContent(`{
-        posts(orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
+        posts(where: {featured: false} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
           id
           title
           slug
