@@ -109,7 +109,7 @@ export default {
   font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
-  font-size: 13vw;
+  font-size: 9vw;
   line-height: 1;
   position: relative;
 

@@ -64,7 +64,7 @@ li {
 h2 {
   font-family: $font-display;
   margin: 0;
-  font-size: 9vw;
+  font-size: 7vw;
   text-align: left;
   text-transform: uppercase;
   font-weight: $extrabold;
