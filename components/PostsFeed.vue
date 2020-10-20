@@ -237,12 +237,12 @@ section {
   margin-bottom: 1rem;
 
   @media (min-width: $bp-desktop) {
-    max-height: 450px;
+    /* max-height: 450px; */
     display: flex;
   }
 
   @media (min-width: $bp-lg-desktop) {
-    max-height: 550px;
+    /* max-height: 550px; */
     display: flex;
   }
 }
