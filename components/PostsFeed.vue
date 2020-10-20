@@ -66,10 +66,6 @@ export default {
       type: String,
       required: true,
     },
-    // showFeatured: {
-    //   type: Boolean,
-    //   required: true,
-    // },
   },
   data() {
     return {

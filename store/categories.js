@@ -319,6 +319,8 @@ export const actions = {
       return `{}`
     }
 
+    // console.log(format(filters))
+
     commit("setFormattedFilters", format(filters))
   },
   handleRouteQueries({ dispatch, commit, state }, payload) {

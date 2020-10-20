@@ -9,7 +9,6 @@
       <PostsFeed
         :posts="postsTotal"
         :post-limit="postLimit"
-        :show-featured="cityCollabs.length === 0"
         get-some-posts-path="categories/getCategoryPosts"
       />
     </div>
@@ -98,8 +97,8 @@ export default {
     cityCollabs() {
       return this.collabs.filter((collab) => {
         if (
-          collab.artist[0].location.toLowerCase() === this.title ||
-          collab.artist[1].location.toLowerCase() === this.title
+          collab.city[0].name.toLowerCase() === this.title ||
+          collab.city[1].name.toLowerCase() === this.title
         ) {
           return collab
         }
