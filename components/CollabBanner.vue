@@ -291,12 +291,14 @@ export default {
   margin: 0;
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .category {
   text-transform: capitalize;
   margin-right: 1rem;
   position: relative;
+  margin-bottom: 0.2rem;
 
   &::before {
     content: "•";
