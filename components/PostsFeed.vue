@@ -66,6 +66,10 @@ export default {
       type: String,
       required: true,
     },
+    showFeatured: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
@@ -75,10 +79,19 @@ export default {
   },
   computed: {
     formattedPosts() {
-      return this.posts.map((post) => ({
-        ...post,
-        tags: this.computeTags(post.city, post.sense, post.mood),
-      }))
+      if (this.showFeatured) {
+        return this.posts.map((post) => ({
+          ...post,
+          tags: this.computeTags(post.city, post.sense, post.mood),
+        }))
+      }
+
+      return this.posts
+        .map((post) => ({
+          ...post,
+          tags: this.computeTags(post.city, post.sense, post.mood),
+        }))
+        .filter((post) => !post.featured)
     },
   },
   mounted() {

@@ -32,6 +32,7 @@ export const actions = {
           title
           slug
           date
+          featured
           city {
             name
           }
