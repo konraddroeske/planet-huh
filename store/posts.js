@@ -2,7 +2,7 @@ import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
   posts: null,
-  collabs: null,
+  // collabs: null,
 })
 
 export const actions = {
@@ -57,7 +57,7 @@ export const actions = {
 
       const { posts } = data.data
       commit("setPosts", posts)
-      commit("setCollabs", posts)
+      // commit("setCollabs", posts)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)
@@ -69,13 +69,13 @@ export const mutations = {
   setPosts(state, payload) {
     state.posts = payload
   },
-  setCollabs(state, payload) {
-    const collabs = payload.filter((post) => {
-      if (post.artist.length > 1) {
-        return post
-      }
-    })
+  // setCollabs(state, payload) {
+  //   const collabs = payload.filter((post) => {
+  //     if (post.artist.length >= 2 && post.featuredImages.length >= 2) {
+  //       return post
+  //     }
+  //   })
 
-    state.collabs = collabs
-  },
+  //   state.collabs = collabs
+  // },
 }

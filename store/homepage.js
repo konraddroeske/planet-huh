@@ -49,6 +49,9 @@ export const actions = {
                 name
               }
             }
+            city {
+                name
+            }
             date
         }
       }`)
@@ -129,7 +132,9 @@ export const mutations = {
     state.postsFeed = state.postsFeed.concat(newPosts)
   },
   setFeatured(state, featuredPosts) {
-    state.featured = featuredPosts
+    state.featured = featuredPosts.filter((post) => {
+      return post.featuredImages.length >= 2 && post.artist.length >= 2
+    })
   },
   setMaxPosts(state, num) {
     state.maxPosts += num

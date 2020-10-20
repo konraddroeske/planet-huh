@@ -67,7 +67,7 @@ export default {
       },
       allFilters: (state) => state.categories.allFilters,
       isFetching: (state) => state.categories.isFetching,
-      collabs: (state) => state.posts.collabs,
+      collabs: (state) => state.homepage.featured,
       artists: (state) => state.categories.artists,
     }),
     metaTitle() {
