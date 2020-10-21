@@ -249,6 +249,10 @@ export default {
     width: 70%;
     margin: 5rem auto;
   }
+
+  .bodyText {
+    font-family: $font-display;
+  }
 }
 
 p {

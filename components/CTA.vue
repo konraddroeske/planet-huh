@@ -33,7 +33,7 @@ export default {
   padding: 5rem 0 0 0;
 
   @media (min-width: $bp-desktop) {
-    width: 40%;
+    width: 50%;
     margin: 0 auto 0 auto;
   }
 }
