@@ -35,7 +35,8 @@ export const actions = {
     const navTime = 1
 
     navContainerTl
-      .to("#navContainer", navTime, {
+      .to("#navContainer", {
+        duration: navTime,
         y: state.isMobile ? "3rem" : "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
         ease: "power4.out",
@@ -46,8 +47,8 @@ export const actions = {
         overflow: "visible",
       })
 
-    gsap.to("#toggleContainer", navTime, { autoAlpha: 0 })
-    gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
+    gsap.to("#toggleContainer", { autoAlpha: 0, duration: navTime })
+    gsap.to("#navFeedContainer", { autoAlpha: 0, duration: navTime })
   },
   setNavLeave({ state, commit }, startRouting) {
     const navContainerTl = gsap.timeline()
@@ -56,7 +57,8 @@ export const actions = {
     if (state.isMobile) commit("setNavOpen", false)
 
     navContainerTl
-      .to(window, state.scrollTime, {
+      .to(window, {
+        duration: state.scrollTime,
         scrollTo: 0,
         ease: "power4.out",
         onComplete: () => {
@@ -73,7 +75,8 @@ export const actions = {
       .set("#navContainer", {
         position: "fixed",
       })
-      .to("#navContainer", navTime, {
+      .to("#navContainer", {
+        duration: navTime,
         y: state.isMobile ? "3rem" : "-2rem",
         scale: state.isMobile ? 0.2 : 0.15,
         ease: "power4.out",
@@ -83,8 +86,8 @@ export const actions = {
         overflow: "visible",
       })
 
-    gsap.to("#toggleContainer", navTime, { autoAlpha: 0 })
-    gsap.to("#navFeedContainer", navTime, { autoAlpha: 0 })
+    gsap.to("#toggleContainer", { duration: navTime, autoAlpha: 0 })
+    gsap.to("#navFeedContainer", { duration: navTime, autoAlpha: 0 })
   },
   setNavLeaveSmall({ state }, payload) {
     const { done, el } = payload
@@ -96,7 +99,8 @@ export const actions = {
     })
 
     navContainerTl
-      .to(el, state.scrollTime, {
+      .to(el, {
+        duration: state.scrollTime,
         autoAlpha: 0,
         ease: "power4.out",
       })
@@ -123,12 +127,24 @@ export const actions = {
     const navTime = 1
     const delay = 0
 
+    gsap.fromTo(
+      el,
+      {
+        autoAlpha: 0,
+      },
+      {
+        autoAlpha: 1,
+        duration: 0.5,
+      }
+    )
+
     navContainerTl
       .set("#layout", {
         height: "calc(100vh + 1px)",
         overflow: "hidden",
       })
-      .to("#navContainer", navTime, {
+      .to("#navContainer", {
+        duration: navTime,
         delay,
         y: "0",
         scale: 1,
@@ -144,14 +160,15 @@ export const actions = {
       })
 
     if (el) {
-      gsap.to(el, navTime, { autoAlpha: 1 })
+      gsap.to(el, { duration: navTime, autoAlpha: 1 })
     }
 
-    gsap.to("#toggleContainer", navTime, { autoAlpha: 1 })
-    gsap.to("#navFeedContainer", navTime, { autoAlpha: 1 })
+    gsap.to("#toggleContainer", { duration: navTime, autoAlpha: 1 })
+    gsap.to("#navFeedContainer", { duration: navTime, autoAlpha: 1 })
   },
   setNavContainerSmall() {
-    gsap.to("#main", 0.6, {
+    gsap.to("#main", {
+      duration: 0.6,
       y: 0,
       ease: "power4.out",
     })
@@ -179,13 +196,15 @@ export const actions = {
   setLeave(context, payload) {
     const { el, done } = payload
 
-    gsap.to(el, 0.6, {
-      y: "60vh",
+    gsap.to(el, {
+      duration: 0.6,
+      autoAlpha: 0,
       ease: "power4.out",
     })
 
-    gsap.to(el, 0.6, {
-      autoAlpha: 0,
+    gsap.to(el, {
+      duration: 0.6,
+      y: "60vh",
       ease: "power4.out",
       onComplete: () => done(),
     })
@@ -194,7 +213,8 @@ export const actions = {
     const tl = gsap.timeline()
     const { el } = payload
 
-    gsap.to("#main", 0.6, {
+    gsap.to("#main", {
+      duration: 0.6,
       y: 0,
       ease: "power4.out",
     })

@@ -90,6 +90,9 @@ export const actions = {
                 longitude
             }
             createdAt
+            post {
+              id
+            }
         }
       }`)
 
@@ -108,7 +111,9 @@ export const mutations = {
       state.cities.push([
         city.coordinates.latitude,
         city.coordinates.longitude,
-        city.name.toLowerCase(),
+        city.post.length > 0
+          ? city.name.toLowerCase()
+          : city.name.toLowerCase() + " (coming soon)",
       ])
     })
   },
