@@ -409,6 +409,10 @@ blockquote {
   }
 }
 
+.fullImageContainer {
+  margin: 3rem 0;
+}
+
 .fullImageContainer,
 .flexImageContainer {
   img {
