@@ -28,7 +28,7 @@
         </p>
       </div>
       <Button @clicked="routeFilter(artist.name)"
-        >Show {{ artist.name.replace(/ .*/, "") }} posts</Button
+        >Show {{ artist.name.replace(/ .*/, "") }}'s posts</Button
       >
     </div>
   </div>
