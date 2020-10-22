@@ -198,7 +198,7 @@ export default {
     text-align: center;
     max-width: calc(100% - 2rem);
 
-    @media (min-width: $bp-tablet) {
+    @media (min-width: $bp-mobile) {
       max-width: 75%;
       font-size: $font-sm;
     }
