@@ -138,6 +138,7 @@ export const actions = {
           website
           social
           about
+          shortBio
           city {
             name
           }

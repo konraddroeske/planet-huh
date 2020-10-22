@@ -4,10 +4,13 @@
     <nuxt-link ref="link" :event="disabled ? '' : 'click'" :to="to">{{
       name
     }}</nuxt-link>
+    <p v-if="shortBio" class="shortBio bodyText">{{ shortBio }}</p>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex"
+
 export default {
   props: {
     variant: {
@@ -29,6 +32,19 @@ export default {
       type: Boolean,
       required: false,
       default: false,
+    },
+  },
+  computed: {
+    ...mapState({
+      artists: (state) => state.categories.artists,
+    }),
+    artist() {
+      return this.artists.filter((artist) => {
+        return artist.name === this.name
+      })[0]
+    },
+    shortBio() {
+      return this.artist ? this.artist.shortBio : null
     },
   },
   methods: {
@@ -171,6 +187,25 @@ export default {
         box-shadow: 0 0 18rem 18rem $accent;
         opacity: 0.4;
       }
+    }
+  }
+
+  .shortBio {
+    font-size: $font-x-sm;
+    margin: 1rem auto 0 auto;
+    text-transform: none;
+    font-weight: 400;
+    text-align: center;
+    max-width: calc(100% - 2rem);
+
+    @media (min-width: $bp-tablet) {
+      max-width: 75%;
+      font-size: $font-sm;
+    }
+
+    @media (min-width: $bp-desktop) {
+      max-width: 50%;
+      /* font-size: $font-md; */
     }
   }
 }
