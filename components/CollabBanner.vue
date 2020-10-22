@@ -33,7 +33,7 @@
 
         <div class="categoriesContainer">
           <span class="accentText categoriesTitle">Filed Under:</span>
-          <ul class="categories">
+          <!-- <ul class="categories">
             <li v-if="city.length > 0" class="category">
               <span class="visuallyHidden">City One: </span
               >{{ cityOneFormatted }}
@@ -47,6 +47,36 @@
             </li>
             <li v-if="mood" class="category">
               <span class="visuallyHidden">Mood: </span>{{ moodFormatted }}
+            </li>
+          </ul> -->
+          <ul class="categories">
+            <li v-if="city.length > 0" class="category">
+              <span class="visuallyHidden">City One: </span>
+              <nuxt-link
+                :to="`/categories?filters=${cityOneFormatted.toLowerCase()}`"
+                >{{ cityOneFormatted }}</nuxt-link
+              >
+            </li>
+            <li v-if="city.length > 0" class="category">
+              <span class="visuallyHidden">City Two: </span>
+              <nuxt-link
+                :to="`/categories?filters=${cityTwoFormatted.toLowerCase()}`"
+                >{{ cityTwoFormatted }}</nuxt-link
+              >
+            </li>
+            <li v-if="sense.length > 0" class="category">
+              <span class="visuallyHidden">Sense: </span>
+              <nuxt-link
+                :to="`/categories?filters=${senseFormatted.toLowerCase()}`"
+                >{{ senseFormatted }}</nuxt-link
+              >
+            </li>
+            <li v-if="mood" class="category">
+              <span class="visuallyHidden">Mood: </span>
+              <nuxt-link
+                :to="`/categories?filters=${moodFormatted.toLowerCase()}`"
+                >{{ moodFormatted }}</nuxt-link
+              >
             </li>
           </ul>
         </div>
@@ -313,6 +343,17 @@ export default {
     position: absolute;
     left: -0.75rem;
     top: 0;
+  }
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
   }
 
   @media (min-width: $bp-desktop) {
