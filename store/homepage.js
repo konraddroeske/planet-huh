@@ -64,7 +64,7 @@ export const actions = {
       console.log(error) // TODO: error handling
     }
   },
-  async getSomePosts({ commit, state }, numPosts = 4) {
+  async getSomePosts({ commit, state }, numPosts = 8) {
     try {
       const { data } = await fetchContent(`{
         posts(where: {featured: false} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
@@ -97,7 +97,7 @@ export const actions = {
 
       const { posts } = data.data
       commit("setSomePosts", posts)
-      commit("setMaxPosts", 4)
+      commit("setMaxPosts", 8)
     } catch (error) {
       // eslint-disable-next-line no-console
       console.log(error)

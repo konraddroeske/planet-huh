@@ -55,7 +55,6 @@ export default {
     },
     navigate(destination, filters) {
       if (this.$route.fullPath.includes(this.name.toLowerCase())) {
-        console.log("close modal")
         this.$emit("close-modal")
       } else if (this.$route.fullPath.includes("categories")) {
         const tl = gsap.timeline()

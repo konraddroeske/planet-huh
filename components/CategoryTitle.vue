@@ -192,6 +192,7 @@ export default {
 
   .shortBio {
     font-size: $font-x-sm;
+    color: $black;
     margin: 1rem auto 0 auto;
     text-transform: none;
     font-weight: 400;
@@ -205,7 +206,6 @@ export default {
 
     @media (min-width: $bp-desktop) {
       max-width: 50%;
-      /* font-size: $font-md; */
     }
   }
 }

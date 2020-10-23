@@ -36,7 +36,7 @@ export default {
     if (store.state.homepage.postsFeed.length === 0) {
       await store.dispatch("homepage/getHomepage")
       await store.commit("homepage/resetMaxPosts")
-      await store.dispatch("homepage/getSomePosts", 8)
+      await store.dispatch("homepage/getSomePosts", 16)
     }
   },
   computed: {

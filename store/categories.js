@@ -24,7 +24,7 @@ export const state = () => ({
 })
 
 export const actions = {
-  async getCategoryPosts({ commit, state }, numPosts = 4) {
+  async getCategoryPosts({ commit, state }, numPosts = 8) {
     try {
       const { data } = await fetchContent(`{
         posts(where: ${state.formattedFilters} orderBy: date_DESC skip: ${state.postsFeed.length} first: ${numPosts} ) {
@@ -53,7 +53,7 @@ export const actions = {
 
       const { posts } = data.data
       commit("setCategoryPosts", posts)
-      commit("setMaxPosts", 4)
+      commit("setMaxPosts", 8)
       commit("setIsFetching", false)
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -348,7 +348,7 @@ export const actions = {
       commit("setFilters", params)
       dispatch("checkTitle")
       dispatch("formatFilters")
-      dispatch("getCategoryPosts", 8)
+      dispatch("getCategoryPosts", 16)
     }
   },
   getQueries({ state }, newFilter) {

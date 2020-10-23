@@ -139,7 +139,7 @@ export default {
       }
     },
     getSomePosts() {
-      this.$store.dispatch(this.getSomePostsPath, 4)
+      this.$store.dispatch(this.getSomePostsPath, 8)
     },
     getSomePostsAndUnfocus() {
       this.$refs.load.$el.blur()
