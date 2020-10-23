@@ -10,7 +10,14 @@
         />
         <div class="bannerText">
           <h1 class="title">{{ title }}</h1>
-          <p class="excerpt">{{ excerpt }}</p>
+          <p v-if="excerpt" class="excerpt">{{ excerpt }}</p>
+          <p v-if="artistFormatted" class="excerpt curated">
+            Curated by
+            <nuxt-link
+              :to="`/categories?filters=${artistFormatted.toLowerCase()}`"
+              >{{ artistFormatted }}</nuxt-link
+            >
+          </p>
         </div>
       </div>
 
@@ -66,7 +73,12 @@ export default {
     },
     excerpt: {
       type: String,
-      required: true,
+      required: false,
+      default: null,
+    },
+    artist: {
+      type: Array,
+      default: () => null,
     },
     date: {
       type: String,
@@ -94,6 +106,9 @@ export default {
     },
     nameFormatted() {
       return this.city.length > 0 ? `${this.city[0].name}` : null
+    },
+    artistFormatted() {
+      return this.artist.length > 0 ? `${this.artist[0].name}` : null
     },
   },
 }
@@ -164,6 +179,21 @@ export default {
   margin-bottom: 0;
   @media (min-width: $bp-desktop) {
     font-size: 1.5rem;
+  }
+}
+
+.curated {
+  text-transform: uppercase;
+
+  a,
+  a:visited {
+    color: $black;
+    text-decoration: none;
+
+    &:hover,
+    &:focus {
+      color: $accent;
+    }
   }
 }
 
