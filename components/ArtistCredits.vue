@@ -15,7 +15,10 @@
             <h3 class="accentText">
               {{ isSingleArtist ? "Curated By" : "Who" }}
             </h3>
-            <span>{{ artist.name }}</span>
+            <nuxt-link
+              :to="`/categories?filters=${artist.name.toLowerCase()}`"
+              >{{ artist.name }}</nuxt-link
+            >
           </div>
 
           <div class="website">
