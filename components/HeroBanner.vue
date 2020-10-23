@@ -183,7 +183,7 @@ export default {
 }
 
 .curated {
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
 
   a,
   a:visited {
