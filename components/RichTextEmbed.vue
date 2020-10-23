@@ -85,9 +85,12 @@ export default {
 .richTextContainer {
   display: inline-block;
   position: relative;
+  width: 100%;
 }
 
 .richTextEmbed {
   max-width: 100%;
+  margin: 0 auto;
+  display: block;
 }
 </style>

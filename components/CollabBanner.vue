@@ -33,22 +33,7 @@
 
         <div class="categoriesContainer">
           <span class="accentText categoriesTitle">Filed Under:</span>
-          <!-- <ul class="categories">
-            <li v-if="city.length > 0" class="category">
-              <span class="visuallyHidden">City One: </span
-              >{{ cityOneFormatted }}
-            </li>
-            <li v-if="city.length > 0" class="category">
-              <span class="visuallyHidden">City Two: </span
-              >{{ cityTwoFormatted }}
-            </li>
-            <li v-if="sense.length > 0" class="category">
-              <span class="visuallyHidden">Sense: </span>{{ senseFormatted }}
-            </li>
-            <li v-if="mood" class="category">
-              <span class="visuallyHidden">Mood: </span>{{ moodFormatted }}
-            </li>
-          </ul> -->
+
           <ul class="categories">
             <li v-if="city.length > 0" class="category">
               <span class="visuallyHidden">City One: </span>

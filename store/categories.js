@@ -86,7 +86,7 @@ export const actions = {
   async getCities({ commit, state }) {
     try {
       const { data } = await fetchContent(`{
-        cities(orderBy: name_ASC) {
+        cities(orderBy: name_ASC where: {post_every: {id_contains: ""}}) {
             id
             name
             createdAt
