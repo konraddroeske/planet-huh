@@ -14,11 +14,21 @@
       <div class="links">
         <div class="website">
           <h4 class="accentText">Website</h4>
-          <a :href="artist.website">{{ websiteFormatted }}</a>
+          <a
+            :href="artist.website"
+            target="_blank"
+            rel="canonical noopener noreferrer"
+            >{{ websiteFormatted }}</a
+          >
         </div>
         <div class="social">
           <h4 class="accentText">Social</h4>
-          <a :href="artist.socialUrl">@{{ artist.social }}</a>
+          <a
+            :href="artist.socialUrl"
+            target="_blank"
+            rel="canonical noopener noreferrer"
+            >@{{ artist.social }}</a
+          >
         </div>
       </div>
       <div>
