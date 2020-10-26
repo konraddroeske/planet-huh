@@ -201,6 +201,8 @@ export default {
             })
           }
         } else if (item.type === "iframe") {
+          console.log(item.url)
+
           cleanContent.push({
             type: item.type,
             url: item.url,
