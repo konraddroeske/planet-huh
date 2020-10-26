@@ -1,5 +1,9 @@
 <template>
-  <div ref="modalFilters" class="modalFilters backdrop-blur">
+  <div
+    ref="modalFilters"
+    v-scroll-lock="isOpen && isMobile"
+    class="modalFilters backdrop-blur"
+  >
     <resize-observer @notify="handleResize()" />
     <div class="filtersTop">
       <div class="topBar">
@@ -163,6 +167,8 @@ export default {
       moodCategories: (state) => state.categories.moodCategories,
       filters: (state) => state.categories.filters,
       allFilters: (state) => state.categories.allFilters,
+      isOpen: (state) => state.categories.modal,
+      isMobile: (state) => state.transitions.isMobile,
     }),
   },
   watch: {
