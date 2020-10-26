@@ -158,8 +158,8 @@ footer {
   background: $white;
   position: relative;
   bottom: 1.5rem;
-  border-radius: 180px;
-  padding: 0.25rem 0.25rem 0.15rem 0.25rem;
+  border-radius: 50%;
+  padding: 0.25rem 0.25rem 0rem 0.25rem;
 }
 
 .secondRow {
