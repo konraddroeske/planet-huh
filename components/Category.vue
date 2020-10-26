@@ -168,7 +168,7 @@ export default {
   font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
-  font-size: 4rem;
+  font-size: 3rem;
   line-height: 1;
   position: relative;
 
@@ -201,6 +201,10 @@ export default {
     &:focus {
       color: $white;
     }
+  }
+
+  @media (min-width: $bp-tablet) {
+    font-size: 4rem;
   }
 
   @media (min-width: $bp-desktop) {
