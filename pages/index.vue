@@ -39,6 +39,7 @@ export default {
       await store.dispatch("homepage/getSomePosts", 16)
     }
   },
+
   computed: {
     isMobile() {
       return this.$device.isMobileOrTablet

@@ -107,6 +107,11 @@ export default {
           "https://fonts.googleapis.com/css2?family=Oswald:wght@400&family=Work+Sans:wght@400;500;600;900&display=swap",
       },
     ],
+    script: [
+      {
+        src: "/js/fb-sdk.js",
+      },
+    ],
   },
   /*
    ** Global CSS

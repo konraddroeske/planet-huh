@@ -89,7 +89,7 @@
             :name="`iframe${index}`"
             :instagram="item.instagram"
           />
-          <InstagramEmbed
+          <Instagram
             v-else
             :url="item.url.slice(0, -5)"
             :max-width="item.width"
@@ -103,13 +103,15 @@
 </template>
 
 <script>
-import InstagramEmbed from "vue-instagram-embed"
+// import InstagramEmbed from "vue-instagram-embed"
+import Instagram from "@/components/Instagram"
 import RichTextEmbed from "@/components/RichTextEmbed"
 
 export default {
   components: {
     RichTextEmbed,
-    InstagramEmbed,
+    Instagram,
+    // InstagramEmbed,
   },
   props: {
     content: {
@@ -201,8 +203,6 @@ export default {
             })
           }
         } else if (item.type === "iframe") {
-          console.log(item.url)
-
           cleanContent.push({
             type: item.type,
             url: item.url,
