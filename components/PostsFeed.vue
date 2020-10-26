@@ -13,7 +13,7 @@
             <div class="postImageContainer">
               <LazyImage
                 class="postImage"
-                :src="post.coverImage.url"
+                :src="post.coverImage ? post.coverImage.url : null"
                 :alt="post.title"
                 :max-width="1000"
                 @loaded="onLoaded"
