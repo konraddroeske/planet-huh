@@ -163,7 +163,7 @@ export default {
   }
 
   @media (min-width: $bp-tablet) {
-    font-size: 7rem;
+    /* font-size: 7rem; */
     ::before {
       box-shadow: 0 0 10.5rem 10.5rem $accent;
     }
