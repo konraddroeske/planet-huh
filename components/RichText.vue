@@ -382,7 +382,7 @@ blockquote {
     margin-bottom: 1rem;
     text-transform: uppercase;
     font-weight: $extrabold;
-    font-size: 2.25rem;
+    font-size: $font-md;
   }
 
   .source {
@@ -390,12 +390,18 @@ blockquote {
     font-weight: $semibold;
   }
 
+  @media (min-width: $bp-tablet) {
+    q {
+      font-size: $font-lg;
+    }
+  }
+
   @media (min-width: $bp-desktop) {
     margin-top: 3rem;
     margin-bottom: 2rem;
 
     q {
-      font-size: 3.5rem;
+      font-size: 3rem;
       margin-bottom: 2rem;
     }
   }
