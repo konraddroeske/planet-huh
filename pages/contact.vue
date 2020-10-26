@@ -253,7 +253,7 @@ export default {
         {
           hid: "og:url",
           property: "og:url",
-          content: `http://www.planethuh.com${this.$route.fullPath}`,
+          content: `http://www.planethuh.com${this.$route.fullPath}/`,
         },
       ],
     }

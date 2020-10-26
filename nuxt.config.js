@@ -73,6 +73,11 @@ export default {
         content: "Planet huh logo and planets",
       },
       {
+        hid: "fb:app_id",
+        property: "fb:app_id",
+        content: "392644721931229",
+      },
+      {
         hid: "og:image",
         property: "og:image",
         content: img,

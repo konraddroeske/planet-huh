@@ -54,7 +54,7 @@ export default {
   data() {
     return {
       slug: this.$route.params.slug,
-      link: `http://www.planethuh.com${this.$route.fullPath}`,
+      link: `http://www.planethuh.com${this.$route.fullPath}/`,
     }
   },
   computed: {
