@@ -103,7 +103,6 @@
 </template>
 
 <script>
-// import InstagramEmbed from "vue-instagram-embed"
 import Instagram from "@/components/Instagram"
 import RichTextEmbed from "@/components/RichTextEmbed"
 
@@ -111,7 +110,6 @@ export default {
   components: {
     RichTextEmbed,
     Instagram,
-    // InstagramEmbed,
   },
   props: {
     content: {

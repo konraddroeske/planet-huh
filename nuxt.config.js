@@ -206,6 +206,7 @@ export default {
   },
   env: {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
+    facebookToken: process.env.FACEBOOK_CLIENT_TOKEN,
   },
   generate: {
     routes: dynamicRoutes,

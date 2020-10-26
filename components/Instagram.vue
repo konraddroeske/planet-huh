@@ -42,7 +42,7 @@ export default {
         "GET",
         {
           url: this.url,
-          access_token: "392644721931229|376f83040d9f0ca2b9f7b5655017d33d",
+          access_token: process.env.facebookToken,
           maxwidth: maxWidth,
           hidecaption: this.hideCaption,
           omitscript: this.omitScript,
