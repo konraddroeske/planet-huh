@@ -252,6 +252,9 @@ export default {
 
   .bodyText {
     font-family: $font-display;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
   }
 }
 
