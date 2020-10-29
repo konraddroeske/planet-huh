@@ -5,16 +5,16 @@
       <p>
         {{ text }}
       </p>
-      <Button to="/about">Learn More</Button>
+      <!-- <Button to="/about">Learn More</Button> -->
     </Wrapper>
   </div>
 </template>
 
 <script>
 import Wrapper from "./Wrapper"
-import Button from "./Button"
+// import Button from "./Button"
 export default {
-  components: { Wrapper, Button },
+  components: { Wrapper },
   computed: {
     title() {
       return this.$store.state.homepage.ctaTitle
