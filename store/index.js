@@ -14,6 +14,7 @@ export const actions = {
     await dispatch("categories/getCities")
     await dispatch("categories/getSenses")
     await dispatch("categories/getArtists")
+    await dispatch("categories/getCategoryPage")
   },
 }
 

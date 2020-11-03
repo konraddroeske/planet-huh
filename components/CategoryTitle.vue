@@ -4,7 +4,8 @@
     <nuxt-link ref="link" :event="disabled ? '' : 'click'" :to="to">{{
       name
     }}</nuxt-link>
-    <p v-if="shortBio" class="shortBio bodyText">{{ shortBio }}</p>
+    <p v-if="isArtist" class="description bodyText">{{ isArtist }}</p>
+    <p v-if="isMood" class="description bodyText">{{ isMood }}</p>
   </div>
 </template>
 
@@ -37,14 +38,23 @@ export default {
   computed: {
     ...mapState({
       artists: (state) => state.categories.artists,
+      moods: (state) => state.categories.moods,
     }),
     artist() {
       return this.artists.filter((artist) => {
         return artist.name === this.name
       })[0]
     },
-    shortBio() {
+    isArtist() {
       return this.artist ? this.artist.shortBio : null
+    },
+    mood() {
+      return this.moods.filter((mood) => {
+        return mood.mood === this.name
+      })[0]
+    },
+    isMood() {
+      return this.mood ? this.mood.description : null
     },
   },
   methods: {
@@ -189,7 +199,9 @@ export default {
     }
   }
 
-  .shortBio {
+  .description {
+    top: 1rem;
+    position: relative;
     font-size: $font-x-sm;
     color: $black;
     margin: 1rem auto 0 auto;

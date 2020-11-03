@@ -4,6 +4,7 @@
       <h2 class="sectionTitle">
         {{ artists.length > 1 ? "City Curators" : "City Curator" }}
       </h2>
+      <p v-if="description" class="bodyText description">{{ description }}</p>
       <ul :class="getClass()">
         <li v-for="artist of viewableArtists" :key="artist.id">
           <CityCurator :artist="artist" />
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex"
 import CityCurator from "@/components/CityCurator"
 import Wrapper from "@/components/Wrapper"
 import Button from "@/components/Button"
@@ -41,6 +43,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      description: (state) => state.categories.curatorDescription,
+    }),
     viewableArtists() {
       return this.artists.slice(0, this.rowsLoaded * this.postsPerRow)
     },
@@ -136,6 +141,22 @@ ul {
 
   li {
     width: 100%;
+  }
+}
+
+.description {
+  font-size: $font-x-sm;
+  margin: 0rem auto 3.5rem auto;
+  text-transform: none;
+  font-weight: 400;
+  text-align: center;
+
+  @media (min-width: $bp-mobile) {
+    font-size: $font-sm;
+  }
+
+  @media (min-width: $bp-desktop) {
+    max-width: 75%;
   }
 }
 

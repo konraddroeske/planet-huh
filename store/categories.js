@@ -21,6 +21,7 @@ export const state = () => ({
   moodCategories: [],
   isFetching: false,
   artists: [],
+  curatorDescription: "",
 })
 
 export const actions = {
@@ -66,6 +67,7 @@ export const actions = {
         moods(orderBy: mood_ASC) {
             id
             mood
+            description
             moodCategory
             createdAt
             post {
@@ -158,6 +160,23 @@ export const actions = {
       console.log(error)
     }
   },
+  async getCategoryPage({ commit }) {
+    try {
+      const { data } = await fetchContent(`{
+         categoriesPages {
+            id
+            curatorDescription
+          }
+      }`)
+
+      const { curatorDescription } = data.data.categoriesPages[0]
+
+      commit("setCategoryPage", curatorDescription)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error) // TODO: error handling
+    }
+  },
   checkTitle({ state, commit }) {
     if (state.filters.length === 1) {
       if (state.allFilters[state.filters[0]]?.type === "moodCategory") {
@@ -212,7 +231,9 @@ export const actions = {
         let str = "city_some.AND"
 
         for (let i = 0; i < cityFilters.length; i++) {
-          set(cityObj, str, { name: state.allFilters[cityFilters[i]].query })
+          set(cityObj, str, {
+            name: state.allFilters[cityFilters[i]].query,
+          })
           str += ".AND"
         }
         filtersArr.push(cityObj)
@@ -224,7 +245,9 @@ export const actions = {
         let str = "sense_some.AND"
 
         for (let i = 0; i < senseFilters.length; i++) {
-          set(senseObj, str, { name: state.allFilters[senseFilters[i]].query })
+          set(senseObj, str, {
+            name: state.allFilters[senseFilters[i]].query,
+          })
           str += ".AND"
         }
 
@@ -269,7 +292,9 @@ export const actions = {
 
         for (let i = 0; i < moodFilters.length; i++) {
           if (state.allFilters[moodFilters[i]].type === "mood") {
-            set(moodObj, str, { mood: state.allFilters[moodFilters[i]].query })
+            set(moodObj, str, {
+              mood: state.allFilters[moodFilters[i]].query,
+            })
           }
 
           if (state.allFilters[moodFilters[i]].type === "moodCategory") {
@@ -527,5 +552,8 @@ export const mutations = {
   },
   setIsFetching(state, payload) {
     state.isFetching = payload
+  },
+  setCategoryPage(state, curatorDescription) {
+    state.curatorDescription = curatorDescription
   },
 }
