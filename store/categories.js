@@ -149,6 +149,11 @@ export const actions = {
             width
             height
           }
+          posts {
+            mood {
+              mood
+            }
+          }
         }
       }`)
 

@@ -30,9 +30,11 @@
             <template v-for="(tag, idx) of post.tags">
               <span :key="idx">
                 <span v-if="idx > 0">, </span>
-                <nuxt-link :to="`/categories?filters=${tag.toLowerCase()}`">{{
-                  tag
-                }}</nuxt-link>
+                <nuxt-link
+                  :to="`/categories?filters=${tag.toLowerCase()}`"
+                  @click.native="routeFilter(tag.toLowerCase())"
+                  >{{ tag }}</nuxt-link
+                >
               </span>
             </template>
           </p>
@@ -47,12 +49,14 @@
 
 <script>
 import gsap from "gsap"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 import Wrapper from "@/components/Wrapper"
 import Button from "@/components/Button"
 import Date from "@/components/Date"
 
 export default {
   components: { Wrapper, Button, Date },
+  mixins: [categoryRouteReset],
   props: {
     posts: {
       type: Array,

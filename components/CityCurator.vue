@@ -32,6 +32,18 @@
         </div>
       </div>
       <div>
+        <h4 class="accentText">Moods</h4>
+        <ul class="moods">
+          <li v-for="(mood, index) of moodsFormatted" :key="index" class="mood">
+            <nuxt-link
+              :to="`/categories?filters=${mood.toLowerCase()}`"
+              @click.native="routeFilter(mood.toLowerCase())"
+              >{{ mood }}</nuxt-link
+            >
+          </li>
+        </ul>
+      </div>
+      <div>
         <h4 class="accentText">About</h4>
         <p class="bodyText">
           {{ artist.about }}
@@ -85,13 +97,32 @@ export default {
             type: Object,
             required: true,
           },
+          posts: {
+            type: Array,
+            required: false,
+          },
         }
       },
     },
   },
+
   computed: {
     websiteFormatted() {
       return this.artist.website.replace(/^https?:\/\//i, "")
+    },
+    moodsFormatted() {
+      return this.artist.posts
+        ? this.artist.posts.reduce(this.getMoods, [])
+        : null
+    },
+  },
+  methods: {
+    getMoods(acc, post) {
+      if (acc.includes(post.mood.mood)) {
+        return acc
+      }
+
+      return [...acc, post.mood.mood]
     },
   },
 }
@@ -121,7 +152,7 @@ export default {
   }
 
   .lower {
-    padding: 2.5rem 2rem;
+    padding: 2rem 1.5rem;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -177,6 +208,49 @@ export default {
     &:focus {
       color: $accent;
     }
+  }
+
+  .moods {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .mood {
+    text-transform: capitalize;
+    margin-right: 1.5rem;
+    position: relative;
+
+    &::before {
+      content: "•";
+      font-size: 1.25rem;
+      position: absolute;
+      left: -1rem;
+      top: 0;
+    }
+
+    a,
+    a:visited {
+      color: $black;
+      text-decoration: none;
+
+      &:hover,
+      &:focus {
+        color: $accent;
+      }
+    }
+  }
+
+  .mood:first-child {
+    &::before {
+      content: "";
+    }
+  }
+
+  .mood:last-child {
+    margin-right: 0;
   }
 }
 </style>

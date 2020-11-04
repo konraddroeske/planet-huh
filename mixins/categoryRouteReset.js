@@ -12,7 +12,8 @@ export default {
     async routeFilter(filter) {
       this.resetFilters()
 
-      gsap.to(window, 0.4, {
+      gsap.to(window, {
+        duration: 0.4,
         scrollTo: 0,
         ease: "power4.out",
       })
