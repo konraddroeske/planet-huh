@@ -78,7 +78,7 @@ h2 {
   }
 
   h2 {
-    font-size: 5vw;
+    font-size: 3.5vw;
   }
 }
 
@@ -88,7 +88,7 @@ h2 {
   }
 }
 
-@media (min-width: $bp-lg-desktop) {
+@media (min-width: $bp-xl-desktop) {
   h2 {
     font-size: 4rem;
   }
