@@ -30,6 +30,10 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.$fb.track("Search", {
+        value: this.input.toLowerCase(),
+      })
+
       this.$emit("onSubmit", this.input.toLowerCase())
       this.input = null
     },

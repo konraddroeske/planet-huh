@@ -170,6 +170,8 @@ export default {
       this.messageError = message.length > 300 || message.length === 0
     },
     handleSubmit() {
+      this.$fb.track("Contact", {})
+
       this.nameCheck(this.name)
       this.emailCheck(this.email)
       this.messageCheck(this.message)
