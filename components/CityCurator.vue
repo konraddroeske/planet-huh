@@ -195,7 +195,7 @@ export default {
   a,
   span {
     font-family: $font-display;
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: $semibold;
   }
 
@@ -225,7 +225,7 @@ export default {
 
     &::before {
       content: "•";
-      font-size: 1.25rem;
+      font-size: 1.1rem;
       position: absolute;
       right: -1rem;
       top: 0;
@@ -251,6 +251,19 @@ export default {
 
   .mood:last-child {
     margin-right: 0;
+  }
+
+  @media (min-width: $bp-tablet) {
+    a,
+    span {
+      font-size: 1.25rem;
+    }
+
+    .mood {
+      &::before {
+        font-size: 1.25rem;
+      }
+    }
   }
 }
 </style>
