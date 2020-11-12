@@ -227,7 +227,7 @@ export default {
       content: "•";
       font-size: 1.25rem;
       position: absolute;
-      left: -1rem;
+      right: -1rem;
       top: 0;
     }
 
@@ -243,7 +243,7 @@ export default {
     }
   }
 
-  .mood:first-child {
+  .mood:last-child {
     &::before {
       content: "";
     }
