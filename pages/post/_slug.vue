@@ -29,6 +29,7 @@ import ArtistCredits from "@/components/ArtistCredits"
 import SocialShare from "@/components/SocialShare"
 import SuggestedPosts from "@/components/SuggestedPosts"
 import Footer from "@/components/Footer"
+import transitions from "@/mixins/transitions"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -43,14 +44,7 @@ export default {
     SuggestedPosts,
     Footer,
   },
-  transition: {
-    enter(el, done) {
-      this.$store.dispatch("transitions/setEnter", { el, done })
-    },
-    leave(el, done) {
-      this.$store.dispatch("transitions/setLeave", { el, done })
-    },
-  },
+  mixins: [transitions],
   data() {
     return {
       slug: this.$route.params.slug,
@@ -90,31 +84,6 @@ export default {
     },
     description() {
       return this.post.excerpt
-    },
-  },
-
-  activated() {
-    this.onMount()
-  },
-  deactivated() {
-    this.onDestroy()
-  },
-
-  methods: {
-    onMount() {
-      const nav = document.querySelector("#navContainer")
-      nav.addEventListener("click", this.route, false)
-      nav.addEventListener("touchstart", this.route, false)
-    },
-    onDestroy() {
-      const nav = document.querySelector("#navContainer")
-      nav.removeEventListener("click", this.route, false)
-      nav.removeEventListener("touchstart", this.route, false)
-    },
-    route() {
-      this.$router.push({
-        path: `/`,
-      })
     },
   },
   head() {

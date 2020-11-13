@@ -124,14 +124,11 @@ export default {
   mounted() {
     const tl = gsap.timeline()
 
-    tl.set("#footer", { delay: 0.4, display: "block", autoAlpha: 0 }).to(
-      "#footer",
-      1,
-      {
-        delay: 0.6,
-        autoAlpha: 1,
-      }
-    )
+    tl.set("#footer", { display: "block", autoAlpha: 0 }).to("#footer", {
+      duration: 0.6,
+      delay: 0.3,
+      autoAlpha: 1,
+    })
   },
 }
 </script>

@@ -1,9 +1,6 @@
 <template>
   <nav>
     <ul :class="`navList-${variant}`">
-      <li :class="`navItem-${variant}`">
-        <nuxt-link :to="'/contact'">Contact</nuxt-link>
-      </li>
       <li v-for="slug in slugs" :key="slug.slug" :class="`navItem-${variant}`">
         <nuxt-link :to="`/${slug.slug}`">
           {{ slug.shortTitle }}
@@ -24,9 +21,30 @@ export default {
       },
     },
   },
+  data() {
+    return {
+      extraSlugs: [
+        {
+          shortTitle: "Contact",
+          slug: "contact",
+        },
+        {
+          shortTitle: "Submit Mood",
+          slug: "submit-mood",
+        },
+      ],
+    }
+  },
   computed: {
     slugs() {
-      return this.$store.state.static.slugs
+      return [...this.$store.state.static.slugs, ...this.extraSlugs].sort(
+        (a, b) => {
+          const textA = a.shortTitle.toLowerCase()
+          const textB = b.shortTitle.toLowerCase()
+
+          return textA.localeCompare(textB)
+        }
+      )
     },
   },
   async mounted() {

@@ -34,12 +34,6 @@ export default {
       required: true,
     },
   },
-  // mounted() {
-  //   this.onMount()
-  // },
-  // beforeDestroy() {
-  //   this.onDestroy()
-  // },
   activated() {
     this.onMount()
   },

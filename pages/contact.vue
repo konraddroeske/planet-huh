@@ -80,6 +80,7 @@ import axios from "axios"
 import { fetchContent } from "@/utils/api"
 import Wrapper from "@/components/Wrapper"
 import Footer from "@/components/Footer"
+import transitions from "@/mixins/transitions"
 
 export default {
   layout: "default",
@@ -87,6 +88,7 @@ export default {
     Wrapper,
     Footer,
   },
+  mixins: [transitions],
   async asyncData() {
     const { data } = await fetchContent(`{
       contacts {
@@ -122,20 +124,10 @@ export default {
       return this.title
     },
   },
-  transition: {
-    enter(el, done) {
-      this.$store.dispatch("transitions/setEnter", { el, done })
-    },
-    leave(el, done) {
-      this.$store.dispatch("transitions/setLeave", { el, done })
-    },
-  },
   activated() {
-    this.onMount()
     this.resetForm()
   },
   deactivated() {
-    this.onDestroy()
     this.resetForm()
   },
   methods: {
@@ -211,21 +203,6 @@ export default {
         }
       })
     },
-    onMount() {
-      const nav = document.querySelector("#navContainer")
-      nav.addEventListener("click", this.route, false)
-      nav.addEventListener("touchstart", this.route, false)
-    },
-    onDestroy() {
-      const nav = document.querySelector("#navContainer")
-      nav.removeEventListener("click", this.route, false)
-      nav.removeEventListener("touchstart", this.route, false)
-    },
-    route() {
-      this.$router.push({
-        path: `/`,
-      })
-    },
   },
   head() {
     return {
@@ -289,7 +266,6 @@ export default {
     }
 
     p {
-      // font-size: $font-sm;
       margin: 0;
     }
   }

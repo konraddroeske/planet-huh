@@ -127,17 +127,6 @@ export const actions = {
     const navTime = 1
     const delay = 0
 
-    gsap.fromTo(
-      el,
-      {
-        autoAlpha: 0,
-      },
-      {
-        autoAlpha: 1,
-        duration: 0.5,
-      }
-    )
-
     navContainerTl
       .set("#layout", {
         height: "calc(100vh + 1px)",
@@ -160,7 +149,16 @@ export const actions = {
       })
 
     if (el) {
-      gsap.to(el, { duration: navTime, autoAlpha: 1 })
+      gsap.fromTo(
+        el,
+        {
+          autoAlpha: 0,
+        },
+        {
+          autoAlpha: 1,
+          duration: navTime,
+        }
+      )
     }
 
     gsap.to("#toggleContainer", { duration: navTime, autoAlpha: 1 })

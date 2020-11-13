@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section :class="{ noMargin: isIndex }">
     <Wrapper>
       <h2 class="visuallyHidden">Posts Feed</h2>
       <ul class="postList">
@@ -75,6 +75,7 @@ export default {
     return {
       allPostsFetched: false,
       width: null,
+      isIndex: false,
     }
   },
   computed: {
@@ -99,6 +100,7 @@ export default {
   },
   methods: {
     onMount() {
+      if (this.$route.path === "/") this.isIndex = true
       this.width = window.matchMedia("(min-width: 1024px)")
       this.setPadding(this.width)
       this.width.addListener(this.setPadding)
@@ -173,6 +175,10 @@ export default {
 section {
   margin: 7rem 0;
   text-align: center;
+}
+
+.noMargin {
+  margin-bottom: 0rem;
 }
 
 .postList {
