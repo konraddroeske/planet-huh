@@ -46,7 +46,6 @@
               <span class="line"
                 >Thanks for telling us about how you feel.</span
               >
-              <span class="line">Come back soon for the full experience.</span>
             </h2>
           </div>
           <div v-else class="fail">
