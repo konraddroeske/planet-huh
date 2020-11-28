@@ -11,7 +11,7 @@
         <div class="bannerText">
           <h1 class="title">{{ title }}</h1>
           <p v-if="excerpt" class="excerpt">{{ excerpt }}</p>
-          <p v-if="artistFormatted" class="excerpt curated">
+          <p v-if="artistFormatted && curated" class="excerpt curated">
             Curated by
             <nuxt-link
               :to="`/categories?filters=${artistFormatted.toLowerCase()}`"
@@ -95,6 +95,10 @@ export default {
     mood: {
       type: Object,
       default: () => null,
+    },
+    curated: {
+      type: Boolean,
+      default: () => false,
     },
   },
   computed: {
