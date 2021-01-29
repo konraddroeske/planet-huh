@@ -208,23 +208,6 @@ export default {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
     facebookToken: process.env.FACEBOOK_CLIENT_TOKEN,
   },
-  babel: {
-    presets(env, [preset, options]) {
-      return [
-        [
-          "@nuxt/babel-preset-app",
-          {
-            exclude(modulePath) {
-              return (
-                /node_modules/.test(modulePath) &&
-                !/node_modules\/three/.test(modulePath)
-              )
-            },
-          },
-        ],
-      ]
-    },
-  },
   generate: {
     routes: dynamicRoutes,
   },
