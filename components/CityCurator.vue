@@ -31,7 +31,7 @@
           >
         </div>
       </div>
-      <div>
+      <div v-if="moodsFormatted.length > 0">
         <h4 class="accentText">Moods</h4>
         <ul class="moods">
           <li v-for="(mood, index) of moodsFormatted" :key="index" class="mood">
@@ -118,7 +118,7 @@ export default {
   },
   methods: {
     getMoods(acc, post) {
-      if (acc.includes(post.mood.mood)) {
+      if (!post?.mood?.mood || acc.includes(post.mood.mood)) {
         return acc
       }
 
