@@ -49,10 +49,10 @@
 
 <script>
 import gsap from "gsap"
-import categoryRouteReset from "~/mixins/categoryRouteReset"
 import Wrapper from "@/components/Wrapper"
 import Button from "@/components/Button"
 import Date from "@/components/Date"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 
 export default {
   components: { Wrapper, Button, Date },

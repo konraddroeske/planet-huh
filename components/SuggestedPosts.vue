@@ -64,9 +64,9 @@ import gsap from "gsap"
 import { Draggable, InertiaPlugin } from "gsap/all"
 import { fetchContent } from "@/utils/api"
 import ButtonArrow from "@/components/ButtonArrow"
+import Wrapper from "@/components/Wrapper"
 import LeftArrow from "~/assets/icons/leftArrow.svg?inline"
 import RightArrow from "~/assets/icons/rightArrow.svg?inline"
-import Wrapper from "@/components/Wrapper"
 
 export default {
   components: {

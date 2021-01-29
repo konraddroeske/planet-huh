@@ -56,14 +56,10 @@
         </div>
         <div v-else class="response">
           <div v-if="isSuccess" class="success">
-            <h2>
-              Thanks for getting in touch!
-            </h2>
+            <h2>Thanks for getting in touch!</h2>
           </div>
           <div v-else class="fail">
-            <h2>
-              Sorry, that didn't work. Please try again.
-            </h2>
+            <h2>Sorry, that didn't work. Please try again.</h2>
           </div>
           <div class="linkContainer">
             <nuxt-link class="mainLink" to="/">Back To Main</nuxt-link>

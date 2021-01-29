@@ -57,8 +57,8 @@
 </template>
 
 <script>
-import categoryRouteReset from "~/mixins/categoryRouteReset"
 import Button from "@/components/Button"
+import categoryRouteReset from "~/mixins/categoryRouteReset"
 
 export default {
   components: {

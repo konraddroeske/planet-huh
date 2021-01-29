@@ -4,16 +4,26 @@
       id="navContainer"
       ref="navContainer"
       v-scroll-lock="isOpen"
-      class="navContainer"
+      :class="{ navContainer: true, navContainerMobile: isMobile }"
     >
-      <div id="sceneContainer" ref="sceneContainer" class="sceneContainer">
+      <div
+        id="sceneContainer"
+        ref="sceneContainer"
+        :class="{ sceneContainer: true, sceneContainerMobile: isMobile }"
+      >
         <canvas id="scene" ref="scene" class="scene" />
       </div>
     </div>
-    <div id="toggleContainer" class="toggleContainer">
+    <div
+      id="toggleContainer"
+      :class="{ toggleContainer: true, toggleContainerMobile: isMobile }"
+    >
       <NavToggle />
     </div>
-    <div id="navFeedContainer" class="navFeedContainer">
+    <div
+      id="navFeedContainer"
+      :class="{ navFeedContainer: true, navFeedContainerMobile: isMobile }"
+    >
       <NavFeed @clicked="handleNav()">Planet Huh</NavFeed>
     </div>
   </div>
@@ -72,6 +82,8 @@ export default {
           : this.$store.state.transitions.pause(0)
       }
     })
+
+    console.log(this.isMobile)
 
     this.observer.observe(this.$refs.navContainer)
 
@@ -1560,33 +1572,30 @@ export default {
   display: none;
 }
 
-@media (pointer: none), (pointer: coarse) {
-  .navContainer {
-    position: fixed;
-    top: 10vh;
-    bottom: 10vh;
-  }
+.navContainerMobile {
+  position: fixed;
+  top: 10vh;
+  bottom: 10vh;
+}
 
-  .scene {
-    height: 110vh !important;
-  }
+.sceneMobile {
+  height: 110vh !important;
+}
 
-  .toggleContainer {
-    top: 10vh !important;
-    bottom: auto !important;
-  }
+.toggleContainerMobile {
+  top: 10vh !important;
+  bottom: auto !important;
+}
 
-  .navFeedContainer {
-    top: 75vh;
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, 0);
-    z-index: $z-modal;
-    display: block;
-    width: 17rem;
-    display: flex;
-    justify-content: center;
-  }
+.navFeedContainerMobile {
+  top: 75vh;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: $z-modal;
+  width: 17rem;
+  display: flex;
+  justify-content: center;
 }
 
 @media (min-width: $bp-mobile) {

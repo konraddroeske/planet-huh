@@ -6,10 +6,8 @@
       :to="{ name: '' }"
       :variant="variant"
     />
-    <div class="buttonContainer">
-      <ButtonFilter @clicked="toggleModal">
-        Filter Posts
-      </ButtonFilter>
+    <div :class="{ buttonContainer: true, buttonContainerMobile: isMobile }">
+      <ButtonFilter @clicked="toggleModal"> Filter Posts </ButtonFilter>
     </div>
   </div>
 </template>
@@ -34,6 +32,11 @@ export default {
       variant: "gradient",
       disabled: true,
     }
+  },
+  computed: {
+    isMobile() {
+      return this.$device.isMobileOrTablet
+    },
   },
   methods: {
     toggleModal() {
@@ -65,11 +68,11 @@ export default {
   transform: translateX(-50%);
 }
 
-@media (pointer: none), (pointer: coarse) {
-  .buttonContainer {
-    bottom: 6.5rem;
-  }
+//@media (pointer: none), (pointer: coarse) {
+.buttonContainerMobile {
+  bottom: 6.5rem;
 }
+//}
 
 @media (min-width: $bp-tablet) {
   .buttonContainer {

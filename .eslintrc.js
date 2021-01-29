@@ -22,5 +22,7 @@ module.exports = {
     "no-lone-blocks": "warn",
     "prefer-const": "warn",
     "no-unused-expressions": "warn",
+    "no-undef": 0,
   },
+  ignorePatterns: ["fb-sdk.js"],
 }

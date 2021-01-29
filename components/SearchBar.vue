@@ -6,9 +6,7 @@
       type="text"
       placeholder="Start typing..."
     />
-    <button type="submit" :class="`searchButton-${variant}`">
-      Go!
-    </button>
+    <button type="submit" :class="`searchButton-${variant}`">Go!</button>
   </form>
 </template>
 

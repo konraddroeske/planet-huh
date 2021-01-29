@@ -8,7 +8,10 @@
         name="menuButton"
         @click="toggleModal"
       />
-      <label for="menuButton">
+      <label
+        for="menuButton"
+        :class="{ menuButton: true, menuButtonMobile: isMobile }"
+      >
         <span class="labelText visuallyHidden">View Menu</span>
         <span class="menuIcon" />
       </label>
@@ -46,6 +49,11 @@ export default {
       isOpen: false,
     }
   },
+  computed: {
+    isMobile() {
+      return this.$device.isMobileOrTablet
+    },
+  },
   watch: {
     $route(to, from) {
       if (this.isOpen) {
@@ -55,7 +63,6 @@ export default {
       }
     },
   },
-
   methods: {
     toggleModal() {
       if (this.isOpen) {
@@ -137,7 +144,7 @@ export default {
   opacity: 0;
 }
 
-label[for="menuButton"] {
+.menuButton {
   display: block;
   height: 2rem;
   width: 4rem;
@@ -154,14 +161,12 @@ label[for="menuButton"] {
   }
 }
 
-@media (pointer: none), (pointer: coarse) {
-  label[for="menuButton"] {
-    &:hover {
-      .menuIcon,
-      .menuIcon::before,
-      .menuIcon::after {
-        background: $black;
-      }
+.menuButtonMobile {
+  &:hover {
+    .menuIcon,
+    .menuIcon::before,
+    .menuIcon::after {
+      background: $black;
     }
   }
 }
