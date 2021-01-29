@@ -83,8 +83,6 @@ export default {
       }
     })
 
-    console.log(this.isMobile)
-
     this.observer.observe(this.$refs.navContainer)
 
     if (!this.isIndex) {
