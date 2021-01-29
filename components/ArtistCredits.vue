@@ -78,10 +78,6 @@ export default {
 .wrapper {
   width: 85%;
   margin: 0 auto;
-
-  @media (min-width: $bp-desktop) {
-    width: 70%;
-  }
 }
 section {
   @media (min-width: $bp-desktop) {
@@ -156,7 +152,7 @@ section {
 }
 
 .shortInfo {
-  @media (min-width: $bp-desktop) {
+  @media (min-width: $bp-xl-desktop) {
     display: flex;
     justify-content: space-between;
   }
