@@ -7,7 +7,7 @@ const dynamicRoutes = async () => {
         staticPages {
           slug
         }
-        posts {
+        posts(first: 1000) {
           slug
         }
       }`)

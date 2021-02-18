@@ -1,9 +1,10 @@
 <template>
   <div ref="container" :class="`category-${variant}`">
     <div v-if="variant === 'gradient'" class="explore">Explore</div>
-    <nuxt-link ref="link" :event="disabled ? '' : 'click'" :to="to">{{
-      name
-    }}</nuxt-link>
+    <nuxt-link v-if="!disabled" ref="link" :to="to"
+      ><h1>{{ name }}</h1>
+    </nuxt-link>
+    <h1 v-else>{{ name }}</h1>
     <p v-if="isArtist" class="description bodyText">{{ isArtist }}</p>
     <p v-if="isMood" class="description bodyText">{{ isMood }}</p>
   </div>
@@ -83,59 +84,58 @@ export default {
   }
 }
 
-.category-dark {
-  font-family: $font-display;
-  text-transform: uppercase;
-  font-weight: $extrabold;
-  font-size: 4rem;
-  line-height: 1;
+//.category-dark {
+//  font-family: $font-display;
+//  text-transform: uppercase;
+//  font-weight: $extrabold;
+//  font-size: 4rem;
+//  line-height: 1;
+//
+//  a,
+//  a:visited {
+//    color: $white;
+//    text-decoration: none;
+//    text-align: center;
+//
+//    &:hover,
+//    &:focus {
+//      color: $accent;
+//    }
+//  }
+//}
 
-  a,
-  a:visited {
-    color: $white;
-    text-decoration: none;
-    text-align: center;
-
-    &:hover,
-    &:focus {
-      color: $accent;
-    }
-  }
-}
-
-.category-light {
-  font-family: $font-display;
-  text-transform: uppercase;
-  font-weight: $extrabold;
-  font-size: 4rem;
-  line-height: 1;
-
-  a,
-  a:visited {
-    color: $black;
-    text-decoration: none;
-    text-align: center;
-
-    &:hover,
-    &:focus {
-      color: $accent;
-    }
-  }
-
-  @media (min-width: $bp-desktop) {
-    font-size: 5rem;
-  }
-
-  @media (min-width: $bp-lg-desktop) {
-    font-size: 6rem;
-  }
-}
+//.category-light {
+//  font-family: $font-display;
+//  text-transform: uppercase;
+//  font-weight: $extrabold;
+//  font-size: 4rem;
+//  line-height: 1;
+//
+//  a,
+//  a:visited {
+//    color: $black;
+//    text-decoration: none;
+//    text-align: center;
+//
+//    &:hover,
+//    &:focus {
+//      color: $accent;
+//    }
+//  }
+//
+//  @media (min-width: $bp-desktop) {
+//    font-size: 5rem;
+//  }
+//
+//  @media (min-width: $bp-lg-desktop) {
+//    font-size: 6rem;
+//  }
+//}
 
 .category-gradient {
   font-family: $font-display;
   text-transform: uppercase;
   font-weight: $extrabold;
-  font-size: 10vw;
   line-height: 1;
   position: relative;
 
@@ -165,8 +165,8 @@ export default {
     }
   }
 
-  a,
-  a:visited {
+  h1 {
+    font-size: 10vw;
     color: $black;
     text-decoration: none;
     text-align: center;
@@ -186,7 +186,10 @@ export default {
   }
 
   @media (min-width: $bp-lg-desktop) {
-    font-size: 8rem;
+    h1 {
+      font-size: 8rem;
+    }
+
     ::before {
       box-shadow: 0 0 12rem 12rem $accent;
     }

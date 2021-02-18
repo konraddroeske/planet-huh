@@ -2,7 +2,6 @@ import { fetchContent } from "@/utils/api"
 
 export const state = () => ({
   posts: null,
-  // collabs: null,
 })
 
 export const actions = {
@@ -70,13 +69,4 @@ export const mutations = {
   setPosts(state, payload) {
     state.posts = payload
   },
-  // setCollabs(state, payload) {
-  //   const collabs = payload.filter((post) => {
-  //     if (post.artist.length >= 2 && post.featuredImages.length >= 2) {
-  //       return post
-  //     }
-  //   })
-
-  //   state.collabs = collabs
-  // },
 }
