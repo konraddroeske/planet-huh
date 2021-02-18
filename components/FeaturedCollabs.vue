@@ -336,7 +336,7 @@ export default {
 .featuredCollabs {
   position: relative;
   margin-bottom: 5rem;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .buttonContainer {
