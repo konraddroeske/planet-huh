@@ -8,7 +8,7 @@ export const actions = {
   async getPosts({ commit, state }) {
     try {
       const { data } = await fetchContent(`{
-        posts(orderBy: date_DESC) {
+        posts(first: 1000, orderBy: date_DESC) {
             id
             title
             headline
