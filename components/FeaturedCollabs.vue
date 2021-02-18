@@ -336,6 +336,10 @@ export default {
   top: calc(58vw / 2);
   transform: translateY(-50%);
   z-index: 10;
+
+  g {
+    fill: white;
+  }
 }
 
 .leftArrow {
