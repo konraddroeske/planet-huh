@@ -40,7 +40,7 @@
               :max-width="1000"
             />
           </div>
-          <div class="collabsContent">
+          <div :ref="'collabsContent' + index" class="collabsContent">
             <div class="content">
               <div class="headline">
                 <p>
@@ -104,6 +104,7 @@ export default {
       wrapWidth: null,
       slideAnimation: gsap.to({}, 0.1, {}),
       switchPosition: null,
+      maxHeight: null,
     }
   },
   computed: {
@@ -256,30 +257,48 @@ export default {
         this.slideWidth = this.$refs.post0[0].getBoundingClientRect().width
         this.wrapWidth = this.slideWidth * this.numSlides
 
-        // List Height
+        // Image Height
+        // If screen is larger than 1024px, then images can't exceed height of content
+        if (window.innerWidth > 1024) {
+          const contentRefs = Object.entries(this.$refs)
+            .filter((ele) => ele[0].includes("collabsContent"))
+            .map((ele) => ele[1][0])
 
-        this.slideHeights = this.getMaxHeight(
-          Object.values(this.$refs).map((ele) => ele[0])
-        )
+          this.maxHeight = Math.max(...this.getMaxHeight(contentRefs))
 
-        const maxHeight = Math.max(...this.slideHeights)
+          gsap.set(".postImage", {
+            height: this.maxHeight,
+          })
+        } else {
+          // List Height
+
+          this.slideHeights = this.getMaxHeight(
+            Object.values(this.$refs).map((ele) => ele[0])
+          )
+
+          this.maxHeight = Math.max(...this.slideHeights)
+
+          gsap.set(".postImage", {
+            height: "100%",
+          })
+        }
 
         gsap.set(".collabsList", {
-          height: maxHeight,
+          height: this.maxHeight,
         })
 
         // Content Height
 
-        const textElements = Array.from(document.querySelectorAll(".content"))
-        const textHeight = textElements[this.maxCharIndex].offsetHeight
-
-        for (let i = 0; i < this.posts.length; i += 1) {
-          if (i !== this.maxCharIndex) {
-            gsap.set(textElements[i], {
-              height: textHeight,
-            })
-          }
-        }
+        // const textElements = Array.from(document.querySelectorAll(".content"))
+        // const textHeight = textElements[this.maxCharIndex].offsetHeight
+        //
+        // for (let i = 0; i < this.posts.length; i += 1) {
+        //   if (i !== this.maxCharIndex) {
+        //     gsap.set(textElements[i], {
+        //       height: textHeight,
+        //     })
+        //   }
+        // }
 
         // Set Position of Posts
 
@@ -485,7 +504,7 @@ ul {
 
     .leftImage,
     .rightImage {
-      height: auto;
+      max-height: auto;
     }
 
     .content {
