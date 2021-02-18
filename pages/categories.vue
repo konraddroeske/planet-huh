@@ -118,7 +118,6 @@ export default {
   //   },
   // },
   activated() {
-
     this.$store.dispatch(
       "categories/handleRouteQueries",
       isEmpty(this.$route.query) ? {} : this.$route.query

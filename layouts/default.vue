@@ -35,6 +35,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.layout {
+  position: relative;
+}
+
 .burrableContent {
   position: relative;
 }
