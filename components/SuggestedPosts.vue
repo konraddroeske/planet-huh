@@ -287,6 +287,10 @@ export default {
   top: calc(13.5rem - 1rem);
   z-index: 1;
 
+  g {
+    fill: white;
+  }
+
   @media (min-width: $bp-desktop) {
     top: calc(50% - 2rem);
   }
