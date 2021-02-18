@@ -118,7 +118,6 @@ export default {
   //   },
   // },
   activated() {
-    console.log(this.artists)
 
     this.$store.dispatch(
       "categories/handleRouteQueries",

@@ -182,11 +182,6 @@ export default {
   mounted() {
     this.onMount()
   },
-
-  // activated() {
-  //   console.log('activated')
-  //   this.onMount()
-  // },
   methods: {
     onMount() {
       this.modalRef = this.$refs.modalFilters
