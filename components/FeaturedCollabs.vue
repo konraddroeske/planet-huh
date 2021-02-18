@@ -287,19 +287,6 @@ export default {
           height: this.maxHeight,
         })
 
-        // Content Height
-
-        // const textElements = Array.from(document.querySelectorAll(".content"))
-        // const textHeight = textElements[this.maxCharIndex].offsetHeight
-        //
-        // for (let i = 0; i < this.posts.length; i += 1) {
-        //   if (i !== this.maxCharIndex) {
-        //     gsap.set(textElements[i], {
-        //       height: textHeight,
-        //     })
-        //   }
-        // }
-
         // Set Position of Posts
 
         if (this.posts.length > 1) {

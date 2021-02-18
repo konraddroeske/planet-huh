@@ -22,7 +22,7 @@ export default {
       filter ? (queries = await this.getQueriesSearch(filter)) : (queries = [])
 
       this.$router.push({
-        path: "/categories",
+        name: "categories",
         query: { filters: queries },
       })
     },

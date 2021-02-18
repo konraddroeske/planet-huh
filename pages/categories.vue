@@ -105,18 +105,16 @@ export default {
       })
     },
   },
-  // watch: {
-  //   $route(to, from) {
-  //     console.log("route to categories", to)
-  //
-  //     if (to.name === "categories") {
-  //       this.$store.dispatch(
-  //         "categories/handleRouteQueries",
-  //         isEmpty(to.query.filters) ? {} : to.query.filters
-  //       )
-  //     }
-  //   },
-  // },
+  watch: {
+    $route(to, from) {
+      if (to.name === "categories") {
+        this.$store.dispatch(
+          "categories/handleRouteQueries",
+          isEmpty(to.query.filters) ? {} : to.query.filters
+        )
+      }
+    },
+  },
   activated() {
     this.$store.dispatch(
       "categories/handleRouteQueries",

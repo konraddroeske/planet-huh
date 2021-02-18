@@ -280,7 +280,7 @@ export default {
           !currentTarget.name.includes("coming soon")
         ) {
           this.$router.push({
-            path: "categories",
+            name: "categories",
             query: { filters: currentTarget.name },
           })
 
@@ -291,7 +291,7 @@ export default {
       const navRouter = () => {
         if (currentTarget && !currentTarget.name.includes("coming soon")) {
           this.$router.push({
-            path: "categories",
+            name: "categories",
             query: { filters: currentTarget.name },
           })
         }
@@ -1200,7 +1200,7 @@ export default {
       const navRouterTitle = (e) => {
         if (e.target && !e.target.title.includes("coming soon")) {
           this.$router.push({
-            path: "categories",
+            name: "categories",
             query: { filters: currentTarget.name },
           })
 
