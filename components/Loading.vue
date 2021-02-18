@@ -41,6 +41,8 @@ export default {
   top: 0;
   left: 0;
   width: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
   height: 100%;
   background: $white;
   text-align: center;
