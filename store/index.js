@@ -5,6 +5,8 @@ export const state = () => ({
 
 export const actions = {
   async nuxtServerInit({ dispatch }) {
+    console.log("fetching from nuxt server init")
+
     await dispatch("homepage/getFeatured")
     await dispatch("static/getStaticPages")
     await dispatch("nav/getMoods")
