@@ -1,21 +1,4 @@
-// import { fetchContent } from "./utils/api.js"
-
 if (process.env.NODE_ENV !== "production") require("dotenv").config()
-
-// const dynamicRoutes = async () => {
-//   const { data } = await fetchContent(`{
-//         staticPages {
-//           slug
-//         }
-//         posts(first: 1000) {
-//           slug
-//         }
-//       }`)
-//
-//   return data.data.posts
-//     .map((post) => `/post/${post.slug}`)
-//     .concat(data.data.staticPages.map((page) => `/${page.slug}`))
-// }
 
 const title = "Planet Huh"
 const description =
@@ -138,18 +121,18 @@ export default {
   buildModules: [
     // Doc: https://github.com/nuxt-community/eslint-module
     "@nuxtjs/eslint-module",
-    // "@nuxtjs/google-analytics",
-    // "nuxt-facebook-pixel-module",
+    "@nuxtjs/google-analytics",
+    "nuxt-facebook-pixel-module",
   ],
-  // googleAnalytics: {
-  //   id: process.env.GOOGLE_ANALYTICS_ID,
-  // },
-  // facebook: {
-  //   /* module options */
-  //   track: "PageView",
-  //   pixelId: process.env.FACEBOOK_PIXEL_ID,
-  //   disabled: false,
-  // },
+  googleAnalytics: {
+    id: process.env.GOOGLE_ANALYTICS_ID,
+  },
+  facebook: {
+    /* module options */
+    track: "PageView",
+    pixelId: process.env.FACEBOOK_PIXEL_ID,
+    disabled: false,
+  },
   /*
    ** Nuxt.js modules
    */
@@ -203,7 +186,4 @@ export default {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
     facebookToken: process.env.FACEBOOK_CLIENT_TOKEN,
   },
-  // generate: {
-  //   routes: dynamicRoutes,
-  // },
 }

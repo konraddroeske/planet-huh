@@ -30,6 +30,8 @@ export const actions = {
     }
   },
   async getFeatured({ commit }) {
+    console.log("getting featured")
+
     try {
       const { data } = await fetchContent(`{
           posts(where: {featured: true}, orderBy: date_DESC) {
