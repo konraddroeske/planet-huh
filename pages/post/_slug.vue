@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex"
 import gsap from "gsap"
 import { ScrollToPlugin } from "gsap/ScrollToPlugin"
 import HeroBanner from "@/components/HeroBanner"
@@ -30,6 +29,7 @@ import SocialShare from "@/components/SocialShare"
 import SuggestedPosts from "@/components/SuggestedPosts"
 import Footer from "@/components/Footer"
 import transitions from "@/mixins/transitions"
+import { fetchContent } from "../../utils/api"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -45,8 +45,73 @@ export default {
     Footer,
   },
   mixins: [transitions],
+  async fetch() {
+    try {
+      const { data } = await fetchContent(`{
+        post(where: {slug: "${this.$route.params.slug}"}) {
+          id
+            title
+            headline
+            slug
+            blueTitle
+            curated
+            excerpt
+            date
+            featured
+            featuredImages {
+              id
+              url
+              fileName
+            }
+            content {
+                html
+                markdown
+                raw
+                text
+            }
+            coverImage {
+                url
+            }
+            sense {
+                name
+            }
+            mood {
+                moodCategory
+                mood
+            }
+            artist {
+                name
+                city {
+                  name
+                }
+                about
+                website
+                social
+                socialUrl
+            }
+            city {
+                name
+            }
+        }
+      }`)
+
+      const { post } = data.data
+      const { coverImage, content } = post
+
+      this.post = {
+        ...post,
+        imageSrc: coverImage.url,
+        content: content.raw.children,
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
+  },
+  fetchOnServer: true,
   data() {
     return {
+      post: null,
       slug: this.$route.params.slug,
       link: `http://www.planethuh.com${this.$route.fullPath}/`,
     }
@@ -57,33 +122,33 @@ export default {
         match.toUpperCase()
       )
     },
-    ...mapState({
-      posts: (state) => state.posts.posts,
-    }),
-    post() {
-      const post = this.posts.find((el) => el.slug === this.slug)
-      const { coverImage, content } = post
-
-      return {
-        ...post,
-        imageSrc: coverImage.url,
-        content: content.raw.children,
-      }
-    },
+    // ...mapState({
+    //   posts: (state) => state.posts.posts,
+    // }),
+    // post() {
+    //   const post = this.posts.find((el) => el.slug === this.slug)
+    //   const { coverImage, content } = post
+    //
+    //   return {
+    //     ...post,
+    //     imageSrc: coverImage.url,
+    //     content: content.raw.children,
+    //   }
+    // },
     cities() {
-      return this.post.city.map((city) => city.name)
+      return this.post && this.post.city.map((city) => city.name)
     },
     senses() {
-      return this.post.sense.map((sense) => sense.name)
+      return this.post && this.post.sense.map((sense) => sense.name)
     },
     mood() {
-      return this.post.mood ? this.post.mood.mood : ""
+      return this.post && this.post.mood ? this.post.mood.mood : ""
     },
     img() {
-      return this.post.imageSrc
+      return this.post && this.post.imageSrc
     },
     description() {
-      return this.post.excerpt
+      return this.post && this.post.excerpt
     },
   },
   head() {
