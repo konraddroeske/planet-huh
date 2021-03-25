@@ -24,7 +24,7 @@
     "@nuxtjs/google-analytics": "^2.4.0",
     "@nuxtjs/pwa": "^3.3.5",
     "@nuxtjs/svg": "^0.1.12",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "express": "^4.17.1",
     "gsap": "file:gsap-bonus.tgz",
     "intersection-observer": "^0.11.0",
