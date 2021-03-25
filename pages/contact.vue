@@ -11,14 +11,10 @@
             method="post"
             name="contact"
             action
-            data-netlify="true"
-            netlify-honeypot="bot-field"
             @submit.prevent="handleSubmit"
           >
+            <input type="text" name="_gotcha" :style="hidden" />
             <input type="hidden" name="form-name" value="contact" />
-            <p class="visuallyHidden">
-              <label>Don’t fill this out: <input name="bot-field" /></label>
-            </p>
             <div class="upperForm">
               <FormulateInput
                 v-model="name"
@@ -113,6 +109,9 @@ export default {
       nameError: false,
       emailError: false,
       messageError: false,
+      hidden: {
+        display: "none",
+      },
     }
   },
   computed: {
@@ -178,18 +177,14 @@ export default {
           this.isSubmitted = true
 
           const axiosConfig = {
-            header: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: {
+              Accept: "application/json",
+            },
+            data: formValues,
           }
 
           axios
-            .post(
-              "/",
-              this.encode({
-                "form-name": "contact",
-                ...formValues,
-              }),
-              axiosConfig
-            )
+            .post("https://formspree.io/f/xjvjbaed", axiosConfig)
             .then(() => {
               this.isSuccess = true
             })

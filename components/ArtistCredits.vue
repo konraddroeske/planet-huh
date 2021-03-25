@@ -71,6 +71,9 @@ export default {
       return this.$props.artists.length === 1
     },
   },
+  mounted() {
+    console.log(this.artists)
+  },
 }
 </script>
 
@@ -142,6 +145,10 @@ section {
   @media (min-width: $bp-desktop) {
     margin-bottom: 3rem;
   }
+}
+
+.website {
+  word-break: break-word;
 }
 
 .oddLastArtist {

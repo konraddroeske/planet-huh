@@ -7,14 +7,9 @@
             method="post"
             name="preview"
             action
-            data-netlify="true"
-            netlify-honeypot="bot-field"
             @submit.prevent="handleSubmit"
           >
-            <input type="hidden" name="form-name" value="preview" />
-            <p class="visuallyHidden">
-              <label>Don’t fill this out: <input name="bot-field" /></label>
-            </p>
+            <input type="text" name="_gotcha" :style="hidden" />
             <div class="upperForm">
               <span class="formText">I feel </span>
               <FormulateInput
@@ -93,6 +88,9 @@ export default {
       cityEmpty: false,
       isSubmitted: false,
       isSuccess: true,
+      hidden: {
+        display: "none",
+      },
     }
   },
   methods: {
@@ -128,18 +126,14 @@ export default {
         this.isSubmitted = true
 
         const axiosConfig = {
-          header: { "Content-Type": "application/x-www-form-urlencoded" },
+          headers: {
+            Accept: "application/json",
+          },
+          data: formValues,
         }
 
         axios
-          .post(
-            "/",
-            this.encode({
-              "form-name": "preview",
-              ...formValues,
-            }),
-            axiosConfig
-          )
+          .post("https://formspree.io/f/xlearppe", axiosConfig)
           .then(() => {
             this.isSuccess = true
           })
