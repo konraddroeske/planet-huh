@@ -1,21 +1,4 @@
-import { fetchContent } from "./utils/api.js"
-
 if (process.env.NODE_ENV !== "production") require("dotenv").config()
-
-const dynamicRoutes = async () => {
-  const { data } = await fetchContent(`{
-        staticPages {
-          slug
-        }
-        posts(first: 1000) {
-          slug
-        }
-      }`)
-
-  return data.data.posts
-    .map((post) => `/post/${post.slug}`)
-    .concat(data.data.staticPages.map((page) => `/${page.slug}`))
-}
 
 const title = "Planet Huh"
 const description =
@@ -27,7 +10,7 @@ export default {
    ** Nuxt target
    ** See https://nuxtjs.org/api/configuration-target
    */
-  target: "static",
+  target: "server",
   /*
    ** Headers of the page
    ** See https://nuxtjs.org/api/configuration-head
@@ -102,11 +85,11 @@ export default {
           "https://fonts.googleapis.com/css2?family=Oswald:wght@400&family=Work+Sans:wght@400;500;600;900&display=swap",
       },
     ],
-    script: [
-      {
-        src: "/js/fb-sdk.js",
-      },
-    ],
+    // script: [
+    //   {
+    //     src: "/js/fb-sdk.js",
+    //   },
+    // ],
   },
   /*
    ** Global CSS
@@ -202,8 +185,5 @@ export default {
   env: {
     previewToken: process.env.GRAPHCMS_PREVIEW_TOKEN,
     facebookToken: process.env.FACEBOOK_CLIENT_TOKEN,
-  },
-  generate: {
-    routes: dynamicRoutes,
   },
 }
