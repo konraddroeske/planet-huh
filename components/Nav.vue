@@ -614,15 +614,9 @@ export default {
 
       // touch event listeners
 
-      sceneContainer.addEventListener("touchstart", onTouchStart, {
-        passive: true,
-      })
-      sceneContainer.addEventListener("touchmove", onTouchMove, {
-        passive: true,
-      })
-      sceneContainer.addEventListener("touchend", onTouchEnd, {
-        passive: true,
-      })
+      sceneContainer.addEventListener("touchstart", onTouchStart, false)
+      sceneContainer.addEventListener("touchmove", onTouchMove, false)
+      sceneContainer.addEventListener("touchend", onTouchEnd, false)
 
       // INITIALIZE CANVAS
 
