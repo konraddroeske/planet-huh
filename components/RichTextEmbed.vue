@@ -59,8 +59,13 @@ export default {
       return this.intHeight / this.intWidth
     },
   },
-  activated() {
-    this.handleResize()
+  mounted() {
+    const video = document.querySelector(`#${this.name}`)
+    video.addEventListener("load", this.handleResize)
+  },
+  beforeDestroy() {
+    const video = document.querySelector(`#${this.name}`)
+    video.removeEventListener("load", this.handleResize)
   },
   methods: {
     handleResize() {

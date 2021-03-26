@@ -71,9 +71,6 @@ export default {
       return this.$props.artists.length === 1
     },
   },
-  mounted() {
-    console.log(this.artists)
-  },
 }
 </script>
 
