@@ -133,6 +133,7 @@ export default {
   width: 100%;
   display: flex;
   flex-direction: column;
+  word-break: break-word;
 
   .upper {
     width: 100%;
