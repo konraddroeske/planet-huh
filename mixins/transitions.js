@@ -17,13 +17,17 @@ export default {
   methods: {
     onMount() {
       const nav = document.querySelector("#navContainer")
-      nav.addEventListener("click", this.route, false)
-      nav.addEventListener("touchstart", this.route, false)
+      nav.addEventListener("click", this.route, {
+        passive: true,
+      })
+      nav.addEventListener("touchstart", this.route, {
+        passive: true,
+      })
     },
     onDestroy() {
       const nav = document.querySelector("#navContainer")
-      nav.removeEventListener("click", this.route, false)
-      nav.removeEventListener("touchstart", this.route, false)
+      nav.removeEventListener("click", this.route)
+      nav.removeEventListener("touchstart", this.route)
     },
     route() {
       this.$router.push({

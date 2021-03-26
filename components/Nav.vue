@@ -582,31 +582,47 @@ export default {
       // mouse event listeners
       if (!this.isMobile) {
         const addHandlers = () => {
-          sceneContainer.addEventListener("mousedown", mouseDown, false)
-          sceneContainer.addEventListener("mousemove", mouseMove, false)
-          sceneContainer.addEventListener("mouseup", mouseUp, false)
+          sceneContainer.addEventListener("mousedown", mouseDown, {
+            passive: true,
+          })
+          sceneContainer.addEventListener("mousemove", mouseMove, {
+            passive: true,
+          })
+          sceneContainer.addEventListener("mouseup", mouseUp, {
+            passive: true,
+          })
         }
 
         const removeHandlers = () => {
           isDragging = false
           zoomPosition = 0.005
 
-          sceneContainer.removeEventListener("mousedown", mouseDown, false)
-          sceneContainer.removeEventListener("mousemove", mouseMove, false)
-          sceneContainer.removeEventListener("mouseup", mouseUp, false)
+          sceneContainer.removeEventListener("mousedown", mouseDown)
+          sceneContainer.removeEventListener("mousemove", mouseMove)
+          sceneContainer.removeEventListener("mouseup", mouseUp)
         }
 
         addHandlers()
 
-        sceneContainer.addEventListener("mouseover", addHandlers, false)
-        sceneContainer.addEventListener("mouseout", removeHandlers, false)
+        sceneContainer.addEventListener("mouseover", addHandlers, {
+          passive: true,
+        })
+        sceneContainer.addEventListener("mouseout", removeHandlers, {
+          passive: true,
+        })
       }
 
       // touch event listeners
 
-      sceneContainer.addEventListener("touchstart", onTouchStart, false)
-      sceneContainer.addEventListener("touchmove", onTouchMove, false)
-      sceneContainer.addEventListener("touchend", onTouchEnd, false)
+      sceneContainer.addEventListener("touchstart", onTouchStart, {
+        passive: true,
+      })
+      sceneContainer.addEventListener("touchmove", onTouchMove, {
+        passive: true,
+      })
+      sceneContainer.addEventListener("touchend", onTouchEnd, {
+        passive: true,
+      })
 
       // INITIALIZE CANVAS
 
@@ -1188,7 +1204,7 @@ export default {
           const heightHalf = canvas.clientHeight / 2
 
           pos.x = pos.x * widthHalf + widthHalf + 15
-          pos.y = -(pos.y * heightHalf) + heightHalf
+          pos.y = -(pos.y * heightHalf) + heightHalf - 7
 
           gsap.set(activeTitles[i][1], {
             x: pos.x,
@@ -1217,8 +1233,12 @@ export default {
         title.style.position = "absolute"
         title.title = object.name
 
-        title.addEventListener("click", navRouterTitle, false)
-        title.addEventListener("touchstart", navRouterTitle, false)
+        title.addEventListener("click", navRouterTitle, {
+          passive: true,
+        })
+        title.addEventListener("touchstart", navRouterTitle, {
+          passive: true,
+        })
 
         this.$refs.sceneContainer.append(title)
 
