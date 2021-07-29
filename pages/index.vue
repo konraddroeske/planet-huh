@@ -8,7 +8,6 @@
       :post-limit="postLimit"
       get-some-posts-path="homepage/getSomePosts"
     />
-    <MoodSubmission />
     <Footer />
   </div>
 </template>
@@ -21,7 +20,6 @@ import FeaturedCollabs from "@/components/FeaturedCollabs"
 import CategoryNav from "@/components/CategoryNav"
 import PostsFeed from "@/components/PostsFeed"
 import Footer from "@/components/Footer"
-import MoodSubmission from "@/components/MoodSubmission"
 
 gsap.registerPlugin(ScrollToPlugin)
 
@@ -32,7 +30,6 @@ export default {
     FeaturedCollabs,
     CategoryNav,
     PostsFeed,
-    MoodSubmission,
     Footer,
   },
   async fetch({ store }) {
@@ -60,6 +57,7 @@ export default {
       return this.$store.state.homepage.featured
     },
   },
+
   activated() {
     this.onMount()
   },
