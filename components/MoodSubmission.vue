@@ -81,6 +81,7 @@ li {
   video {
     width: 100%;
     display: block;
+    max-height: 100vh;
   }
 }
 .overlay {
