@@ -1,6 +1,7 @@
 export const state = () => ({
   loading: true,
   finish: null,
+  saved: null,
 })
 
 export const actions = {
@@ -23,5 +24,8 @@ export const mutations = {
   },
   setFinish(state, fn) {
     state.finish = fn
+  },
+  setSavedCookie(state, payload) {
+    state.saved = payload
   },
 }

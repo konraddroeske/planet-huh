@@ -141,6 +141,7 @@ export default {
             this.isSuccess = false
           })
       }
+      this.$router.push("/")
     },
   },
 }
