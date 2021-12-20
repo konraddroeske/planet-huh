@@ -199,10 +199,6 @@ section {
   margin-bottom: 0;
 }
 
-button {
-  margin-bottom: 3rem;
-}
-
 @media (min-width: $bp-desktop) {
   .postContainer {
     margin-bottom: 3rem;
