@@ -1483,7 +1483,7 @@ export default {
 
         renderer.render(scene, camera)
 
-        requestAnimationFrame(render)
+        // requestAnimationFrame(render)
       }
 
       playAnimation()
